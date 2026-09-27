@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>School Site Template — Wireframe</title>
+<style>
+  :root{
+    --wire-bg:#f4f4f2;
+    --wire-panel:#ffffff;
+    --wire-border:#c9c8c2;
+    --wire-border-strong:#9a9a92;
+    --wire-text:#2c2c2a;
+    --wire-text-soft:#6b6a64;
+    --wire-placeholder:#e2e1db;
+    --wire-placeholder-strong:#cfcec6;
+    --accent:#1d9e75;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    background:var(--wire-bg);
+    color:var(--wire-text);
+    padding:24px;
+  }
+  .toolbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-bottom:20px;
+  }
+  .label-title{
+    font-size:15px;
+    font-weight:700;
+    letter-spacing:0.02em;
+  }
+  .school-toggle{
+    display:flex;
+    gap:8px;
+    background:var(--wire-panel);
+    border:1px solid var(--wire-border);
+    border-radius:8px;
+    padding:4px;
+  }
+  .school-toggle button{
+    border:none;
+    background:transparent;
+    padding:8px 14px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:6px;
+    cursor:pointer;
+    color:var(--wire-text-soft);
+  }
+  .school-toggle button.active{
+    background:#1d1d1b;
+    color:#fff;
+  }
+  .browser-frame{
+    background:var(--wire-panel);
+    border:1px solid var(--wire-border-strong);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 1px 3px rgba(0,0,0,0.08);
+  }
+  .browser-chrome{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 14px;
+    background:#eceae3;
+    border-bottom:1px solid var(--wire-border);
+  }
+  .dots{display:flex;gap:6px;}
+  .dot{width:10px;height:10px;border-radius:50%;background:#d3d1c7;}
+  .url-bar{
+    flex:1;
+    background:#fff;
+    border:1px solid var(--wire-border);
+    border-radius:6px;
+    padding:5px 12px;
+    font-size:12px;
+    color:var(--wire-text-soft);
+  }
+  .url-bar b{color:var(--wire-text);}
+  .page{
+    padding:0;
+  }
+  nav.site-nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 32px;
+    border-bottom:1px solid var(--wire-border);
+    background:#fff;
+  }
+  .brand{display:flex;align-items:center;gap:10px;}
+  .logo-box{
+    width:38px;height:38px;border-radius:8px;
+    background:var(--wire-placeholder-strong);
+    display:flex;align-items:center;justify-content:center;
+    font-size:10px;color:var(--wire-text-soft);font-weight:700;
+  }
+  .brand-name{font-size:14px;font-weight:700;}
+  .brand-sub{font-size:10px;color:var(--wire-text-soft);}
+  .nav-links{display:flex;gap:22px;font-size:12px;color:var(--wire-text-soft);}
+  .nav-links span{cursor:default;}
+  .nav-cta{
+    font-size:11px;font-weight:700;
+    border:1px solid var(--wire-border-strong);
+    padding:7px 14px;border-radius:6px;
+    color:var(--wire-text);
+  }
+
+  section{padding:40px 32px;border-bottom:1px solid var(--wire-border);position:relative;}
+  section:last-child{border-bottom:none;}
+  .section-tag{
+    position:absolute;
+    top:12px; right:16px;
+    font-size:9px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--wire-text-soft);
+    background:var(--wire-placeholder);
+    padding:3px 8px;
+    border-radius:4px;
+  }
+
+  /* HERO */
+  .hero{
+    display:flex;
+    align-items:center;
+    gap:36px;
+    background:#fafaf8;
+  }
+  .hero-copy{flex:1.1;}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
+  .hero h1{font-size:30px;line-height:1.25;margin:0 0 14px;font-weight:700;}
+  .hero p{font-size:14px;color:var(--wire-text-soft);line-height:1.6;max-width:440px;margin:0 0 20px;}
+  .btn-row{display:flex;gap:10px;}
+  .btn{font-size:12px;font-weight:700;padding:11px 18px;border-radius:6px;}
+  .btn-primary{background:#1d1d1b;color:#fff;}
+  .btn-secondary{border:1px solid var(--wire-border-strong);color:var(--wire-text);}
+  .hero-stats{display:flex;gap:22px;margin-top:26px;}
+  .stat b{display:block;font-size:18px;}
+  .stat span{font-size:10px;color:var(--wire-text-soft);}
+  .hero-media{
+    flex:1;
+    aspect-ratio:4/3;
+    background:repeating-linear-gradient(135deg,var(--wire-placeholder),var(--wire-placeholder) 10px,var(--wire-placeholder-strong) 10px,var(--wire-placeholder-strong) 20px);
+    border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--wire-text-soft);font-size:11px;font-weight:600;
+    border:1px solid var(--wire-border);
+  }
+
+  /* ABOUT */
+  .about{display:flex;gap:36px;align-items:flex-start;}
+  .about-media{
+    flex:0 0 240px;
+    aspect-ratio:1/1;
+    background:var(--wire-placeholder);
+    border:1px solid var(--wire-border);
+    border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;color:var(--wire-text-soft);font-weight:600;
+  }
+  .about-copy{flex:1;}
+  .h2{font-size:20px;font-weight:700;margin:0 0 12px;}
+  .about-copy p{font-size:13px;color:var(--wire-text-soft);line-height:1.7;margin:0 0 12px;}
+  .fact-row{display:flex;gap:28px;margin-top:18px;flex-wrap:wrap;}
+  .fact{border-left:2px solid var(--accent);padding-left:10px;}
+  .fact b{display:block;font-size:16px;}
+  .fact span{font-size:10px;color:var(--wire-text-soft);}
+
+  /* NEWS */
+  .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+  .section-head .h2{margin:0;}
+  .view-all{font-size:11px;font-weight:700;color:var(--accent);}
+  .news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  .news-card{
+    border:1px solid var(--wire-border);
+    border-radius:10px;
+    overflow:hidden;
+    background:#fff;
+  }
+  .news-thumb{
+    aspect-ratio:16/9;
+    background:var(--wire-placeholder);
+  }
+  .news-body{padding:14px;}
+  .news-date{font-size:10px;color:var(--accent);font-weight:700;margin-bottom:6px;}
+  .news-title{font-size:13px;font-weight:700;margin:0 0 6px;line-height:1.4;}
+  .news-excerpt{font-size:11px;color:var(--wire-text-soft);line-height:1.5;}
+  .news-line{height:8px;background:var(--wire-placeholder);border-radius:4px;margin-bottom:6px;}
+  .news-line.short{width:65%;}
+
+  /* GALLERY */
+  .gallery-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    grid-auto-rows:110px;
+    gap:10px;
+  }
+  .g-item{background:var(--wire-placeholder);border:1px solid var(--wire-border);border-radius:8px;}
+  .g-item.tall{grid-row:span 2;}
+  .g-item.wide{grid-column:span 2;}
+
+  /* CONTACT */
+  .contact{display:flex;gap:36px;}
+  .contact-info{flex:1;}
+  .info-row{display:flex;gap:10px;margin-bottom:14px;align-items:flex-start;}
+  .info-icon{
+    width:28px;height:28px;border-radius:6px;
+    background:var(--wire-placeholder-strong);
+    flex:0 0 28px;
+  }
+  .info-row div p{margin:0;font-size:12px;}
+  .info-row div .info-label{font-size:10px;color:var(--wire-text-soft);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px;}
+  .contact-form{
+    flex:1;
+    background:#fff;
+    border:1px solid var(--wire-border);
+    border-radius:10px;
+    padding:20px;
+  }
+  .field-label{font-size:10px;color:var(--wire-text-soft);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.04em;}
+  .field-box{
+    height:34px;
+    background:var(--wire-placeholder);
+    border-radius:6px;
+    margin-bottom:14px;
+  }
+  .field-box.tall{height:70px;}
+  .submit-box{
+    height:38px;width:130px;
+    background:#1d1d1b;
+    border-radius:6px;
+  }
+
+  footer.site-footer{
+    padding:24px 32px;
+    background:#fafaf8;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:10px;
+    color:var(--wire-text-soft);
+  }
+  .powered{
+    display:flex;align-items:center;gap:6px;
+    border:1px solid var(--wire-border);
+    padding:5px 10px;border-radius:6px;
+  }
+
+  .notes{
+    margin-top:22px;
+    background:var(--wire-panel);
+    border:1px solid var(--wire-border);
+    border-radius:10px;
+    padding:18px 22px;
+    font-size:12px;
+    color:var(--wire-text-soft);
+    line-height:1.7;
+  }
+  .notes b{color:var(--wire-text);}
+  .notes ul{margin:8px 0 0;padding-left:18px;}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="label-title">TEMPLATED SCHOOL SITE — Hero · About · News · Gallery · Contact</div>
+  <div class="school-toggle">
+    <button class="active" data-school="gambia">St. Peter's Technical (Gambia)</button>
+    <button data-school="zim">Kriste Mambo High (Zimbabwe)</button>
+  </div>
+</div>
+
+<div class="browser-frame">
+  <div class="browser-chrome">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="url-bar" id="urlbar">🔒 <b>stpeterstechnical</b>.edusaas.africa</div>
+  </div>
+
+  <div class="page">
+    <nav class="site-nav">
+      <div class="brand">
+        <div class="logo-box">LOGO</div>
+        <div>
+          <div class="brand-name" id="brandName">St. Peter's Technical J&S Secondary</div>
+          <div class="brand-sub" id="brandSub">Lamin, The Gambia</div>
+        </div>
+      </div>
+      <div class="nav-links">
+        <span>Home</span><span>About</span><span>News</span><span>Gallery</span><span>Alumni</span><span>Contact</span>
+      </div>
+      <div class="nav-cta">Enquire</div>
+    </nav>
+
+    <section class="hero">
+      <div class="section-tag">Hero</div>
+      <div class="hero-copy">
+        <div class="eyebrow" id="heroEyebrow">Est. 1978 · Junior &amp; Senior Secondary</div>
+        <h1 id="heroTitle">Educating tomorrow's leaders in Lamin</h1>
+        <p id="heroSub">A comprehensive technical secondary school serving Grades 7–12, with a growing alumni network across The Gambia and the diaspora.</p>
+        <div class="btn-row">
+          <div class="btn btn-primary">Enquire now</div>
+          <div class="btn btn-secondary">View admissions</div>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><b id="stat1">1,200+</b><span>Students enrolled</span></div>
+          <div class="stat"><b id="stat2">38</b><span>Years of history</span></div>
+          <div class="stat"><b id="stat3">500+</b><span>Alumni registered</span></div>
+        </div>
+      </div>
+      <div class="hero-media">Hero photo / video</div>
+    </section>
+
+    <section class="about">
+      <div class="section-tag">About</div>
+      <div class="about-media">School photo</div>
+      <div class="about-copy">
+        <div class="h2">About the school</div>
+        <p id="aboutP1">St. Peter's Technical Junior &amp; Senior Secondary School has served the Lamin community for decades, combining a rigorous academic core with hands-on technical training.</p>
+        <div class="news-line"></div>
+        <div class="news-line"></div>
+        <div class="news-line short"></div>
+        <div class="fact-row">
+          <div class="fact"><b>Grades 7–12</b><span>Levels offered</span></div>
+          <div class="fact"><b id="factLoc">Lamin, WCR</b><span>Location</span></div>
+          <div class="fact"><b>English</b><span>Language of instruction</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-tag">News &amp; announcements</div>
+      <div class="section-head">
+        <div class="h2">Latest news</div>
+        <div class="view-all">View all →</div>
+      </div>
+      <div class="news-grid">
+        <div class="news-card">
+          <div class="news-thumb"></div>
+          <div class="news-body">
+            <div class="news-date">3 days ago</div>
+            <div class="news-title">Term 2 exam schedule released</div>
+            <div class="news-excerpt">Admin-published announcement, pulled from the school's news feed.</div>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="news-thumb"></div>
+          <div class="news-body">
+            <div class="news-date">1 week ago</div>
+            <div class="news-title">Alumni career day — save the date</div>
+            <div class="news-excerpt">Same feed the alumni portal reads from — one publish, two surfaces.</div>
+          </div>
+        </div>
+        <div class="news-card">
+          <div class="news-thumb"></div>
+          <div class="news-body">
+            <div class="news-date">2 weeks ago</div>
+            <div class="news-title">New computer lab opens</div>
+            <div class="news-excerpt">Reverse-chronological, 3 most recent shown on the homepage.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-tag">Gallery</div>
+      <div class="section-head">
+        <div class="h2">Gallery</div>
+        <div class="view-all">View all →</div>
+      </div>
+      <div class="gallery-grid">
+        <div class="g-item tall"></div>
+        <div class="g-item"></div>
+        <div class="g-item"></div>
+        <div class="g-item wide"></div>
+        <div class="g-item"></div>
+        <div class="g-item tall"></div>
+        <div class="g-item"></div>
+      </div>
+    </section>
+
+    <section class="contact">
+      <div class="section-tag">Contact</div>
+      <div class="contact-info">
+        <div class="h2">Get in touch</div>
+        <div class="info-row"><div class="info-icon"></div><div><div class="info-label">Address</div><p id="contactAddr">Lamin Village, Kombo North, West Coast Region</p></div></div>
+        <div class="info-row"><div class="info-icon"></div><div><div class="info-label">Phone / WhatsApp</div><p>+220 XXX XXXX</p></div></div>
+        <div class="info-row"><div class="info-icon"></div><div><div class="info-label">Email</div><p id="contactEmail">info@stpeterstechnical.edusaas.africa</p></div></div>
+        <div class="info-row"><div class="info-icon"></div><div><div class="info-label">Office hours</div><p>Mon–Fri, 8:00–16:00</p></div></div>
+        <div class="g-item" style="height:120px;margin-top:14px;border-radius:8px;"></div>
+      </div>
+      <div class="contact-form">
+        <div class="field-label">Full name</div>
+        <div class="field-box"></div>
+        <div class="field-label">Email or phone</div>
+        <div class="field-box"></div>
+        <div class="field-label">Message</div>
+        <div class="field-box tall"></div>
+        <div class="submit-box"></div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div id="footerCopy">© 2026 St. Peter's Technical J&amp;S Secondary School</div>
+      <div class="powered">⚡ Powered by EduSaaS Africa</div>
+    </footer>
+  </div>
+</div>
+
+<div class="notes">
+  <b>How this template works across tenants</b>
+  <ul>
+    <li>One shared Next.js template renders every school's public site; per-tenant data (name, logo, colors, copy, stats, news, gallery, contact info) is pulled by <code>school_id</code> at request time — same layout, different content, same as this toggle swaps Gambia ↔ Zimbabwe.</li>
+    <li>The News section reads from the same admin-published feed that powers the alumni portal (per the alumni module spec) — the school posts once, it surfaces on both the public site and alumni view.</li>
+    <li>Hero and About sections are the highest-trust surfaces for first-time visitors — this is where "not profit-driven" framing matters most; keep copy institutional, not sales-oriented.</li>
+    <li>Contact section doubles as the entry point to the V2 enquiry form (not built yet) — for now it's a simple message box.</li>
+    <li>Performance budget from the design doc applies here too: hero image should be the only large asset above the fold, WebP, under 500KB.</li>
+  </ul>
+</div>
+
+<script>
+const data = {
+  gambia: {
+    url: '🔒 <b>stpeterstechnical</b>.edusaas.africa',
+    brandName: "St. Peter's Technical J&S Secondary",
+    brandSub: "Lamin, The Gambia",
+    heroEyebrow: "Est. 1978 · Junior & Senior Secondary",
+    heroTitle: "Educating tomorrow's leaders in Lamin",
+    heroSub: "A comprehensive technical secondary school serving Grades 7–12, with a growing alumni network across The Gambia and the diaspora.",
+    stat1: "1,200+", stat2: "38", stat3: "500+",
+    aboutP1: "St. Peter's Technical Junior & Senior Secondary School has served the Lamin community for decades, combining a rigorous academic core with hands-on technical training.",
+    factLoc: "Lamin, WCR",
+    contactAddr: "Lamin Village, Kombo North, West Coast Region",
+    contactEmail: "info@stpeterstechnical.edusaas.africa",
+    footerCopy: "© 2026 St. Peter's Technical J&S Secondary School"
+  },
+  zim: {
+    url: '🔒 <b>kristemambo</b>.edusaas.africa',
+    brandName: "Kriste Mambo High School",
+    brandSub: "Bulawayo, Zimbabwe",
+    heroEyebrow: "Est. 1962 · Secondary School",
+    heroTitle: "Building character and excellence at Kriste Mambo",
+    heroSub: "A secondary school with a strong alumni tradition, reunions every five years, and a growing diaspora network in the UK and beyond.",
+    stat1: "900+", stat2: "62", stat3: "310+",
+    aboutP1: "Kriste Mambo High School has built a reputation for academic excellence and strong alumni ties, with graduates spanning six decades and multiple continents.",
+    factLoc: "Bulawayo, ZW",
+    contactAddr: "Kriste Mambo Road, Bulawayo",
+    contactEmail: "info@kristemambo.edusaas.africa",
+    footerCopy: "© 2026 Kriste Mambo High School"
+  }
+};
+
+document.querySelectorAll('.school-toggle button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.school-toggle button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const d = data[btn.dataset.school];
+    document.getElementById('urlbar').innerHTML = d.url;
+    document.getElementById('brandName').textContent = d.brandName;
+    document.getElementById('brandSub').textContent = d.brandSub;
+    document.getElementById('heroEyebrow').textContent = d.heroEyebrow;
+    document.getElementById('heroTitle').textContent = d.heroTitle;
+    document.getElementById('heroSub').textContent = d.heroSub;
+    document.getElementById('stat1').textContent = d.stat1;
+    document.getElementById('stat2').textContent = d.stat2;
+    document.getElementById('stat3').textContent = d.stat3;
+    document.getElementById('aboutP1').textContent = d.aboutP1;
+    document.getElementById('factLoc').textContent = d.factLoc;
+    document.getElementById('contactAddr').textContent = d.contactAddr;
+    document.getElementById('contactEmail').textContent = d.contactEmail;
+    document.getElementById('footerCopy').innerHTML = d.footerCopy;
+  });
+});
+</script>
+
+</body>
+</html>

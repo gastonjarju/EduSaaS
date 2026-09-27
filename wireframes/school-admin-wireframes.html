@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>School Admin — Wireframes</title>
+<style>
+  :root{
+    --wire-bg:#f4f4f2;
+    --wire-panel:#ffffff;
+    --wire-border:#c9c8c2;
+    --wire-border-strong:#9a9a92;
+    --wire-text:#2c2c2a;
+    --wire-text-soft:#6b6a64;
+    --wire-placeholder:#e2e1db;
+    --wire-placeholder-strong:#cfcec6;
+    --accent:#1d9e75;
+    --accent-soft:#e1f5ee;
+    --amber:#ba7517;
+    --amber-soft:#faeeda;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    background:var(--wire-bg);
+    color:var(--wire-text);
+    padding:24px;
+    font-size:13px;
+  }
+  .toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px;}
+  .label-title{font-size:15px;font-weight:700;letter-spacing:0.02em;}
+  .tabs{display:flex;gap:6px;background:var(--wire-panel);border:1px solid var(--wire-border);border-radius:8px;padding:4px;flex-wrap:wrap;}
+  .tabs button{border:none;background:transparent;padding:8px 14px;font-size:12px;font-weight:600;border-radius:6px;cursor:pointer;color:var(--wire-text-soft);}
+  .tabs button.active{background:#1d1d1b;color:#fff;}
+  .screen{display:none;}
+  .screen.active{display:block;}
+  .browser-frame{background:var(--wire-panel);border:1px solid var(--wire-border-strong);border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08);}
+  .browser-chrome{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#eceae3;border-bottom:1px solid var(--wire-border);}
+  .dots{display:flex;gap:6px;}
+  .dot{width:10px;height:10px;border-radius:50%;background:#d3d1c7;}
+  .url-bar{flex:1;background:#fff;border:1px solid var(--wire-border);border-radius:6px;padding:5px 12px;font-size:12px;color:var(--wire-text-soft);}
+  .url-bar b{color:var(--wire-text);}
+
+  /* --- shared admin shell --- */
+  .admin-shell{display:flex;min-height:600px;}
+  .admin-sidebar{
+    width:200px;flex:0 0 200px;
+    background:#fafaf8;border-right:1px solid var(--wire-border);
+    padding:18px 0;
+  }
+  .sb-brand{display:flex;align-items:center;gap:8px;padding:0 16px 18px;border-bottom:1px solid var(--wire-border);margin-bottom:12px;}
+  .sb-logo{width:26px;height:26px;border-radius:6px;background:var(--wire-placeholder-strong);}
+  .sb-name{font-size:12px;font-weight:700;}
+  .sb-sub{font-size:9px;color:var(--wire-text-soft);}
+  .sb-item{display:flex;align-items:center;gap:10px;padding:9px 16px;font-size:12px;color:var(--wire-text-soft);cursor:default;}
+  .sb-item.active{background:var(--accent-soft);color:#085041;font-weight:700;border-right:2px solid var(--accent);}
+  .sb-dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:0.5;}
+  .admin-main{flex:1;padding:22px 26px;}
+  .admin-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+  .page-heading{font-size:18px;font-weight:700;}
+  .page-sub{font-size:11px;color:var(--wire-text-soft);margin-top:2px;}
+  .avatar{width:30px;height:30px;border-radius:50%;background:var(--wire-placeholder-strong);}
+
+  .btn{font-size:11px;font-weight:700;padding:8px 14px;border-radius:6px;display:inline-block;cursor:default;}
+  .btn-primary{background:#1d1d1b;color:#fff;}
+  .btn-secondary{border:1px solid var(--wire-border-strong);color:var(--wire-text);background:#fff;}
+  .btn-ghost{color:var(--wire-text-soft);}
+
+  .panel{background:#fff;border:1px solid var(--wire-border);border-radius:10px;padding:18px;}
+  .panel + .panel{margin-top:16px;}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .panel-title{font-size:13px;font-weight:700;}
+
+  .field-label{font-size:10px;color:var(--wire-text-soft);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.04em;}
+  .field-box{height:34px;background:var(--wire-placeholder);border-radius:6px;margin-bottom:14px;}
+  .field-box.tall{height:90px;}
+  .field-row{display:flex;gap:14px;}
+  .field-row > div{flex:1;}
+  .line{height:8px;background:var(--wire-placeholder);border-radius:4px;margin-bottom:6px;}
+  .line.short{width:60%;}
+  .line.w40{width:40%;}
+
+  .split{display:flex;gap:18px;}
+  .split > div{flex:1;min-width:0;}
+
+  /* badges */
+  .badge{font-size:9px;font-weight:700;padding:3px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:0.03em;}
+  .badge-live{background:var(--accent-soft);color:#085041;}
+  .badge-draft{background:var(--wire-placeholder);color:var(--wire-text-soft);}
+  .badge-pending{background:var(--amber-soft);color:var(--amber);}
+
+  /* DASHBOARD stat cards */
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+  .stat-card{background:#fff;border:1px solid var(--wire-border);border-radius:10px;padding:14px;}
+  .stat-card .num{font-size:20px;font-weight:700;}
+  .stat-card .lbl{font-size:10px;color:var(--wire-text-soft);margin-top:2px;}
+
+  /* content editor mockup for dashboard */
+  .editor-grid{display:grid;grid-template-columns:1fr 320px;gap:16px;}
+  .preview-box{
+    aspect-ratio:4/3;background:var(--wire-placeholder);border-radius:8px;
+    display:flex;align-items:center;justify-content:center;color:var(--wire-text-soft);font-size:11px;font-weight:600;
+    border:1px solid var(--wire-border);
+  }
+
+  /* NEWS list */
+  .news-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--wire-border);}
+  .news-row:last-child{border-bottom:none;}
+  .news-thumb-sm{width:52px;height:38px;border-radius:6px;background:var(--wire-placeholder);flex:0 0 52px;}
+  .news-row-body{flex:1;min-width:0;}
+  .news-row-title{font-size:12px;font-weight:700;margin-bottom:4px;}
+  .news-row-meta{font-size:10px;color:var(--wire-text-soft);display:flex;gap:8px;align-items:center;}
+  .audience-chip{font-size:9px;background:var(--wire-placeholder);color:var(--wire-text-soft);padding:2px 7px;border-radius:8px;}
+
+  /* CALENDAR */
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--wire-border);border:1px solid var(--wire-border);border-radius:8px;overflow:hidden;}
+  .cal-dow{background:#fafaf8;padding:8px;font-size:10px;font-weight:700;text-align:center;color:var(--wire-text-soft);}
+  .cal-cell{background:#fff;min-height:74px;padding:6px;font-size:10px;color:var(--wire-text-soft);position:relative;}
+  .cal-cell .daynum{font-size:10px;font-weight:700;color:var(--wire-text);margin-bottom:4px;}
+  .cal-evt{font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px;margin-bottom:2px;display:block;}
+  .cal-evt.coral{background:#faece7;color:#993c1d;}
+  .cal-evt.blue{background:#e6f1fb;color:#0c447c;}
+  .cal-evt.purple{background:#eeedfe;color:#3c3489;}
+
+  .rsvp-pill{font-size:9px;font-weight:700;padding:3px 9px;border-radius:12px;}
+  .rsvp-going{background:var(--accent-soft);color:#085041;}
+  .rsvp-maybe{background:var(--amber-soft);color:var(--amber);}
+  .avatars-mini{display:flex;}
+  .avatars-mini .a{width:20px;height:20px;border-radius:50%;background:var(--wire-placeholder-strong);border:2px solid #fff;margin-left:-6px;}
+  .avatars-mini .a:first-child{margin-left:0;}
+
+  /* PUBLIC ENQUIRY FORM */
+  .public-page{background:#fafaf8;padding:40px;display:flex;justify-content:center;}
+  .enquiry-card{width:520px;background:#fff;border:1px solid var(--wire-border);border-radius:12px;padding:28px;}
+  .enquiry-head{text-align:center;margin-bottom:22px;}
+  .enquiry-head .h1{font-size:18px;font-weight:700;margin-bottom:6px;}
+  .enquiry-head .sub{font-size:11px;color:var(--wire-text-soft);}
+  .step-dots{display:flex;justify-content:center;gap:6px;margin-bottom:22px;}
+  .step-dots .d{width:22px;height:4px;border-radius:2px;background:var(--wire-placeholder);}
+  .step-dots .d.active{background:var(--accent);}
+
+  .radio-row{display:flex;gap:10px;margin-bottom:14px;}
+  .radio-chip{flex:1;border:1px solid var(--wire-border-strong);border-radius:8px;padding:10px;text-align:center;font-size:11px;font-weight:600;color:var(--wire-text-soft);}
+  .radio-chip.sel{border-color:var(--accent);background:var(--accent-soft);color:#085041;}
+
+  .notes{margin-top:20px;background:var(--wire-panel);border:1px solid var(--wire-border);border-radius:10px;padding:16px 20px;font-size:12px;color:var(--wire-text-soft);line-height:1.7;}
+  .notes b{color:var(--wire-text);}
+  .notes ul{margin:8px 0 0;padding-left:18px;}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="label-title">SCHOOL ADMIN &amp; OPERATIONAL SCREENS</div>
+  <div class="tabs" id="tabs">
+    <button class="active" data-screen="dashboard">Admin dashboard</button>
+    <button data-screen="news">News system</button>
+    <button data-screen="calendar">Event calendar</button>
+    <button data-screen="enquiry">Enquiry form</button>
+  </div>
+</div>
+
+<!-- ============ 1. ADMIN DASHBOARD ============ -->
+<div class="screen active" id="screen-dashboard">
+  <div class="browser-frame">
+    <div class="browser-chrome">
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div class="url-bar">🔒 <b>stpeterstechnical</b>.edusaas.africa/admin/site-content</div>
+    </div>
+    <div class="admin-shell">
+      <div class="admin-sidebar">
+        <div class="sb-brand">
+          <div class="sb-logo"></div>
+          <div><div class="sb-name">St. Peter's Technical</div><div class="sb-sub">Admin console</div></div>
+        </div>
+        <div class="sb-item"><span class="sb-dot"></span>Overview</div>
+        <div class="sb-item active"><span class="sb-dot"></span>Site content</div>
+        <div class="sb-item"><span class="sb-dot"></span>News &amp; announcements</div>
+        <div class="sb-item"><span class="sb-dot"></span>Events</div>
+        <div class="sb-item"><span class="sb-dot"></span>Enquiries <span class="badge badge-pending" style="margin-left:6px;">4 new</span></div>
+        <div class="sb-item"><span class="sb-dot"></span>Gallery</div>
+        <div class="sb-item"><span class="sb-dot"></span>Alumni</div>
+        <div class="sb-item"><span class="sb-dot"></span>Settings</div>
+      </div>
+      <div class="admin-main">
+        <div class="admin-topbar">
+          <div>
+            <div class="page-heading">Site content</div>
+            <div class="page-sub">Edit the public site — changes publish instantly to stpeterstechnical.edusaas.africa</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span class="btn btn-secondary">Preview site</span>
+            <span class="btn btn-primary">Publish changes</span>
+            <div class="avatar"></div>
+          </div>
+        </div>
+
+        <div class="editor-grid">
+          <div>
+            <div class="panel">
+              <div class="panel-head"><div class="panel-title">Hero section</div><span class="badge badge-live">Live</span></div>
+              <div class="field-label">Eyebrow text</div>
+              <div class="field-box"></div>
+              <div class="field-label">Headline</div>
+              <div class="field-box"></div>
+              <div class="field-label">Subtext</div>
+              <div class="field-box tall"></div>
+              <div class="field-row">
+                <div><div class="field-label">Hero image</div><div class="preview-box" style="aspect-ratio:16/9;">Upload / replace image</div></div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head"><div class="panel-title">About section</div><span class="badge badge-draft">Unpublished edit</span></div>
+              <div class="field-label">About copy</div>
+              <div class="field-box tall"></div>
+              <div class="field-row">
+                <div><div class="field-label">Students enrolled</div><div class="field-box"></div></div>
+                <div><div class="field-label">Years of history</div><div class="field-box"></div></div>
+                <div><div class="field-label">Alumni registered</div><div class="field-box"></div></div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head"><div class="panel-title">Contact details</div></div>
+              <div class="field-row">
+                <div><div class="field-label">Address</div><div class="field-box"></div></div>
+                <div><div class="field-label">Phone / WhatsApp</div><div class="field-box"></div></div>
+              </div>
+              <div class="field-row">
+                <div><div class="field-label">Email</div><div class="field-box"></div></div>
+                <div><div class="field-label">Office hours</div><div class="field-box"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="panel">
+              <div class="panel-title" style="margin-bottom:10px;">Live preview</div>
+              <div class="preview-box" style="margin-bottom:10px;">Hero preview</div>
+              <div class="line"></div><div class="line"></div><div class="line short"></div>
+              <div style="margin-top:14px;" class="preview-box">About preview</div>
+            </div>
+            <div class="panel">
+              <div class="panel-title" style="margin-bottom:10px;">Brand</div>
+              <div class="field-label">Logo</div>
+              <div class="preview-box" style="aspect-ratio:1/1;height:70px;">Logo</div>
+              <div class="field-label" style="margin-top:12px;">Accent color</div>
+              <div style="display:flex;gap:8px;">
+                <div style="width:26px;height:26px;border-radius:6px;background:var(--accent);border:2px solid #1d1d1b;"></div>
+                <div style="width:26px;height:26px;border-radius:6px;background:#378add;"></div>
+                <div style="width:26px;height:26px;border-radius:6px;background:#d85a30;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2. NEWS / ANNOUNCEMENT SYSTEM ============ -->
+<div class="screen" id="screen-news">
+  <div class="browser-frame">
+    <div class="browser-chrome">
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div class="url-bar">🔒 <b>stpeterstechnical</b>.edusaas.africa/admin/news</div>
+    </div>
+    <div class="admin-shell">
+      <div class="admin-sidebar">
+        <div class="sb-brand"><div class="sb-logo"></div><div><div class="sb-name">St. Peter's Technical</div><div class="sb-sub">Admin console</div></div></div>
+        <div class="sb-item"><span class="sb-dot"></span>Overview</div>
+        <div class="sb-item"><span class="sb-dot"></span>Site content</div>
+        <div class="sb-item active"><span class="sb-dot"></span>News &amp; announcements</div>
+        <div class="sb-item"><span class="sb-dot"></span>Events</div>
+        <div class="sb-item"><span class="sb-dot"></span>Enquiries</div>
+        <div class="sb-item"><span class="sb-dot"></span>Gallery</div>
+        <div class="sb-item"><span class="sb-dot"></span>Alumni</div>
+        <div class="sb-item"><span class="sb-dot"></span>Settings</div>
+      </div>
+      <div class="admin-main">
+        <div class="admin-topbar">
+          <div>
+            <div class="page-heading">News &amp; announcements</div>
+            <div class="page-sub">One post publishes to the public site and pushes to the alumni feed</div>
+          </div>
+          <span class="btn btn-primary">+ New post</span>
+        </div>
+
+        <div class="split">
+          <div style="flex:1.3;">
+            <div class="panel">
+              <div class="panel-head"><div class="panel-title">Published (12)</div><span class="btn btn-ghost">Filter</span></div>
+
+              <div class="news-row">
+                <div class="news-thumb-sm"></div>
+                <div class="news-row-body">
+                  <div class="news-row-title">Term 2 exam schedule released</div>
+                  <div class="news-row-meta">
+                    <span class="badge badge-live">Published</span>
+                    <span>3 days ago</span>
+                    <span class="audience-chip">Public site</span>
+                    <span class="audience-chip">Alumni push</span>
+                  </div>
+                </div>
+                <span class="btn btn-ghost">Edit</span>
+              </div>
+
+              <div class="news-row">
+                <div class="news-thumb-sm"></div>
+                <div class="news-row-body">
+                  <div class="news-row-title">Alumni career day — save the date</div>
+                  <div class="news-row-meta">
+                    <span class="badge badge-live">Published</span>
+                    <span>1 week ago</span>
+                    <span class="audience-chip">Alumni only</span>
+                  </div>
+                </div>
+                <span class="btn btn-ghost">Edit</span>
+              </div>
+
+              <div class="news-row">
+                <div class="news-thumb-sm"></div>
+                <div class="news-row-body">
+                  <div class="news-row-title">New computer lab opens</div>
+                  <div class="news-row-meta">
+                    <span class="badge badge-live">Published</span>
+                    <span>2 weeks ago</span>
+                    <span class="audience-chip">Public site</span>
+                  </div>
+                </div>
+                <span class="btn btn-ghost">Edit</span>
+              </div>
+
+              <div class="news-row">
+                <div class="news-thumb-sm"></div>
+                <div class="news-row-body">
+                  <div class="news-row-title">Draft — Founders' day recap</div>
+                  <div class="news-row-meta">
+                    <span class="badge badge-draft">Draft</span>
+                    <span>Last edited yesterday</span>
+                  </div>
+                </div>
+                <span class="btn btn-ghost">Edit</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex:1;">
+            <div class="panel">
+              <div class="panel-title" style="margin-bottom:12px;">Compose post</div>
+              <div class="field-label">Title</div>
+              <div class="field-box"></div>
+              <div class="field-label">Cover image</div>
+              <div class="preview-box" style="aspect-ratio:16/9;margin-bottom:14px;">Upload image</div>
+              <div class="field-label">Body</div>
+              <div class="field-box tall"></div>
+
+              <div class="field-label">Audience</div>
+              <div class="radio-row">
+                <div class="radio-chip sel">Public site</div>
+                <div class="radio-chip">Alumni only</div>
+                <div class="radio-chip sel">Both</div>
+              </div>
+
+              <div class="field-label">Notify via WhatsApp push (max 2/week)</div>
+              <div class="field-row" style="align-items:center;margin-bottom:14px;">
+                <div style="width:36px;height:20px;border-radius:12px;background:var(--accent);position:relative;">
+                  <div style="width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:2px;right:2px;"></div>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:8px;">
+                <span class="btn btn-secondary">Save draft</span>
+                <span class="btn btn-primary">Publish</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 3. EVENT CALENDAR ============ -->
+<div class="screen" id="screen-calendar">
+  <div class="browser-frame">
+    <div class="browser-chrome">
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div class="url-bar">🔒 <b>stpeterstechnical</b>.edusaas.africa/admin/events</div>
+    </div>
+    <div class="admin-shell">
+      <div class="admin-sidebar">
+        <div class="sb-brand"><div class="sb-logo"></div><div><div class="sb-name">St. Peter's Technical</div><div class="sb-sub">Admin console</div></div></div>
+        <div class="sb-item"><span class="sb-dot"></span>Overview</div>
+        <div class="sb-item"><span class="sb-dot"></span>Site content</div>
+        <div class="sb-item"><span class="sb-dot"></span>News &amp; announcements</div>
+        <div class="sb-item active"><span class="sb-dot"></span>Events</div>
+        <div class="sb-item"><span class="sb-dot"></span>Enquiries</div>
+        <div class="sb-item"><span class="sb-dot"></span>Gallery</div>
+        <div class="sb-item"><span class="sb-dot"></span>Alumni</div>
+        <div class="sb-item"><span class="sb-dot"></span>Settings</div>
+      </div>
+      <div class="admin-main">
+        <div class="admin-topbar">
+          <div>
+            <div class="page-heading">Events</div>
+            <div class="page-sub">Reunions, career days, fundraisers — shown on the public site and alumni portal</div>
+          </div>
+          <span class="btn btn-primary">+ New event</span>
+        </div>
+
+        <div class="split">
+          <div style="flex:1.4;">
+            <div class="panel">
+              <div class="panel-head">
+                <span class="btn btn-ghost">‹</span>
+                <div class="panel-title">July 2026</div>
+                <span class="btn btn-ghost">›</span>
+              </div>
+              <div class="cal-grid">
+                <div class="cal-dow">Sun</div><div class="cal-dow">Mon</div><div class="cal-dow">Tue</div><div class="cal-dow">Wed</div><div class="cal-dow">Thu</div><div class="cal-dow">Fri</div><div class="cal-dow">Sat</div>
+
+                <div class="cal-cell"><div class="daynum">28</div></div>
+                <div class="cal-cell"><div class="daynum">29</div></div>
+                <div class="cal-cell"><div class="daynum">30</div><span class="cal-evt coral">Career day</span></div>
+                <div class="cal-cell"><div class="daynum">1</div></div>
+                <div class="cal-cell"><div class="daynum">2</div></div>
+                <div class="cal-cell"><div class="daynum">3</div></div>
+                <div class="cal-cell"><div class="daynum">4</div></div>
+
+                <div class="cal-cell"><div class="daynum">5</div></div>
+                <div class="cal-cell"><div class="daynum">6</div></div>
+                <div class="cal-cell"><div class="daynum">7</div></div>
+                <div class="cal-cell"><div class="daynum">8</div></div>
+                <div class="cal-cell"><div class="daynum">9</div></div>
+                <div class="cal-cell"><div class="daynum">10</div></div>
+                <div class="cal-cell"><div class="daynum">11</div></div>
+
+                <div class="cal-cell"><div class="daynum">12</div></div>
+                <div class="cal-cell"><div class="daynum">13</div></div>
+                <div class="cal-cell"><div class="daynum">14</div><span class="cal-evt blue">PTA meeting</span></div>
+                <div class="cal-cell"><div class="daynum">15</div></div>
+                <div class="cal-cell"><div class="daynum">16</div></div>
+                <div class="cal-cell"><div class="daynum">17</div></div>
+                <div class="cal-cell"><div class="daynum">18</div><span class="cal-evt purple">Alumni reunion</span></div>
+
+                <div class="cal-cell"><div class="daynum">19</div></div>
+                <div class="cal-cell"><div class="daynum">20</div></div>
+                <div class="cal-cell"><div class="daynum">21</div></div>
+                <div class="cal-cell"><div class="daynum">22</div></div>
+                <div class="cal-cell"><div class="daynum">23</div></div>
+                <div class="cal-cell"><div class="daynum">24</div></div>
+                <div class="cal-cell"><div class="daynum">25</div></div>
+
+                <div class="cal-cell"><div class="daynum">26</div></div>
+                <div class="cal-cell"><div class="daynum">27</div></div>
+                <div class="cal-cell"><div class="daynum">28</div></div>
+                <div class="cal-cell"><div class="daynum">29</div></div>
+                <div class="cal-cell"><div class="daynum">30</div></div>
+                <div class="cal-cell"><div class="daynum">31</div></div>
+                <div class="cal-cell"><div class="daynum">1</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex:1;">
+            <div class="panel">
+              <div class="panel-title" style="margin-bottom:12px;">Alumni reunion — Jul 18</div>
+              <div class="preview-box" style="aspect-ratio:16/9;margin-bottom:12px;">Cover image</div>
+              <div class="field-row">
+                <div><div class="field-label">Date &amp; time</div><div class="field-box"></div></div>
+                <div><div class="field-label">Location</div><div class="field-box"></div></div>
+              </div>
+              <div class="field-label">Description</div>
+              <div class="field-box tall"></div>
+
+              <div class="field-label">RSVPs</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                <div style="display:flex;gap:6px;">
+                  <span class="rsvp-pill rsvp-going">62 going</span>
+                  <span class="rsvp-pill rsvp-maybe">14 maybe</span>
+                </div>
+                <div class="avatars-mini"><div class="a"></div><div class="a"></div><div class="a"></div><div class="a"></div></div>
+              </div>
+
+              <div style="display:flex;gap:8px;">
+                <span class="btn btn-secondary">Share via WhatsApp</span>
+                <span class="btn btn-primary">Save changes</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 4. ONLINE ENQUIRY FORM (V2, public-facing) ============ -->
+<div class="screen" id="screen-enquiry">
+  <div class="browser-frame">
+    <div class="browser-chrome">
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div class="url-bar">🔒 <b>stpeterstechnical</b>.edusaas.africa/enquire</div>
+    </div>
+    <div class="public-page">
+      <div class="enquiry-card">
+        <div class="enquiry-head">
+          <div class="h1">Enquire about admissions</div>
+          <div class="sub">Not a full application — we'll follow up with next steps by WhatsApp or email</div>
+        </div>
+        <div class="step-dots"><div class="d active"></div><div class="d"></div></div>
+
+        <div class="field-label">I am enquiring as a...</div>
+        <div class="radio-row">
+          <div class="radio-chip sel">Parent / guardian</div>
+          <div class="radio-chip">Prospective student</div>
+        </div>
+
+        <div class="field-row">
+          <div><div class="field-label">Full name</div><div class="field-box"></div></div>
+          <div><div class="field-label">Phone / WhatsApp</div><div class="field-box"></div></div>
+        </div>
+        <div class="field-label">Email (optional)</div>
+        <div class="field-box"></div>
+
+        <div class="field-row">
+          <div><div class="field-label">Grade of interest</div><div class="field-box"></div></div>
+          <div><div class="field-label">Intended start term</div><div class="field-box"></div></div>
+        </div>
+
+        <div class="field-label">Message (optional)</div>
+        <div class="field-box tall"></div>
+
+        <div style="display:flex;justify-content:flex-end;">
+          <span class="btn btn-primary">Send enquiry →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:16px;">
+    <div class="panel-head"><div class="panel-title">Admin view — Enquiries inbox</div><span class="badge badge-pending">4 new</span></div>
+    <div class="news-row">
+      <div class="news-thumb-sm" style="border-radius:50%;"></div>
+      <div class="news-row-body">
+        <div class="news-row-title">Fatou Jallow — Grade 9, Sept intake</div>
+        <div class="news-row-meta"><span class="badge badge-pending">New</span><span>Submitted 2 hours ago · +220 XXX XXXX</span></div>
+      </div>
+      <span class="btn btn-ghost">Respond</span>
+    </div>
+    <div class="news-row">
+      <div class="news-thumb-sm" style="border-radius:50%;"></div>
+      <div class="news-row-body">
+        <div class="news-row-title">Ousman Sanneh — Grade 7, Sept intake</div>
+        <div class="news-row-meta"><span class="badge badge-pending">New</span><span>Submitted yesterday · +220 XXX XXXX</span></div>
+      </div>
+      <span class="btn btn-ghost">Respond</span>
+    </div>
+    <div class="news-row">
+      <div class="news-thumb-sm" style="border-radius:50%;"></div>
+      <div class="news-row-body">
+        <div class="news-row-title">Mariama Ceesay — Grade 10, Jan intake</div>
+        <div class="news-row-meta"><span class="badge badge-live">Responded</span><span>3 days ago</span></div>
+      </div>
+      <span class="btn btn-ghost">View</span>
+    </div>
+  </div>
+</div>
+
+<div class="notes" id="notesBlock"></div>
+
+<script>
+const notes = {
+  dashboard: `<b>Admin dashboard</b><ul>
+    <li>Sidebar mirrors the sections on the public template (hero, about, news, events, enquiries, gallery) so admins never have to guess where a public-site field lives.</li>
+    <li>Edits are draft-first — "Publish changes" pushes to the live site; this avoids half-written copy going public, which matters given school staff have mixed technical literacy.</li>
+    <li>Live preview panel keeps the non-technical admin (likely a teacher, per the alumni doc's "champion" question) confident about what visitors will actually see.</li>
+  </ul>`,
+  news: `<b>News / announcement system</b><ul>
+    <li>One compose flow, one publish action, two audiences — public site and the alumni feed read from the same post, matching survey data: 85% of Gambian alumni and 47% of Zimbabwean alumni rank news as a top-3 want.</li>
+    <li>Audience toggle (Public / Alumni only / Both) and an opt-in WhatsApp push, capped at 2/week per the notification strategy in the design doc, to control API cost and avoid fatigue.</li>
+    <li>Draft state is explicit so partially-written posts never leak to the public feed.</li>
+  </ul>`,
+  calendar: `<b>Event calendar</b><ul>
+    <li>Month grid on the left, event detail + RSVP summary on the right — covers reunions, career days, and fundraisers called out as a "core V1 feature, not a nice-to-have" in the design doc.</li>
+    <li>RSVP pills and attendee avatars mirror the alumni spec's Going / Maybe / Not going pattern; "Share via WhatsApp" is kept prominent since that's how events spread in both markets.</li>
+    <li>Same event data feeds the public site's event listing and the alumni portal — authored once here.</li>
+  </ul>`,
+  enquiry: `<b>Online enquiry form (V2 — not a full application)</b><ul>
+    <li>Deliberately short: name, contact, grade of interest, intended term, optional message — a low-friction first touch, not the multi-step application flow that would come later.</li>
+    <li>Phone/WhatsApp is the primary contact field given WhatsApp's dominance in both pilot markets (75% Gambia, 53% Zimbabwe per the survey data).</li>
+    <li>Submissions land in an admin inbox with a "new / responded" status — simple triage, no workflow automation in V2.</li>
+  </ul>`
+};
+
+const tabBtns = document.querySelectorAll('#tabs button');
+function activate(name){
+  tabBtns.forEach(b=>b.classList.toggle('active', b.dataset.screen===name));
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.getElementById('notesBlock').innerHTML = notes[name];
+}
+tabBtns.forEach(b=> b.addEventListener('click', ()=>activate(b.dataset.screen)));
+activate('dashboard');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,593 @@
+<meta charset="utf-8">
+<title>EduSaaS Domain Routing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@500;600;700;800&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ---------- Design tokens ---------- */
+  :root {
+    --bg: #F1F5F4;
+    --surface: #FFFFFF;
+    --surface-2: #E7EDEC;
+    --ink: #131D22;
+    --ink-muted: #5B6D71;
+    --line: #CBD5D3;
+    --line-soft: #DEE6E4;
+    --teal: #1D7A64;
+    --teal-soft: #DBEEE7;
+    --amber: #9C6620;
+    --amber-soft: #F2E3C9;
+    --danger: #9C4030;
+    --font-display: 'Overpass', 'Arial Narrow', sans-serif;
+    --font-body: 'Public Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0F1517;
+      --surface: #161F22;
+      --surface-2: #1C282B;
+      --ink: #E7EEEC;
+      --ink-muted: #93A6A5;
+      --line: #2C3B3D;
+      --line-soft: #24312F;
+      --teal: #52B99D;
+      --teal-soft: #1A3733;
+      --amber: #D89A4E;
+      --amber-soft: #38290F;
+      --danger: #C97462;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0F1517;
+    --surface: #161F22;
+    --surface-2: #1C282B;
+    --ink: #E7EEEC;
+    --ink-muted: #93A6A5;
+    --line: #2C3B3D;
+    --line-soft: #24312F;
+    --teal: #52B99D;
+    --teal-soft: #1A3733;
+    --amber: #D89A4E;
+    --amber-soft: #38290F;
+    --danger: #C97462;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .eyebrow {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.9rem, 4vw, 2.6rem);
+    line-height: 1.12;
+    margin: 0;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  .subhead {
+    font-size: 1.02rem;
+    color: var(--ink-muted);
+    max-width: 62ch;
+    margin: 0;
+  }
+
+  .lede {
+    font-size: 1.02rem;
+    color: var(--ink);
+    max-width: 68ch;
+    margin: 0;
+  }
+  .lede + .lede { margin-top: 4px; }
+
+  /* ---------- Legend ---------- */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: 8px;
+    width: fit-content;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.86rem;
+    color: var(--ink-muted);
+  }
+  .legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex: none;
+  }
+  .legend-swatch.teal { background: var(--teal); }
+  .legend-swatch.amber { background: var(--amber); }
+
+  /* ---------- Sections / figures ---------- */
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .section-head {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+
+  .section-dek {
+    color: var(--ink-muted);
+    font-size: 0.94rem;
+    max-width: 66ch;
+    margin: 0;
+  }
+
+  figure {
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .diagram-scroll {
+    overflow-x: auto;
+  }
+
+  figure svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-width: 560px;
+    font-family: var(--font-body);
+  }
+
+  figcaption {
+    margin-top: 14px;
+    padding-left: 14px;
+    border-left: 2px solid var(--line);
+    color: var(--ink-muted);
+    font-size: 0.88rem;
+    max-width: 68ch;
+  }
+
+  /* ---------- SVG shared ---------- */
+  .node rect, .node-shape {
+    fill: var(--surface);
+    stroke: var(--line);
+    stroke-width: 1.5;
+  }
+  .node-teal .node-shape { stroke: var(--teal); }
+  .node-amber .node-shape { stroke: var(--amber); }
+  .node-fill-2 { fill: var(--surface-2); }
+
+  text { fill: var(--ink); }
+  .t-label { font-family: var(--font-body); font-weight: 600; font-size: 13px; }
+  .t-sub { font-family: var(--font-body); font-weight: 400; font-size: 11.5px; fill: var(--ink-muted); }
+  .t-mono { font-family: var(--font-mono); font-size: 11px; fill: var(--ink-muted); }
+  .t-mono-strong { font-family: var(--font-mono); font-size: 11.5px; fill: var(--ink); font-weight: 500; }
+  .t-eyebrow { font-family: var(--font-body); font-weight: 600; font-size: 9.5px; letter-spacing: 0.09em; text-transform: uppercase; fill: var(--ink-muted); }
+  .t-arrowlabel { font-family: var(--font-mono); font-size: 10.5px; fill: var(--ink-muted); }
+
+  .arrow { stroke: var(--ink-muted); stroke-width: 1.5; fill: none; }
+  .arrow-teal { stroke: var(--teal); stroke-width: 1.8; }
+  .arrow-amber { stroke: var(--amber); stroke-width: 1.8; }
+
+  .pill { rx: 9; }
+  .pill-teal { fill: var(--teal-soft); }
+  .pill-amber { fill: var(--amber-soft); }
+  .pill-text-teal { fill: var(--teal); font-family: var(--font-mono); font-size: 10.5px; font-weight: 500; }
+  .pill-text-amber { fill: var(--amber); font-family: var(--font-mono); font-size: 10.5px; font-weight: 500; }
+
+  .col-header-teal { fill: var(--teal-soft); }
+  .col-header-amber { fill: var(--amber-soft); }
+  .col-header-text-teal { fill: var(--teal); font-family: var(--font-body); font-weight: 700; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .col-header-text-amber { fill: var(--amber); font-family: var(--font-body); font-weight: 700; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 40px 16px 64px; gap: 48px; }
+    figure { padding: 14px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <span class="eyebrow">EduSaaS &middot; Architecture companion</span>
+    <h1>How a request finds its school</h1>
+    <p class="subhead">Four drawings for the domain routing design doc &mdash; the request path, the custom-domain provisioning sequence, what's one-time versus per-school, and how one template renders a different site for every school.</p>
+  </header>
+
+  <div class="legend" aria-hidden="true">
+    <div class="legend-item"><span class="legend-swatch teal"></span> Resolves automatically, no human step</div>
+    <div class="legend-item"><span class="legend-swatch amber"></span> Requires the provisioning flow / a step someone takes</div>
+  </div>
+
+  <!-- ============ FIGURE 1 ============ -->
+  <section>
+    <div class="section-head">
+      <h2>1. Two paths to the same page</h2>
+      <p class="section-dek">Every render starts with the <code>Host</code> header on the incoming request. What happens next depends on whether that host is a free subdomain or a school's own domain.</p>
+    </div>
+    <div class="diagram-scroll">
+    <figure>
+      <svg viewBox="0 0 880 356" role="img" aria-label="A browser request splits on its hostname: a subdomain of edusaas.africa resolves with zero lookups because the school slug is already in the hostname, while a custom domain costs one cached Edge Config lookup. Both paths converge on the same shared Next.js template rendering that school's SchoolProfile and content blocks.">
+        <defs>
+          <marker id="f1arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="context-stroke"></path>
+          </marker>
+        </defs>
+
+        <!-- Incoming request -->
+        <g class="node">
+          <rect class="node-shape" x="300" y="14" width="280" height="58" rx="8"></rect>
+          <text class="t-label" x="440" y="38" text-anchor="middle">Incoming request</text>
+          <text class="t-mono" x="440" y="58" text-anchor="middle">Host: &lt;hostname&gt;</text>
+        </g>
+
+        <!-- split lines -->
+        <path class="arrow arrow-teal" d="M 360,72 L 190,118" marker-end="url(#f1arrow)"></path>
+        <path class="arrow arrow-amber" d="M 520,72 L 690,118" marker-end="url(#f1arrow)"></path>
+
+        <!-- branch condition labels -->
+        <text class="t-mono-strong" x="190" y="104" text-anchor="middle" fill="var(--teal)">*.edusaas.africa</text>
+        <text class="t-mono-strong" x="690" y="104" text-anchor="middle" fill="var(--amber)">custom domain</text>
+
+        <!-- left column node -->
+        <g class="node node-teal">
+          <rect class="node-shape" x="60" y="128" width="260" height="64" rx="8"></rect>
+          <text class="t-label" x="190" y="154" text-anchor="middle">Slug read straight</text>
+          <text class="t-label" x="190" y="170" text-anchor="middle">from the hostname</text>
+          <text class="t-mono" x="190" y="186" text-anchor="middle">canyonhills.edusaas.africa</text>
+        </g>
+
+        <!-- right column node -->
+        <g class="node node-amber">
+          <rect class="node-shape" x="560" y="128" width="260" height="64" rx="8"></rect>
+          <text class="t-label" x="690" y="154" text-anchor="middle">Edge Config lookup</text>
+          <text class="t-label" x="690" y="170" text-anchor="middle">custom_domain &rarr; slug</text>
+          <text class="t-mono" x="690" y="186" text-anchor="middle">greenhill.ac.zw</text>
+        </g>
+
+        <!-- down arrows with cost labels -->
+        <line class="arrow arrow-teal" x1="190" y1="192" x2="190" y2="228" marker-end="url(#f1arrow)"></line>
+        <line class="arrow arrow-amber" x1="690" y1="192" x2="690" y2="228" marker-end="url(#f1arrow)"></line>
+        <text class="t-arrowlabel" x="190" y="216" text-anchor="middle" fill="var(--teal)">0 lookups</text>
+        <text class="t-arrowlabel" x="690" y="216" text-anchor="middle" fill="var(--amber)">~1 cached read, sub-ms</text>
+
+        <!-- converge -->
+        <path class="arrow" d="M 190,228 L 330,270" marker-end="url(#f1arrow)"></path>
+        <path class="arrow" d="M 690,228 L 550,270" marker-end="url(#f1arrow)"></path>
+
+        <g class="node">
+          <rect class="node-shape node-fill-2" x="250" y="270" width="380" height="70" rx="8"></rect>
+          <text class="t-label" x="440" y="298" text-anchor="middle">Shared Next.js template</text>
+          <text class="t-sub" x="440" y="316" text-anchor="middle">renders that school's SchoolProfile</text>
+          <text class="t-sub" x="440" y="330" text-anchor="middle">+ content_blocks</text>
+        </g>
+      </svg>
+    </figure>
+    </div>
+    <figcaption>A subdomain request never leaves the edge &mdash; the school's slug is already sitting in the hostname. A custom domain costs one cached lookup before both paths land on the same render.</figcaption>
+  </section>
+
+  <!-- ============ FIGURE 2 ============ -->
+  <section>
+    <div class="section-head">
+      <h2>2. Getting a custom domain live</h2>
+      <p class="section-dek"><code>domain_status</code> moves through a real sequence &mdash; this is the one diagram here where order matters, so the steps are numbered.</p>
+    </div>
+    <div class="diagram-scroll">
+    <figure>
+      <svg viewBox="0 0 980 300" role="img" aria-label="Six-step sequence for activating a custom domain: the school admin enters a domain, the backend registers it with Vercel, Vercel returns a DNS record, the admin adds that record at their registrar, the backend polls Vercel while domain_status moves from pending_dns to pending_ssl, and once SSL is issued the status becomes active and Edge Config is synced.">
+        <defs>
+          <marker id="f2arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="context-stroke"></path>
+          </marker>
+        </defs>
+
+        <!-- nodes: x positions -->
+        <!-- n1 30 n2 188 n3 346 n4 504 n5 662 n6 820, width 130 -->
+
+        <!-- step 1 -->
+        <g class="node">
+          <text class="t-eyebrow" x="95" y="46" text-anchor="middle">School admin</text>
+          <rect class="node-shape" x="30" y="58" width="130" height="90" rx="8"></rect>
+          <circle cx="48" cy="76" r="10" fill="var(--surface-2)" stroke="var(--line)"></circle>
+          <text x="48" y="80" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--ink-muted)">1</text>
+          <text class="t-label" x="95" y="104" text-anchor="middle" font-size="12">Enters domain</text>
+          <text class="t-label" x="95" y="120" text-anchor="middle" font-size="12">in dashboard</text>
+        </g>
+
+        <line class="arrow" x1="160" y1="103" x2="185" y2="103" marker-end="url(#f2arrow)"></line>
+
+        <!-- step 2 -->
+        <g class="node">
+          <text class="t-eyebrow" x="253" y="46" text-anchor="middle">EduSaaS backend</text>
+          <rect class="node-shape" x="188" y="58" width="130" height="90" rx="8"></rect>
+          <circle cx="206" cy="76" r="10" fill="var(--surface-2)" stroke="var(--line)"></circle>
+          <text x="206" y="80" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--ink-muted)">2</text>
+          <text class="t-label" x="253" y="104" text-anchor="middle" font-size="12">Adds domain via</text>
+          <text class="t-label" x="253" y="120" text-anchor="middle" font-size="12">Vercel Domains API</text>
+        </g>
+
+        <line class="arrow" x1="318" y1="103" x2="343" y2="103" marker-end="url(#f2arrow)"></line>
+
+        <!-- step 3 -->
+        <g class="node">
+          <text class="t-eyebrow" x="411" y="46" text-anchor="middle">Vercel</text>
+          <rect class="node-shape" x="346" y="58" width="130" height="90" rx="8"></rect>
+          <circle cx="364" cy="76" r="10" fill="var(--surface-2)" stroke="var(--line)"></circle>
+          <text x="364" y="80" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--ink-muted)">3</text>
+          <text class="t-label" x="411" y="104" text-anchor="middle" font-size="12">Returns DNS record</text>
+          <text class="t-label" x="411" y="120" text-anchor="middle" font-size="12">+ verify token</text>
+        </g>
+
+        <line class="arrow" x1="476" y1="103" x2="501" y2="103" marker-end="url(#f2arrow)"></line>
+
+        <!-- step 4 -->
+        <g class="node">
+          <text class="t-eyebrow" x="569" y="46" text-anchor="middle">Registrar</text>
+          <rect class="node-shape" x="504" y="58" width="130" height="90" rx="8"></rect>
+          <circle cx="522" cy="76" r="10" fill="var(--surface-2)" stroke="var(--line)"></circle>
+          <text x="522" y="80" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--ink-muted)">4</text>
+          <text class="t-label" x="569" y="104" text-anchor="middle" font-size="12">Admin points</text>
+          <text class="t-label" x="569" y="120" text-anchor="middle" font-size="12">CNAME / A record</text>
+        </g>
+
+        <line class="arrow arrow-amber" x1="634" y1="103" x2="659" y2="103" marker-end="url(#f2arrow)"></line>
+        <rect class="pill pill-amber" x="608" y="150" width="88" height="20" rx="10"></rect>
+        <text class="pill-text-amber" x="652" y="164" text-anchor="middle">pending_dns</text>
+
+        <!-- step 5 -->
+        <g class="node">
+          <text class="t-eyebrow" x="727" y="46" text-anchor="middle">Backend (Celery)</text>
+          <rect class="node-shape" x="662" y="58" width="130" height="90" rx="8"></rect>
+          <circle cx="680" cy="76" r="10" fill="var(--surface-2)" stroke="var(--line)"></circle>
+          <text x="680" y="80" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--ink-muted)">5</text>
+          <text class="t-label" x="727" y="104" text-anchor="middle" font-size="12">Polls Vercel</text>
+          <text class="t-label" x="727" y="120" text-anchor="middle" font-size="12">for status</text>
+        </g>
+
+        <line class="arrow arrow-amber" x1="792" y1="103" x2="817" y2="103" marker-end="url(#f2arrow)"></line>
+        <rect class="pill pill-amber" x="766" y="150" width="88" height="20" rx="10"></rect>
+        <text class="pill-text-amber" x="810" y="164" text-anchor="middle">pending_ssl</text>
+
+        <!-- step 6 -->
+        <g class="node node-teal">
+          <text class="t-eyebrow" x="885" y="46" text-anchor="middle">Vercel &rarr; Edge Config</text>
+          <rect class="node-shape" x="820" y="58" width="130" height="90" rx="8"></rect>
+          <circle cx="838" cy="76" r="10" fill="var(--teal-soft)" stroke="var(--teal)"></circle>
+          <text x="838" y="80" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--teal)">6</text>
+          <text class="t-label" x="885" y="104" text-anchor="middle" font-size="12">SSL issued,</text>
+          <text class="t-label" x="885" y="120" text-anchor="middle" font-size="12">routing synced</text>
+        </g>
+
+        <rect class="pill pill-teal" x="843" y="150" width="84" height="20" rx="10"></rect>
+        <text class="pill-text-teal" x="885" y="164" text-anchor="middle">active</text>
+
+        <text class="t-sub" x="885" y="196" text-anchor="middle">old subdomain now</text>
+        <text class="t-sub" x="885" y="210" text-anchor="middle">301s to this domain</text>
+      </svg>
+    </figure>
+    </div>
+    <figcaption>Steps 1&ndash;4 happen once, fast. Step 5 is a Celery poll loop that can take minutes to hours &mdash; DNS propagation, not a bug &mdash; and the dashboard should say so. Once Vercel confirms SSL, the redirect flips automatically.</figcaption>
+  </section>
+
+  <!-- ============ FIGURE 3 ============ -->
+  <section>
+    <div class="section-head">
+      <h2>3. What's automatic, what a school sets up</h2>
+      <p class="section-dek">Both tiers end up served by the same Vercel project and the same Next.js app &mdash; the difference is entirely in what has to happen before a school's site is reachable.</p>
+    </div>
+    <div class="diagram-scroll">
+    <figure>
+      <svg viewBox="0 0 880 380" role="img" aria-label="Comparison: the free subdomain tier is set up once, platform-wide, via a wildcard DNS record and wildcard SSL certificate, so every new school works immediately. The custom domain tier is set up per school, self-serve, moving through pending to active domain status. Both feed into the same Vercel project and Next.js app.">
+        <defs>
+          <marker id="f3arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="context-stroke"></path>
+          </marker>
+        </defs>
+
+        <!-- column headers -->
+        <rect class="col-header-teal" x="40" y="16" width="380" height="30" rx="6"></rect>
+        <text class="col-header-text-teal" x="230" y="36" text-anchor="middle">One-time, platform-wide</text>
+
+        <rect class="col-header-amber" x="460" y="16" width="380" height="30" rx="6"></rect>
+        <text class="col-header-text-amber" x="650" y="36" text-anchor="middle">Per school, self-serve</text>
+
+        <!-- left col node 1 -->
+        <g class="node node-teal">
+          <rect class="node-shape" x="40" y="70" width="380" height="56" rx="8"></rect>
+          <text class="t-label" x="230" y="93" text-anchor="middle">*.edusaas.africa wildcard</text>
+          <text class="t-mono" x="230" y="111" text-anchor="middle">CNAME &rarr; cname.vercel-dns.com</text>
+        </g>
+        <line class="arrow arrow-teal" x1="230" y1="126" x2="230" y2="152" marker-end="url(#f3arrow)"></line>
+
+        <!-- left col node 2 -->
+        <g class="node node-teal">
+          <rect class="node-shape" x="40" y="154" width="380" height="56" rx="8"></rect>
+          <text class="t-label" x="230" y="177" text-anchor="middle">Wildcard SSL certificate</text>
+          <text class="t-sub" x="230" y="195" text-anchor="middle">covers every subdomain, auto-renews</text>
+        </g>
+        <line class="arrow arrow-teal" x1="230" y1="210" x2="230" y2="236" marker-end="url(#f3arrow)"></line>
+        <text class="t-arrowlabel" x="230" y="228" text-anchor="middle" fill="var(--teal)">0 setup steps per school</text>
+
+        <!-- left col node 3 -->
+        <g class="node node-teal">
+          <rect class="node-shape" x="40" y="238" width="380" height="52" rx="8"></rect>
+          <text class="t-label" x="230" y="269" text-anchor="middle">Live the moment the school is created</text>
+        </g>
+
+        <!-- right col node 1 -->
+        <g class="node node-amber">
+          <rect class="node-shape" x="460" y="70" width="380" height="56" rx="8"></rect>
+          <text class="t-label" x="650" y="93" text-anchor="middle">School admin submits a domain</text>
+          <text class="t-mono" x="650" y="111" text-anchor="middle">e.g. pointlomahigh.com</text>
+        </g>
+        <line class="arrow arrow-amber" x1="650" y1="126" x2="650" y2="152" marker-end="url(#f3arrow)"></line>
+
+        <!-- right col node 2 -->
+        <g class="node node-amber">
+          <rect class="node-shape" x="460" y="154" width="380" height="56" rx="8"></rect>
+          <text class="t-label" x="650" y="177" text-anchor="middle">Vercel issues a domain-specific cert</text>
+          <text class="t-sub" x="650" y="195" text-anchor="middle">after DNS verification (see fig. 2)</text>
+        </g>
+        <line class="arrow arrow-amber" x1="650" y1="210" x2="650" y2="236" marker-end="url(#f3arrow)"></line>
+        <text class="t-arrowlabel" x="650" y="228" text-anchor="middle" fill="var(--amber)">pending_dns &rarr; pending_ssl &rarr; active</text>
+
+        <!-- right col node 3 -->
+        <g class="node node-amber">
+          <rect class="node-shape" x="460" y="238" width="380" height="52" rx="8"></rect>
+          <text class="t-label" x="650" y="269" text-anchor="middle">Live once verification completes</text>
+        </g>
+
+        <!-- convergence -->
+        <path class="arrow" d="M 230,290 L 340,326" marker-end="url(#f3arrow)"></path>
+        <path class="arrow" d="M 650,290 L 540,326" marker-end="url(#f3arrow)"></path>
+        <g class="node">
+          <rect class="node-shape node-fill-2" x="220" y="328" width="440" height="42" rx="8"></rect>
+          <text class="t-label" x="440" y="354" text-anchor="middle">Same Vercel project, same Next.js app</text>
+        </g>
+      </svg>
+    </figure>
+    </div>
+    <figcaption>The wildcard certificate and DNS record are set up once, ever. Everything on the right happens per school, on demand, with no engineering involvement &mdash; but it's a real sequence with real wait time, unlike the instant left column.</figcaption>
+  </section>
+
+  <!-- ============ FIGURE 4 ============ -->
+  <section>
+    <div class="section-head">
+      <h2>4. One template, many schools</h2>
+      <p class="section-dek">Nothing about a school's look is a code branch. <code>SchoolProfile</code> branding and the <code>content_blocks</code> array are just data the same components read differently.</p>
+    </div>
+    <div class="diagram-scroll">
+    <figure>
+      <svg viewBox="0 0 900 340" role="img" aria-label="Two schools' data, Canyon Hills with hero, news and events blocks enabled, and Greenhill with hero, gallery and a custom careers page enabled, both flow into the same shared component library. The library renders two visibly different sites from the same codebase, one per school's configuration.">
+        <defs>
+          <marker id="f4arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="context-stroke"></path>
+          </marker>
+        </defs>
+
+        <!-- School A data -->
+        <g class="node node-teal">
+          <rect class="node-shape" x="20" y="24" width="240" height="88" rx="8"></rect>
+          <text class="t-eyebrow" x="140" y="44" text-anchor="middle">Canyon Hills &middot; SchoolProfile</text>
+          <text class="t-mono" x="34" y="62">hero: on</text>
+          <text class="t-mono" x="34" y="78">news: on</text>
+          <text class="t-mono" x="34" y="94">events: on &middot; gallery: off</text>
+        </g>
+
+        <!-- School B data -->
+        <g class="node node-amber">
+          <rect class="node-shape" x="20" y="228" width="240" height="88" rx="8"></rect>
+          <text class="t-eyebrow" x="140" y="248" text-anchor="middle">Greenhill &middot; SchoolProfile</text>
+          <text class="t-mono" x="34" y="266">hero: on</text>
+          <text class="t-mono" x="34" y="282">gallery: on</text>
+          <text class="t-mono" x="34" y="298">custom_page: "careers"</text>
+        </g>
+
+        <path class="arrow arrow-teal" d="M 260,68 L 370,140" marker-end="url(#f4arrow)"></path>
+        <path class="arrow arrow-amber" d="M 260,272 L 370,200" marker-end="url(#f4arrow)"></path>
+
+        <!-- shared component library -->
+        <g class="node">
+          <rect class="node-shape node-fill-2" x="372" y="110" width="176" height="120" rx="8"></rect>
+          <text class="t-label" x="460" y="134" text-anchor="middle" font-size="12">Shared components</text>
+          <text class="t-sub" x="460" y="154" text-anchor="middle">Hero</text>
+          <text class="t-sub" x="460" y="170" text-anchor="middle">News &middot; Gallery</text>
+          <text class="t-sub" x="460" y="186" text-anchor="middle">Events</text>
+          <text class="t-sub" x="460" y="202" text-anchor="middle">Custom page</text>
+        </g>
+
+        <path class="arrow arrow-teal" d="M 548,150 L 640,90" marker-end="url(#f4arrow)"></path>
+        <path class="arrow arrow-amber" d="M 548,190 L 640,250" marker-end="url(#f4arrow)"></path>
+
+        <!-- Rendered preview A -->
+        <g>
+          <rect class="node-shape" x="642" y="30" width="238" height="120" rx="6"></rect>
+          <circle cx="656" cy="44" r="3" fill="var(--line)"></circle>
+          <circle cx="666" cy="44" r="3" fill="var(--line)"></circle>
+          <circle cx="676" cy="44" r="3" fill="var(--line)"></circle>
+          <rect x="652" y="54" width="218" height="26" rx="3" fill="var(--teal)" opacity="0.85"></rect>
+          <rect x="652" y="86" width="218" height="14" rx="3" fill="var(--teal-soft)"></rect>
+          <rect x="652" y="104" width="218" height="14" rx="3" fill="var(--teal-soft)"></rect>
+          <rect x="652" y="122" width="100" height="14" rx="3" fill="none" stroke="var(--line)" stroke-dasharray="2 2"></rect>
+          <text class="t-sub" x="761" y="164" text-anchor="middle">canyonhills.edusaas.africa</text>
+        </g>
+
+        <!-- Rendered preview B -->
+        <g>
+          <rect class="node-shape" x="642" y="196" width="238" height="120" rx="6"></rect>
+          <circle cx="656" cy="210" r="3" fill="var(--line)"></circle>
+          <circle cx="666" cy="210" r="3" fill="var(--line)"></circle>
+          <circle cx="676" cy="210" r="3" fill="var(--line)"></circle>
+          <rect x="652" y="220" width="218" height="26" rx="3" fill="var(--amber)" opacity="0.85"></rect>
+          <rect x="652" y="252" width="104" height="46" rx="3" fill="var(--amber-soft)"></rect>
+          <rect x="762" y="252" width="108" height="46" rx="3" fill="var(--amber-soft)"></rect>
+          <text class="t-sub" x="761" y="330" text-anchor="middle">greenhill.ac.zw</text>
+        </g>
+      </svg>
+    </figure>
+    </div>
+    <figcaption>The dashed block on Canyon Hills' preview is a section left disabled. Greenhill enables gallery and adds a <code>custom_page</code> block instead &mdash; same components, different config, no per-school fork of the codebase.</figcaption>
+  </section>
+
+</div>

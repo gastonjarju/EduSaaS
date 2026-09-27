@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<template id="__bundler_thumbnail" data-bg-color="#e9ebe6">
+  <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+    <rect width="120" height="120" fill="#e9ebe6"/>
+    <rect x="18" y="30" width="84" height="60" rx="6" fill="#ffffff" stroke="#1f4d38" stroke-width="2"/>
+    <rect x="18" y="30" width="84" height="12" rx="6" fill="#1f4d38"/>
+    <circle cx="26" cy="36" r="2" fill="#e9ebe6"/>
+    <circle cx="32" cy="36" r="2" fill="#e9ebe6"/>
+    <rect x="26" y="50" width="30" height="6" rx="2" fill="#c0392b"/>
+    <rect x="26" y="62" width="60" height="4" rx="2" fill="#5b6d63"/>
+    <rect x="26" y="70" width="46" height="4" rx="2" fill="#5b6d63"/>
+  </svg>
+</template>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="./image-slot.js"></script>
+  <style>
+    body{margin:0;background:#e9ebe6;font-family:Inter,-apple-system,sans-serif;}
+    a{color:#1f4d38;}
+    a:hover{color:#c0392b;}
+    ::-webkit-scrollbar{width:10px;height:10px;}
+    ::-webkit-scrollbar-thumb{background:#d3d5cd;border-radius:6px;}
+  </style>
+</helmet>
+
+<div style="min-height:100vh;padding:28px 28px 60px;box-sizing:border-box;">
+
+  <div style="max-width:1600px;margin:0 auto 18px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+    <div>
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#7c8a80;">EduSaaS Africa — clickable prototype</div>
+      <div style="font-size:13px;color:#4a5650;margin-top:2px;">Click through the real site and the admin console. Switch schools with the Tweaks panel.</div>
+    </div>
+    <div style="display:flex;gap:4px;background:#fff;border:1px solid #d7d9d1;border-radius:9px;padding:4px;">
+      <button style="{{ btnPublicStyle }}" style-hover="opacity:0.85" onClick="{{ switchToPublic }}">Public site</button>
+      <button style="{{ btnAdminStyle }}" style-hover="opacity:0.85" onClick="{{ switchToAdmin }}">Admin console</button>
+    </div>
+  </div>
+
+  <div style="max-width:1600px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 30px 70px rgba(30,40,32,0.18);border:1px solid #d7d9d1;">
+
+    <div style="height:44px;background:#eceae3;border-bottom:1px solid #d7d9d1;display:flex;align-items:center;gap:10px;padding:0 16px;">
+      <div style="display:flex;gap:6px;">
+        <div style="width:10px;height:10px;border-radius:50%;background:#d3d1c7;"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#d3d1c7;"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#d3d1c7;"></div>
+      </div>
+      <div style="flex:1;background:#fff;border:1px solid #d7d9d1;border-radius:6px;padding:6px 12px;font-size:12px;color:#68665f;">
+        🔒 <b style="color:#222;">{{ theme.domain }}</b>.edusaas.africa{{ urlPath }}
+      </div>
+    </div>
+
+    <sc-if value="{{ isPublic }}" hint-placeholder-val="{{ true }}">
+      <div style="min-height:820px;">
+
+        <nav style="display:flex;align-items:center;justify-content:space-between;padding:18px 36px;background:#fff;border-bottom:1px solid #eceae3;">
+          <div style="display:flex;align-items:center;gap:12px;cursor:pointer;" onClick="{{ goHome }}">
+            <div style="{{ logoBoxStyle }}">{{ theme.logo }}</div>
+            <div>
+              <div style="font-size:14px;font-weight:800;color:#17231d;">{{ theme.short }}</div>
+              <div style="font-size:10px;color:#5b6d63;">{{ theme.sub }}</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:28px;font-size:13px;font-weight:600;align-items:center;">
+            <span style="{{ navHomeStyle }}" onClick="{{ goHome }}">Home</span>
+            <span style="{{ navAboutStyle }}" onClick="{{ goAbout }}">About</span>
+            <span style="{{ navNewsStyle }}" onClick="{{ goNews }}">News</span>
+            <span style="{{ navGalleryStyle }}" onClick="{{ goGallery }}">Gallery</span>
+            <span style="{{ navContactStyle }}" onClick="{{ goContact }}">Contact</span>
+          </div>
+          <button style="{{ enquireBtnStyle }}" style-hover="opacity:0.88" onClick="{{ goEnquire }}">Enquire</button>
+        </nav>
+
+        <sc-if value="{{ pubHome }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:48px;padding:64px 60px;background:{{ theme.tint }};min-height:600px;">
+            <div style="flex:1.1;">
+              <div style="font-size:12px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:{{ theme.accent }};margin-bottom:14px;">{{ theme.heroEyebrow }}</div>
+              <div style="font-size:44px;font-weight:800;color:{{ theme.ink }};line-height:1.15;margin-bottom:18px;max-width:620px;">{{ theme.heroTitle }}</div>
+              <div style="font-size:15px;color:{{ theme.inkSoft }};line-height:1.7;max-width:480px;margin-bottom:28px;">{{ theme.heroSub }}</div>
+              <div style="display:flex;gap:12px;margin-bottom:34px;">
+                <button style="{{ heroPrimaryBtnStyle }}" style-hover="opacity:0.88" onClick="{{ goEnquire }}">Enquire now</button>
+                <button style="{{ heroSecondaryBtnStyle }}" style-hover="opacity:0.7" onClick="{{ goAbout }}">View admissions</button>
+              </div>
+              <div style="display:flex;gap:36px;">
+                <div><div style="font-size:24px;font-weight:800;color:{{ theme.ink }};">{{ theme.stat1 }}</div><div style="font-size:11px;color:{{ theme.inkSoft }};">Students enrolled</div></div>
+                <div><div style="font-size:24px;font-weight:800;color:{{ theme.ink }};">{{ theme.stat2 }}</div><div style="font-size:11px;color:{{ theme.inkSoft }};">Years of history</div></div>
+                <div><div style="font-size:24px;font-weight:800;color:{{ theme.ink }};">{{ theme.stat3 }}</div><div style="font-size:11px;color:{{ theme.inkSoft }};">Alumni registered</div></div>
+              </div>
+            </div>
+            <div style="{{ heroPhotoStyle }}"><image-slot id="hero-photo" shape="rounded" radius="12" placeholder="Hero photo"></image-slot></div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ pubAbout }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:flex-start;gap:44px;padding:60px;min-height:600px;">
+
+            <div style="flex:0 0 250px;">
+              <div style="font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#8a8f89;margin-bottom:12px;">About</div>
+              <div style="display:flex;flex-direction:column;gap:4px;">
+                <div style="{{ aboutTabHistoryStyle }}" style-hover="opacity:0.85" onClick="{{ goAboutHistory }}">The school's history</div>
+                <div style="{{ aboutTabPrincipalStyle }}" style-hover="opacity:0.85" onClick="{{ goAboutPrincipal }}">Principal's yearly message</div>
+                <div style="{{ aboutTabTopStudentsStyle }}" style-hover="opacity:0.85" onClick="{{ goAboutTopStudents }}">Top Candidates ({{ theme.examYearCurrent }})</div>
+                <div style="{{ aboutTabExamSnapshotStyle }}" style-hover="opacity:0.85" onClick="{{ goAboutExamSnapshot }}">Annual exam snapshot</div>
+              </div>
+              <div style="margin-top:26px;padding-top:22px;border-top:1px solid #eceae3;display:flex;flex-direction:column;gap:16px;">
+                <div style="{{ factBorderStyle }}"><div style="font-size:16px;font-weight:800;">Grades 7–12</div><div style="font-size:11px;color:#5b6d63;">Levels offered</div></div>
+                <div style="{{ factBorderStyle }}"><div style="font-size:16px;font-weight:800;">{{ theme.factLoc }}</div><div style="font-size:11px;color:#5b6d63;">Location</div></div>
+                <div style="{{ factBorderStyle }}"><div style="font-size:16px;font-weight:800;">English</div><div style="font-size:11px;color:#5b6d63;">Instruction</div></div>
+              </div>
+            </div>
+
+            <sc-if value="{{ aboutHistory }}" hint-placeholder-val="{{ true }}">
+              <div style="flex:1;display:flex;gap:44px;align-items:flex-start;">
+                <div style="flex:1;">
+                  <div style="font-size:26px;font-weight:800;color:#17231d;margin-bottom:6px;">The school's history</div>
+                  <div style="font-size:12px;font-weight:700;color:{{ theme.accent }};margin-bottom:18px;">{{ theme.heroEyebrow }}</div>
+                  <div style="font-size:15px;color:#5b6d63;line-height:1.8;max-width:600px;margin-bottom:14px;">{{ theme.aboutP }}</div>
+                  <div style="font-size:15px;color:#5b6d63;line-height:1.8;max-width:600px;margin-bottom:28px;">{{ theme.historyP2 }}</div>
+                  <div style="display:flex;flex-direction:column;gap:0;max-width:600px;">
+                    <sc-for list="{{ milestones }}" as="m" hint-placeholder-count="4">
+                      <div style="{{ m.rowStyle }}">
+                        <div style="{{ m.yearStyle }}">{{ m.year }}</div>
+                        <div style="flex:1;padding-bottom:18px;">
+                          <div style="font-size:14px;font-weight:800;color:#17231d;margin-bottom:3px;">{{ m.title }}</div>
+                          <div style="font-size:13px;color:#5b6d63;line-height:1.6;">{{ m.body }}</div>
+                        </div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="{{ aboutPhotoStyle }}"><image-slot id="about-photo" shape="rounded" radius="12" placeholder="Campus photo"></image-slot></div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ aboutPrincipal }}" hint-placeholder-val="{{ false }}">
+              <div style="flex:1;display:flex;gap:44px;align-items:flex-start;">
+                <div style="flex:1;">
+                  <div style="font-size:26px;font-weight:800;color:#17231d;margin-bottom:6px;">Principal's yearly message</div>
+                  <div style="font-size:12px;font-weight:700;color:{{ theme.accent }};margin-bottom:22px;">2026 academic year</div>
+                  <div style="{{ principalQuoteStyle }}">{{ theme.principalQuote }}</div>
+                  <div style="font-size:15px;color:#5b6d63;line-height:1.8;max-width:600px;margin-bottom:16px;">{{ theme.principalP1 }}</div>
+                  <div style="font-size:15px;color:#5b6d63;line-height:1.8;max-width:600px;margin-bottom:28px;">{{ theme.principalP2 }}</div>
+                  <div style="display:flex;align-items:center;gap:14px;padding-top:20px;border-top:1px solid #eceae3;max-width:600px;">
+                    <div style="{{ principalAvatarStyle }}"><image-slot id="principal-avatar" shape="circle" placeholder="Principal"></image-slot></div>
+                    <div>
+                      <div style="font-size:14px;font-weight:800;color:#17231d;">{{ theme.principalName }}</div>
+                      <div style="font-size:12px;color:#5b6d63;">Principal, {{ theme.short }}</div>
+                    </div>
+                  </div>
+                </div>
+                <div style="flex:0 0 300px;display:flex;flex-direction:column;gap:16px;">
+                  <div style="{{ aboutPhotoStyle }}"><image-slot id="principal-photo" shape="rounded" radius="12" placeholder="Principal portrait"></image-slot></div>
+                  <div style="{{ principalStatsCardStyle }}">
+                    <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#8a8f89;margin-bottom:12px;">This year at a glance</div>
+                    <div style="display:flex;flex-direction:column;gap:12px;">
+                      <div><div style="font-size:18px;font-weight:800;color:{{ theme.ink }};">{{ theme.stat1 }}</div><div style="font-size:11px;color:#5b6d63;">Students enrolled</div></div>
+                      <div><div style="font-size:18px;font-weight:800;color:{{ theme.ink }};">{{ theme.passRate }}</div><div style="font-size:11px;color:#5b6d63;">Exam pass rate</div></div>
+                      <div><div style="font-size:18px;font-weight:800;color:{{ theme.ink }};">{{ theme.teachers }}</div><div style="font-size:11px;color:#5b6d63;">Teaching staff</div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ aboutTopStudents }}" hint-placeholder-val="{{ false }}">
+              <div style="flex:1;">
+                <div style="font-size:26px;font-weight:800;color:#17231d;margin-bottom:6px;">Top 3 in this year's national exam</div>
+                <div style="font-size:12px;font-weight:700;color:{{ theme.accent }};margin-bottom:24px;">{{ theme.examName }} · {{ theme.examYearCurrent }}</div>
+                <div style="display:flex;gap:20px;flex-wrap:wrap;">
+                  <sc-for list="{{ topStudents }}" as="st" hint-placeholder-count="3">
+                    <div style="{{ st.cardStyle }}">
+                      <div style="{{ st.rankBadgeStyle }}">{{ st.rankLabel }}</div>
+                      <div style="{{ st.portraitWrapStyle }}"><image-slot id="{{ st.slotId }}" shape="rounded" radius="10" placeholder="Student photo"></image-slot></div>
+                      <div style="font-size:15px;font-weight:800;color:#17231d;margin-bottom:2px;">{{ st.name }}</div>
+                      <div style="font-size:12px;color:#5b6d63;margin-bottom:10px;">{{ st.grade }}</div>
+                      <div style="{{ st.scorePillStyle }}">{{ st.score }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ aboutExamSnapshot }}" hint-placeholder-val="{{ false }}">
+              <div style="flex:1;">
+                <div style="font-size:26px;font-weight:800;color:#17231d;margin-bottom:6px;">Annual exam snapshot</div>
+                <div style="font-size:12px;font-weight:700;color:{{ theme.accent }};margin-bottom:24px;">{{ theme.examName }} · {{ theme.examYearCurrent }} results</div>
+
+                <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:28px;max-width:700px;">
+                  <div style="{{ examHeroStatStyle }}">
+                    <div style="font-size:34px;font-weight:800;color:{{ theme.ink }};line-height:1;">{{ examCurrentRate }}</div>
+                    <div style="font-size:11px;color:#5b6d63;margin-top:6px;">Overall pass rate, {{ theme.examYearCurrent }}</div>
+                  </div>
+                  <div style="{{ examStatBoxStyle }}">
+                    <div style="font-size:22px;font-weight:800;color:{{ theme.ink }};">{{ theme.examCandidates }}</div>
+                    <div style="font-size:11px;color:#5b6d63;margin-top:4px;">Candidates registered</div>
+                  </div>
+                  <div style="{{ examStatBoxStyle }}">
+                    <div style="font-size:22px;font-weight:800;color:{{ theme.ink }};">{{ theme.examAGrades }}</div>
+                    <div style="font-size:11px;color:#5b6d63;margin-top:4px;">A grades awarded</div>
+                  </div>
+                  <div style="{{ examStatBoxStyle }}">
+                    <div style="font-size:22px;font-weight:800;color:{{ theme.ink }};">{{ theme.examBGrades }}</div>
+                    <div style="font-size:11px;color:#5b6d63;margin-top:4px;">B grades awarded</div>
+                  </div>
+                  <div style="{{ examStatBoxStyle }}">
+                    <div style="font-size:22px;font-weight:800;color:{{ theme.ink }};">{{ theme.examHighPoints }}</div>
+                    <div style="font-size:11px;color:#5b6d63;margin-top:4px;">Scored 15+ points</div>
+                  </div>
+                  <div style="{{ examStatBoxStyle }}">
+                    <div style="font-size:22px;font-weight:800;color:{{ theme.ink }};">{{ theme.examSciencePoints }}</div>
+                    <div style="font-size:11px;color:#5b6d63;margin-top:4px;">8+ points in sciences</div>
+                  </div>
+                </div>
+
+                <div style="max-width:700px;margin-bottom:28px;">
+                  <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#8a8f89;margin-bottom:10px;">Pass rate, last 5 years</div>
+                  <div style="display:flex;align-items:flex-end;gap:18px;height:110px;">
+                    <sc-for list="{{ examYears }}" as="yr" hint-placeholder-count="5">
+                      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;">
+                        <div style="font-size:11px;font-weight:800;color:{{ theme.ink }};margin-bottom:5px;">{{ yr.rateLabel }}</div>
+                        <div style="{{ yr.barStyle }}"></div>
+                        <div style="font-size:11px;font-weight:700;color:#8a8f89;margin-top:6px;">{{ yr.year }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <div style="max-width:700px;">
+                  <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#8a8f89;margin-bottom:10px;">Top-performing subjects, {{ theme.examYearCurrent }}</div>
+                  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                    <sc-for list="{{ examTopSubjects }}" as="subj" hint-placeholder-count="4">
+                      <div style="{{ subj.pillStyle }}">{{ subj.name }} <span style="opacity:0.7;">· {{ subj.rate }}</span></div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ pubNews }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:60px;min-height:600px;background:{{ theme.tint }};">
+            <div style="font-size:26px;font-weight:800;color:#17231d;margin-bottom:26px;">Latest news</div>
+            <div style="display:flex;gap:22px;flex-wrap:wrap;">
+              <sc-for list="{{ posts }}" as="post" hint-placeholder-count="3">
+                <div style="flex:1;min-width:260px;background:#fff;border-radius:12px;border:1px solid #e4e3dd;overflow:hidden;">
+                  <div style="{{ post.thumbStyle }}"><image-slot id="news-thumb-{{ post.id }}" shape="rect" placeholder="News photo"></image-slot></div>
+                  <div style="padding:18px;">
+                    <div style="font-size:11px;font-weight:800;color:{{ theme.accent }};margin-bottom:8px;">{{ post.date }}</div>
+                    <div style="font-size:15px;font-weight:800;color:#17231d;line-height:1.4;margin-bottom:6px;">{{ post.title }}</div>
+                    <div style="font-size:11px;color:#8a8f89;">{{ post.audienceLabel }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ pubGallery }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:60px;min-height:600px;">
+            <div style="font-size:26px;font-weight:800;color:#17231d;margin-bottom:26px;">Gallery</div>
+            <div style="display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:110px;gap:12px;">
+              <div style="grid-column:span 2;grid-row:span 2;"><image-slot id="gallery-1" shape="rounded" radius="10" placeholder="Photo"></image-slot></div>
+              <div><image-slot id="gallery-2" shape="rounded" radius="10" placeholder="Photo"></image-slot></div>
+              <div><image-slot id="gallery-3" shape="rounded" radius="10" placeholder="Photo"></image-slot></div>
+              <div style="grid-column:span 2;"><image-slot id="gallery-4" shape="rounded" radius="10" placeholder="Photo"></image-slot></div>
+              <div><image-slot id="gallery-5" shape="rounded" radius="10" placeholder="Photo"></image-slot></div>
+              <div style="grid-row:span 2;"><image-slot id="gallery-6" shape="rounded" radius="10" placeholder="Photo"></image-slot></div>
+              <div><image-slot id="gallery-7" shape="rounded" radius="10" placeholder="Photo"></image-slot></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ pubContact }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;min-height:600px;">
+
+            <div style="flex:0 0 380px;background:{{ theme.tint }};padding:56px 44px;display:flex;flex-direction:column;">
+              <div style="font-size:12px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:{{ theme.accent }};margin-bottom:12px;">Contact us</div>
+              <div style="font-size:28px;font-weight:800;color:{{ theme.ink }};line-height:1.25;margin-bottom:16px;">We'd love to hear from you</div>
+              <div style="font-size:14px;color:{{ theme.inkSoft }};line-height:1.7;margin-bottom:32px;">Questions about admissions, fees, or a visit to campus — reach us directly, or send an enquiry and we'll follow up.</div>
+
+              <div style="{{ mapSlotStyle }}"><image-slot id="contact-map" shape="rounded" radius="12" placeholder="Map or campus photo"></image-slot></div>
+
+              <div style="display:flex;flex-direction:column;gap:18px;margin-top:auto;">
+                <div style="{{ contactInfoRowStyle }}">
+                  <div style="font-size:10px;color:{{ theme.inkSoft }};text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;">Address</div>
+                  <div style="font-size:14px;font-weight:700;color:{{ theme.ink }};">{{ theme.addr }}</div>
+                </div>
+                <div style="{{ contactInfoRowStyle }}">
+                  <div style="font-size:10px;color:{{ theme.inkSoft }};text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;">Email</div>
+                  <div style="font-size:14px;font-weight:700;color:{{ theme.ink }};">{{ theme.email }}</div>
+                </div>
+                <div style="{{ contactInfoRowStyle }}">
+                  <div style="font-size:10px;color:{{ theme.inkSoft }};text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;">Office hours</div>
+                  <div style="font-size:14px;font-weight:700;color:{{ theme.ink }};">Mon–Fri, 8:00–16:00</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="flex:1;padding:56px 60px;display:flex;justify-content:center;">
+            <div style="max-width:600px;width:100%;">
+              <sc-if value="{{ enquirySubmitted }}" hint-placeholder-val="{{ false }}">
+                <div style="background:#fff;border-radius:14px;padding:44px;text-align:center;border:1px solid #e4e3dd;">
+                  <div style="{{ successCircleStyle }}">✓</div>
+                  <div style="font-size:20px;font-weight:800;color:#17231d;margin:18px 0 8px;">Enquiry sent</div>
+                  <div style="font-size:13px;color:#5b6d63;margin-bottom:26px;line-height:1.6;">{{ theme.short }} will follow up with {{ enqName }} by {{ contactMethodLabel }}.</div>
+                  <button style="{{ heroSecondaryBtnStyle }}" style-hover="opacity:0.7" onClick="{{ viewInboxFromConfirmation }}">See it land in the admin inbox →</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{ enquiryNotSubmitted }}" hint-placeholder-val="{{ true }}">
+                <div>
+                  <div style="font-size:20px;font-weight:800;margin-bottom:4px;color:{{ theme.ink }};">Send us an enquiry</div>
+                  <div style="font-size:12px;color:#8a8f89;margin-bottom:24px;">Not a full application — we'll follow up by WhatsApp or email</div>
+                  <div style="font-size:10px;color:#8a8f89;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">I am enquiring as a...</div>
+                  <div style="display:flex;gap:10px;margin-bottom:18px;">
+                    <div style="{{ chipParentStyle }}" onClick="{{ setRoleParent }}">Parent / guardian</div>
+                    <div style="{{ chipStudentStyle }}" onClick="{{ setRoleStudent }}">Prospective student</div>
+                  </div>
+                  <div style="display:flex;gap:14px;margin-bottom:16px;">
+                    <div style="flex:1;">
+                      <div style="font-size:10px;color:#8a8f89;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;">Full name</div>
+                      <input style="{{ inputStyle }}" value="{{ enqName }}" onChange="{{ onEnqNameChange }}" placeholder="e.g. Fatou Jallow" />
+                    </div>
+                    <div style="flex:1;">
+                      <div style="font-size:10px;color:#8a8f89;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;">Phone / WhatsApp</div>
+                      <input style="{{ inputStyle }}" value="{{ enqPhone }}" onChange="{{ onEnqPhoneChange }}" placeholder="e.g. 771 22 33" />
+                    </div>
+                  </div>
+                  <div style="margin-bottom:16px;">
+                    <div style="font-size:10px;color:#8a8f89;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;">Email address</div>
+                    <input style="{{ inputStyle }}" value="{{ enqEmail }}" onChange="{{ onEnqEmailChange }}" placeholder="e.g. fatou@example.com" />
+                  </div>
+                  <div style="margin-bottom:16px;">
+                    <div style="font-size:10px;color:#8a8f89;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;">Grade of interest</div>
+                    <input style="{{ inputStyle }}" value="{{ enqGrade }}" onChange="{{ onEnqGradeChange }}" placeholder="e.g. Grade 9" />
+                  </div>
+                  <div style="margin-bottom:16px;">
+                    <div style="font-size:10px;color:#8a8f89;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;">Anything else we should know?</div>
+                    <textarea style="{{ textareaStyle }}" value="{{ enqMessage }}" onChange="{{ onEnqMessageChange }}" placeholder="Tell us about your child's interests, previous school, or any questions you have"></textarea>
+                  </div>
+                  <div style="margin-bottom:22px;">
+                    <div style="font-size:10px;color:#8a8f89;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">Preferred contact method</div>
+                    <div style="display:flex;gap:10px;">
+                      <div style="{{ contactWaStyle }}" onClick="{{ setContactWa }}">WhatsApp</div>
+                      <div style="{{ contactEmailStyle }}" onClick="{{ setContactEmail }}">Email</div>
+                      <div style="{{ contactCallStyle }}" onClick="{{ setContactCall }}">Phone call</div>
+                    </div>
+                  </div>
+                  <div style="display:flex;justify-content:flex-end;">
+                    <button style="{{ submitEnquiryStyle }}" style-hover="{{ submitEnquiryHover }}" onClick="{{ submitEnquiry }}">Send enquiry →</button>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="padding:20px 36px;background:{{ theme.tint }};display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#8a8f89;border-top:1px solid #e4e3dd;">
+          <div>{{ theme.footer }}</div>
+          <div style="border:1px solid #d7d9d1;padding:5px 10px;border-radius:6px;">⚡ Powered by EduSaaS Africa</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;min-height:820px;">
+        <div style="width:230px;flex:0 0 230px;background:#fafaf8;border-right:1px solid #eceae3;padding:20px 0;">
+          <div style="display:flex;align-items:center;gap:9px;padding:0 18px 16px;border-bottom:1px solid #eceae3;margin-bottom:10px;">
+            <div style="{{ sbLogoStyle }}"></div>
+            <div><div style="font-size:12px;font-weight:800;">{{ theme.short }}</div><div style="font-size:9px;color:#8a8f89;">Admin console</div></div>
+          </div>
+          <div style="{{ sbItemStaticStyle }}">Overview</div>
+          <div style="{{ sbDashboardStyle }}" style-hover="background:#f2f1ec" onClick="{{ goAdminDashboard }}">Site content</div>
+          <div style="{{ sbNewsStyle }}" style-hover="background:#f2f1ec" onClick="{{ goAdminNews }}">News &amp; announcements</div>
+          <div style="{{ sbCalendarStyle }}" style-hover="background:#f2f1ec" onClick="{{ goAdminCalendar }}">Events</div>
+          <div style="{{ sbEnquiriesStyle }}" style-hover="background:#f2f1ec" onClick="{{ goAdminEnquiries }}">
+            Enquiries
+            <sc-if value="{{ hasPending }}" hint-placeholder-val="{{ true }}"><span style="{{ pendingBadgeStyle }}">{{ pendingCount }} new</span></sc-if>
+          </div>
+          <div style="{{ sbItemStaticStyle }}">Gallery</div>
+          <div style="{{ sbItemStaticStyle }}">Alumni</div>
+          <div style="{{ sbItemStaticStyle }}">Settings</div>
+        </div>
+
+        <div style="flex:1;padding:26px 30px;">
+
+          <sc-if value="{{ admDashboard }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;">
+                <div><div style="font-size:19px;font-weight:800;">Site content</div><div style="font-size:11px;color:#8a8f89;margin-top:3px;">Edit the public site — changes publish instantly to {{ theme.domain }}.edusaas.africa</div></div>
+                <div style="{{ avatarStyle }}"></div>
+              </div>
+              <div style="display:flex;gap:18px;">
+                <div style="flex:1.4;background:#fff;border:1px solid #e4e3dd;border-radius:12px;padding:20px;">
+                  <div style="display:flex;justify-content:space-between;margin-bottom:14px;">
+                    <div style="font-size:14px;font-weight:800;">Hero section</div>
+                    <span style="{{ heroBadgeStyle }}">{{ heroBadgeText }}</span>
+                  </div>
+                  <div style="font-size:10px;color:#8a8f89;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;">Headline</div>
+                  <input style="{{ headlineInputStyle }}" value="{{ headlineDraft }}" onChange="{{ onHeadlineChange }}" />
+                  <div style="height:14px;"></div>
+                  <button style="{{ publishHeroStyle }}" style-hover="{{ publishHeroHover }}" onClick="{{ publishHero }}">Publish changes</button>
+                </div>
+                <div style="flex:1;background:#fff;border:1px solid #e4e3dd;border-radius:12px;padding:20px;">
+                  <div style="font-size:13px;font-weight:800;margin-bottom:12px;">Live preview</div>
+                  <div style="{{ livePreviewBoxStyle }}">{{ liveHeadlineDisplay }}</div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ admNews }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="margin-bottom:22px;"><div style="font-size:19px;font-weight:800;">News &amp; announcements</div><div style="font-size:11px;color:#8a8f89;margin-top:3px;">One post publishes to the public site and the alumni feed</div></div>
+              <div style="display:flex;gap:18px;">
+                <div style="flex:1.3;background:#fff;border:1px solid #e4e3dd;border-radius:12px;padding:20px;">
+                  <div style="font-size:14px;font-weight:800;margin-bottom:12px;">Published ({{ postsCount }})</div>
+                  <sc-for list="{{ posts }}" as="post" hint-placeholder-count="3">
+                    <div style="{{ post.rowStyle }}">
+                      <div style="{{ post.thumbSmStyle }}"><image-slot id="news-thumb-sm-{{ post.id }}" shape="rounded" radius="6" placeholder="Photo"></image-slot></div>
+                      <div style="flex:1;">
+                        <div style="font-size:13px;font-weight:800;margin-bottom:5px;">{{ post.title }}</div>
+                        <div style="display:flex;gap:8px;align-items:center;"><span style="{{ publishedBadgeStyle }}">Published</span><span style="font-size:10px;color:#8a8f89;">{{ post.date }}</span></div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="flex:1;background:#fff;border:1px solid #e4e3dd;border-radius:12px;padding:20px;">
+                  <div style="font-size:13px;font-weight:800;margin-bottom:12px;">Compose post</div>
+                  <div style="font-size:10px;color:#8a8f89;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;">Title</div>
+                  <input style="{{ inputStyle }}" value="{{ newsTitle }}" onChange="{{ onNewsTitleChange }}" placeholder="Post title" />
+                  <div style="height:12px;"></div>
+                  <div style="font-size:10px;color:#8a8f89;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;">Audience</div>
+                  <div style="display:flex;gap:8px;margin-bottom:16px;">
+                    <div style="{{ audPublicStyle }}" onClick="{{ setAudPublic }}">Public site</div>
+                    <div style="{{ audAlumniStyle }}" onClick="{{ setAudAlumni }}">Alumni only</div>
+                    <div style="{{ audBothStyle }}" onClick="{{ setAudBoth }}">Both</div>
+                  </div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+                    <div style="font-size:10px;color:#8a8f89;text-transform:uppercase;letter-spacing:0.04em;">WhatsApp push</div>
+                    <div style="{{ toggleTrackStyle }}" onClick="{{ toggleWa }}"><div style="{{ toggleKnobStyle }}"></div></div>
+                  </div>
+                  <button style="{{ publishNewsStyle }}" style-hover="{{ publishNewsHover }}" onClick="{{ publishNews }}">Publish</button>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ admCalendar }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="margin-bottom:22px;"><div style="font-size:19px;font-weight:800;">Events</div><div style="font-size:11px;color:#8a8f89;margin-top:3px;">Reunions, career days, fundraisers</div></div>
+              <div style="display:flex;gap:18px;">
+                <div style="flex:1.4;background:#fff;border:1px solid #e4e3dd;border-radius:12px;padding:20px;">
+                  <div style="font-size:14px;font-weight:800;margin-bottom:12px;">July 2026</div>
+                  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:#e4e3dd;border:1px solid #e4e3dd;border-radius:8px;overflow:hidden;">
+                    <sc-for list="{{ dowLabels }}" as="d" hint-placeholder-count="7">
+                      <div style="background:#fafaf8;padding:7px;font-size:10px;font-weight:800;text-align:center;color:#8a8f89;">{{ d }}</div>
+                    </sc-for>
+                    <sc-for list="{{ calendarDays }}" as="cell" hint-placeholder-count="35">
+                      <div style="{{ cell.cellStyle }}">
+                        <div style="font-size:10px;font-weight:700;margin-bottom:3px;">{{ cell.day }}</div>
+                        <sc-if value="{{ cell.hasEvt }}" hint-placeholder-val="{{ false }}"><div style="{{ cell.evtStyle }}">{{ cell.evt }}</div></sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="flex:1;background:#fff;border:1px solid #e4e3dd;border-radius:12px;padding:20px;">
+                  <div style="font-size:13px;font-weight:800;margin-bottom:12px;">Alumni reunion — Jul 18</div>
+                  <div style="{{ eventPhotoStyle }}"><image-slot id="event-photo" shape="rounded" radius="8" placeholder="Event photo"></image-slot></div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin:14px 0;">
+                    <span style="{{ rsvpPillStyle }}">{{ rsvpGoing }} going</span>
+                    <span style="font-size:11px;color:#8a8f89;">{{ rsvpMaybe }} maybe</span>
+                  </div>
+                  <button style="{{ rsvpBtnStyle }}" style-hover="{{ rsvpBtnHover }}" onClick="{{ doRsvp }}">{{ rsvpBtnText }}</button>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ admEnquiries }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="margin-bottom:22px;"><div style="font-size:19px;font-weight:800;">Enquiries</div><div style="font-size:11px;color:#8a8f89;margin-top:3px;">Submissions from the public enquiry form</div></div>
+              <div style="background:#fff;border:1px solid #e4e3dd;border-radius:12px;padding:20px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+                  <div style="font-size:14px;font-weight:800;">Inbox</div>
+                  <sc-if value="{{ hasPending }}" hint-placeholder-val="{{ true }}"><span style="{{ pendingBadgeStyle }}">{{ pendingCount }} new</span></sc-if>
+                </div>
+                <sc-for list="{{ enquiries }}" as="enq" hint-placeholder-count="2">
+                  <div style="{{ enq.rowStyle }}">
+                    <div style="{{ enq.avatarStyle }}"></div>
+                    <div style="flex:1;">
+                      <div style="font-size:13px;font-weight:800;margin-bottom:5px;">{{ enq.name }} — {{ enq.meta }}</div>
+                      <sc-if value="{{ enq.hasNote }}" hint-placeholder-val="{{ false }}">
+                        <div style="font-size:12px;color:#5b6d63;line-height:1.5;margin-bottom:6px;max-width:640px;">“{{ enq.note }}”</div>
+                      </sc-if>
+                      <div style="display:flex;gap:8px;align-items:center;"><span style="{{ enq.badgeStyle }}">{{ enq.badgeText }}</span><span style="font-size:10px;color:#8a8f89;">{{ enq.time }}</span></div>
+                    </div>
+                    <button style="{{ enq.actionBtnStyle }}" onClick="{{ enq.respond }}">{{ enq.actionText }}</button>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;schoolTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;stpeters&quot;,&quot;options&quot;:[&quot;stpeters&quot;,&quot;kristemambo&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;startScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;public&quot;,&quot;options&quot;:[&quot;public&quot;,&quot;admin&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Behavior&quot;}}">
+const THEMES = {
+  stpeters: {
+    key: "stpeters", name: "St. Peter's Technical J&S Secondary", short: "St. Peter's Technical", sub: "Lamin, The Gambia", domain: "stpeterstechnical",
+    primary: "#1f4d38", primaryDark: "#153428", accent: "#c0392b", accentSoft: "#f7e3e0", tint: "#eef2ec", ink: "#17231d", inkSoft: "#5b6d63", logo: "SP",
+    heroEyebrow: "Est. 1975 \u00b7 Junior & Senior Secondary", heroTitle: "Educating tomorrow\u2019s leaders in Lamin",
+    heroSub: "A comprehensive technical secondary school serving Grades 7\u201312, with a growing alumni network across The Gambia and the diaspora.",
+    stat1: "1,200+", stat2: "50", stat3: "500+",
+    aboutP: "St. Peter\u2019s Technical Junior & Senior Secondary School has served the Lamin community for five decades, combining a rigorous academic core with hands-on technical training.",
+    historyP2: "What began as a small parish initiative now runs full junior and senior secondary streams, a technical workshop block, and a computer lab \u2014 with graduates working across the region and abroad.",
+    milestones: [
+      { year: "1975", title: "Founded in Lamin", body: "Opened with three classrooms and 62 students on land donated by the parish." },
+      { year: "1988", title: "Technical stream added", body: "Woodwork, metalwork and technical drawing introduced alongside the academic core." },
+      { year: "2004", title: "Senior secondary opened", body: "Grades 10\u201312 added, allowing students to complete WASSCE on campus." },
+      { year: "2023", title: "Computer lab commissioned", body: "Funded largely by alumni donations from the diaspora network." }
+    ],
+    principalName: "Mr. Alieu Touray", passRate: "87%", teachers: "48",
+    principalQuote: "A school is not its buildings \u2014 it is the habits of mind we build in the young people who pass through it.",
+    principalP1: "Welcome to the 2026 academic year. Last year our students achieved our strongest WASSCE results in a decade, and our technical stream placed twelve graduates directly into apprenticeships in Serekunda and Banjul.",
+    principalP2: "This year we are focused on three things: consistent attendance, stronger reading across all grades, and expanding the computer lab so every senior student has timetabled screen time. We ask parents to partner with us on the first of these \u2014 it is where the school and home meet most directly.",
+    examName: "WASSCE", examYearCurrent: "2026",
+    topStudents: [
+      { name: "Isatou Camara", grade: "Grade 12 \u00b7 Science stream", score: "8 A1s", slotId: "top-student-1" },
+      { name: "Lamin Bojang", grade: "Grade 12 \u00b7 Technical stream", score: "7 A1s, 1 B2", slotId: "top-student-2" },
+      { name: "Adama Kah", grade: "Grade 12 \u00b7 Arts stream", score: "6 A1s, 2 B2s", slotId: "top-student-3" }
+    ],
+    examYears: [
+      { year: "2022", rate: 79 }, { year: "2023", rate: 81 }, { year: "2024", rate: 84 }, { year: "2025", rate: 85 }, { year: "2026", rate: 87 }
+    ],
+    examCandidates: "142", examAGrades: "268", examBGrades: "94", examHighPoints: "61%", examSciencePoints: "74%",
+    examTopSubjects: [
+      { name: "Biology", rate: "100%" }, { name: "Computing", rate: "100%" }, { name: "Chemistry", rate: "97%" }, { name: "Pure Maths", rate: "96%" }
+    ],
+    factLoc: "Lamin, WCR", addr: "Lamin Village, Kombo North, West Coast Region", email: "info@stpeterstechnical.edusaas.africa",
+    footer: "\u00a9 2026 St. Peter's Technical J&S Secondary School",
+    photo1: "#2f6b4a", photo2: "#3f8a5c", photo3: "#c9863f"
+  },
+  kristemambo: {
+    key: "kristemambo", name: "Kriste Mambo High School", short: "Kriste Mambo High", sub: "Rusape, Zimbabwe", domain: "kristemambo",
+    primary: "#132a5e", primaryDark: "#0c1c40", accent: "#c79a2b", accentSoft: "#f6eed2", tint: "#eef1f8", ink: "#161c2b", inkSoft: "#5a6480", logo: "KM",
+    heroEyebrow: "Est. 1964 \u00b7 Catholic Mission Secondary", heroTitle: "Building character and excellence at Kriste Mambo",
+    heroSub: "A Catholic mission secondary school near Rusape with a strong alumni tradition and a growing diaspora network in the UK and beyond.",
+    stat1: "900+", stat2: "62", stat3: "310+",
+    aboutP: "Kriste Mambo High School has built a reputation for academic excellence and strong alumni ties, with graduates spanning six decades and multiple continents.",
+    historyP2: "Founded as a mission school, Kriste Mambo grew into one of Manicaland\u2019s most respected boarding secondaries, with an alumni association active in Harare, Johannesburg and the UK.",
+    milestones: [
+      { year: "1964", title: "Mission school founded", body: "Established by the Catholic mission near Rusape with a single boarding block." },
+      { year: "1979", title: "A-Level stream introduced", body: "Sciences and arts A-Levels added, drawing students from across Manicaland." },
+      { year: "1998", title: "Science block completed", body: "Three purpose-built laboratories funded by the parish and alumni contributions." },
+      { year: "2021", title: "Alumni network formalised", body: "A registered old scholars\u2019 association launched, now spanning three continents." }
+    ],
+    principalName: "Sr. Tendai Marufu", passRate: "91%", teachers: "62",
+    principalQuote: "Discipline, faith and curiosity \u2014 in that order, they carry a student further than talent alone ever will.",
+    principalP1: "Welcome to the 2026 academic year. Our O-Level pass rate rose again last year, and six of our upper-sixth students earned university places outside Zimbabwe \u2014 a reflection of steady teaching, not luck.",
+    principalP2: "Our priorities this year are boarding welfare, laboratory equipment renewal, and a structured mentorship link between current pupils and our alumni abroad. Parents will hear from us each term with specific, measurable progress on all three.",
+    examName: "ZIMSEC O-Level", examYearCurrent: "2026",
+    topStudents: [
+      { name: "Tadiwa Chikafu", grade: "Form 4 \u00b7 Sciences", score: "9 A's", slotId: "top-student-1" },
+      { name: "Rutendo Marange", grade: "Form 4 \u00b7 Sciences", score: "8 A's, 1 B", slotId: "top-student-2" },
+      { name: "Kudzai Mutasa", grade: "Form 4 \u00b7 Commercials", score: "7 A's, 2 B's", slotId: "top-student-3" }
+    ],
+    examYears: [
+      { year: "2022", rate: 84 }, { year: "2023", rate: 86 }, { year: "2024", rate: 88 }, { year: "2025", rate: 89 }, { year: "2026", rate: 91 }
+    ],
+    examCandidates: "71", examAGrades: "133", examBGrades: "31", examHighPoints: "62%", examSciencePoints: "97%",
+    examTopSubjects: [
+      { name: "Pure Maths", rate: "100%" }, { name: "Geography", rate: "100%" }, { name: "Accounting", rate: "100%" }, { name: "Biology", rate: "89%" }
+    ],
+    factLoc: "Rusape, Manicaland", addr: "Rusape\u2013Nyanga Road, Rusape, Manicaland", email: "info@kristemambo.edusaas.africa",
+    footer: "\u00a9 2026 Kriste Mambo High School",
+    photo1: "#1d3f7a", photo2: "#2c5a9e", photo3: "#8a6a2b"
+  }
+};
+
+const DEFAULT_POSTS = [
+  { id: 1, title: "Term 2 exam schedule released", date: "3 days ago", audience: "public" },
+  { id: 2, title: "Alumni career day \u2014 save the date", date: "1 week ago", audience: "alumni" },
+  { id: 3, title: "New computer lab opens", date: "2 weeks ago", audience: "public" }
+];
+
+const DEFAULT_ENQUIRIES = [
+  { id: 1, name: "Ousman Sanneh", meta: "Grade 7, Sept intake", status: "new", time: "Submitted yesterday" },
+  { id: 2, name: "Mariama Ceesay", meta: "Grade 10, Jan intake", status: "responded", time: "3 days ago" }
+];
+
+const CAL_LAYOUT = [
+  { day: 28, muted: true }, { day: 29, muted: true }, { day: 30, muted: true, evt: "Career day" },
+  { day: 1 }, { day: 2 }, { day: 3 }, { day: 4 },
+  { day: 5 }, { day: 6 }, { day: 7 }, { day: 8 }, { day: 9 }, { day: 10 }, { day: 11 },
+  { day: 12 }, { day: 13 }, { day: 14, evt: "PTA meeting" }, { day: 15 }, { day: 16 }, { day: 17 }, { day: 18, evt: "Alumni reunion", highlight: true },
+  { day: 19 }, { day: 20 }, { day: 21 }, { day: 22 }, { day: 23 }, { day: 24 }, { day: 25 },
+  { day: 26 }, { day: 27 }, { day: 28 }, { day: 29 }, { day: 30 }, { day: 31 }, { day: 1, muted: true }
+];
+
+class Component extends DCLogic {
+  state = {
+    app: "public", publicPage: "home", aboutTab: "history", adminPage: "dashboard",
+    draftHeadline: null, liveHeadline: null,
+    newsTitle: "", newsAudience: "both", waOn: false, posts: DEFAULT_POSTS.slice(),
+    rsvpGoing: 58, rsvpMaybe: 14, rsvped: false,
+    enqRole: "parent", enqName: "", enqPhone: "", enqEmail: "", enqGrade: "", enqMessage: "", enqContact: "whatsapp", enquirySubmitted: false,
+    enquiries: DEFAULT_ENQUIRIES.slice()
+  };
+
+  componentDidMount() {
+    if (this.props.startScreen === "admin") this.setState({ app: "admin" });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.schoolTheme !== this.props.schoolTheme) this.resetDemo();
+  }
+
+  resetDemo() {
+    this.setState({
+      publicPage: "home", adminPage: "dashboard",
+      draftHeadline: null, liveHeadline: null,
+      newsTitle: "", newsAudience: "both", waOn: false, posts: DEFAULT_POSTS.slice(),
+      rsvpGoing: 58, rsvped: false,
+      enqRole: "parent", enqName: "", enqPhone: "", enqEmail: "", enqGrade: "", enqMessage: "", enqContact: "whatsapp", enquirySubmitted: false,
+      enquiries: DEFAULT_ENQUIRIES.slice()
+    });
+  }
+
+  theme() { return THEMES[this.props.schoolTheme] || THEMES.stpeters; }
+
+  renderVals() {
+    const theme = this.theme();
+    const s = this.state;
+    const isPublic = s.app === "public";
+    const isAdmin = s.app === "admin";
+    const seg = (active) => ({ border: "none", background: active ? "#1d1d1b" : "transparent", color: active ? "#fff" : "#5b6d63", fontSize: 12, fontWeight: 700, padding: "8px 16px", borderRadius: 6, cursor: "pointer" });
+    const navStyle = (active) => ({ cursor: "pointer", fontWeight: active ? 800 : 600, color: active ? theme.primary : "#5b6d63" });
+    const sbStyle = (active) => ({ display: "flex", alignItems: "center", gap: 8, padding: "10px 18px", fontSize: 12, fontWeight: active ? 800 : 600, cursor: "pointer",
+      color: active ? theme.primaryDark : "#5b6d63", background: active ? theme.accentSoft : "transparent", borderRight: active ? `3px solid ${theme.accent}` : "3px solid transparent" });
+    const chipStyle = (sel) => ({ flex: 1, textAlign: "center", padding: "10px 8px", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer",
+      border: `1.5px solid ${sel ? theme.accent : "#c9cdc5"}`, background: sel ? theme.accentSoft : "#fff", color: sel ? theme.ink : "#5b6d63" });
+    const audStyle = (sel) => ({ flex: 1, textAlign: "center", padding: "8px 6px", borderRadius: 7, fontSize: 11, fontWeight: 700, cursor: "pointer",
+      border: `1px solid ${sel ? theme.accent : "#c9cdc5"}`, background: sel ? theme.accentSoft : "#fff", color: sel ? theme.ink : "#5b6d63" });
+    const aboutTabStyle = (active) => ({ padding: "11px 14px", borderRadius: 8, fontSize: 13, fontWeight: active ? 800 : 600, cursor: "pointer",
+      color: active ? theme.primaryDark : "#5b6d63", background: active ? theme.accentSoft : "transparent",
+      borderLeft: active ? `3px solid ${theme.accent}` : "3px solid transparent" });
+    const badge = (bg, fg, text) => ({ fontSize: 9, fontWeight: 800, padding: "4px 10px", borderRadius: 10, textTransform: "uppercase", letterSpacing: "0.4px", background: bg, color: fg, whiteSpace: "nowrap" });
+
+    const liveHeadline = s.liveHeadline == null ? theme.heroTitle : s.liveHeadline;
+    const headlineDraft = s.draftHeadline == null ? liveHeadline : s.draftHeadline;
+    const isDirty = headlineDraft !== liveHeadline;
+
+    const posts = s.posts.map((p) => ({
+      ...p,
+      audienceLabel: p.audience === "alumni" ? "Alumni only" : p.audience === "both" ? "Public site \u00b7 Alumni" : "Public site",
+      thumbStyle: { aspectRatio: "16/9", overflow: "hidden", position: "relative" },
+      thumbSmStyle: { width: 52, height: 38, borderRadius: 6, flexShrink: 0, overflow: "hidden", position: "relative" },
+      rowStyle: { display: "flex", gap: 12, padding: "12px 0", borderBottom: "1px solid #eceae3", alignItems: "center" }
+    }));
+
+    const pendingCount = s.enquiries.filter((e) => e.status === "new").length;
+    const enquiries = s.enquiries.map((e) => ({
+      ...e,
+      hasNote: !!e.note,
+      badgeText: e.status === "new" ? "New" : "Responded",
+      badgeStyle: e.status === "new" ? badge("#faeeda", "#ba7517", "New") : badge(theme.accentSoft, theme.ink, "Responded"),
+      actionText: e.status === "new" ? "Respond" : "View",
+      actionBtnStyle: { border: "none", background: "transparent", color: "#5b6d63", fontSize: 11, fontWeight: 700, cursor: "pointer" },
+      avatarStyle: { width: 38, height: 38, borderRadius: "50%", background: e.status === "new" ? theme.primary : "#e4e3dd", flexShrink: 0 },
+      rowStyle: { display: "flex", gap: 12, padding: "13px 0", borderBottom: "1px solid #eceae3", alignItems: "center", background: e.justAdded ? theme.accentSoft : "transparent", borderRadius: e.justAdded ? 8 : 0 },
+      respond: () => this.setState({ enquiries: this.state.enquiries.map((x) => x.id === e.id ? { ...x, status: "responded" } : x) })
+    }));
+
+    const calendarDays = CAL_LAYOUT.map((c, i) => ({
+      day: c.day, hasEvt: !!c.evt, evt: c.evt,
+      cellStyle: { background: c.highlight ? theme.accentSoft : "#fff", minHeight: 56, padding: 6, color: c.muted ? "#c3c6bd" : theme.ink },
+      evtStyle: { fontSize: 8, fontWeight: 800, padding: "2px 5px", borderRadius: 4, background: c.highlight ? theme.accent : "#e6f1fb", color: c.highlight ? "#fff" : "#0c447c" }
+    }));
+
+    return {
+      theme, isPublic, isAdmin,
+      urlPath: isAdmin
+        ? (s.adminPage === "dashboard" ? "/admin/site-content" : s.adminPage === "news" ? "/admin/news" : s.adminPage === "calendar" ? "/admin/events" : "/admin/enquiries")
+        : (s.publicPage === "home" ? "" : "/" + s.publicPage),
+      btnPublicStyle: seg(isPublic), btnAdminStyle: seg(isAdmin),
+      switchToPublic: () => this.setState({ app: "public" }),
+      switchToAdmin: () => this.setState({ app: "admin" }),
+
+      logoBoxStyle: { width: 42, height: 42, borderRadius: 8, background: theme.primary, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 14 },
+      pubHome: s.publicPage === "home", pubAbout: s.publicPage === "about", pubNews: s.publicPage === "news",
+      pubGallery: s.publicPage === "gallery", pubContact: s.publicPage === "contact" || s.publicPage === "enquire",
+      navHomeStyle: navStyle(s.publicPage === "home"), navAboutStyle: navStyle(s.publicPage === "about"), navNewsStyle: navStyle(s.publicPage === "news"),
+      navGalleryStyle: navStyle(s.publicPage === "gallery"), navContactStyle: navStyle(s.publicPage === "contact"),
+      aboutHistory: s.aboutTab === "history", aboutPrincipal: s.aboutTab === "principal", aboutTopStudents: s.aboutTab === "topStudents",
+      aboutExamSnapshot: s.aboutTab === "examSnapshot",
+      aboutTabHistoryStyle: aboutTabStyle(s.aboutTab === "history"), aboutTabPrincipalStyle: aboutTabStyle(s.aboutTab === "principal"),
+      aboutTabTopStudentsStyle: aboutTabStyle(s.aboutTab === "topStudents"),
+      aboutTabExamSnapshotStyle: aboutTabStyle(s.aboutTab === "examSnapshot"),
+      goAboutHistory: () => this.setState({ aboutTab: "history" }), goAboutPrincipal: () => this.setState({ aboutTab: "principal" }),
+      goAboutTopStudents: () => this.setState({ aboutTab: "topStudents" }),
+      goAboutExamSnapshot: () => this.setState({ aboutTab: "examSnapshot" }),
+      examYears: (() => {
+        const years = theme.examYears || [];
+        const max = Math.max(...years.map((y) => y.rate), 1);
+        return years.map((y) => ({
+          year: y.year, rateLabel: y.rate + "%",
+          barStyle: { width: "60%", height: (y.rate / max * 100) + "%", borderRadius: "6px 6px 0 0", background: `linear-gradient(180deg, ${theme.accent}, ${theme.primary})` }
+        }));
+      })(),
+      examCurrentRate: (() => {
+        const years = theme.examYears || [];
+        if (!years.length) return "\u2014";
+        return years[years.length - 1].rate + "%";
+      })(),
+      examHeroStatStyle: { flex: "0 0 170px", background: theme.accentSoft, borderRadius: 12, padding: 18 },
+      examStatBoxStyle: { flex: "1 1 140px", minWidth: 140, background: "#fff", border: "1px solid #e4e3dd", borderRadius: 12, padding: 18 },
+      examTopSubjects: (theme.examTopSubjects || []).map((s2) => ({
+        ...s2,
+        pillStyle: { fontSize: 12, fontWeight: 700, padding: "8px 14px", borderRadius: 8, background: theme.tint, color: theme.ink }
+      })),
+      topStudents: (theme.topStudents || []).map((st, i) => ({
+        ...st,
+        rankLabel: "#" + (i + 1),
+        cardStyle: { flex: "1 1 220px", minWidth: 220, background: "#fff", border: "1px solid #e4e3dd", borderRadius: 12, padding: 18, position: "relative" },
+        rankBadgeStyle: { position: "absolute", top: 14, right: 14, fontSize: 11, fontWeight: 800, color: theme.accent },
+        portraitWrapStyle: { width: "100%", aspectRatio: "1/1", borderRadius: 10, overflow: "hidden", position: "relative", marginBottom: 14 },
+        scorePillStyle: { display: "inline-block", fontSize: 11, fontWeight: 800, padding: "5px 10px", borderRadius: 8, background: theme.accentSoft, color: theme.ink }
+      })),
+      milestones: (theme.milestones || []).map((m) => ({
+        ...m,
+        rowStyle: { display: "flex", gap: 18, alignItems: "flex-start" },
+        yearStyle: { flex: "0 0 62px", fontSize: 13, fontWeight: 800, color: theme.accent, paddingTop: 1 }
+      })),
+      principalQuoteStyle: { fontSize: 18, fontWeight: 700, lineHeight: 1.6, color: theme.ink, borderLeft: `3px solid ${theme.accent}`, paddingLeft: 18, maxWidth: 580, marginBottom: 24 },
+      principalAvatarStyle: { width: 52, height: 52, borderRadius: "50%", overflow: "hidden", position: "relative", flexShrink: 0 },
+      principalStatsCardStyle: { background: theme.tint, borderRadius: 12, padding: 20 },
+      goHome: () => this.setState({ publicPage: "home" }), goAbout: () => this.setState({ publicPage: "about" }), goNews: () => this.setState({ publicPage: "news" }),
+      goGallery: () => this.setState({ publicPage: "gallery" }), goContact: () => this.setState({ publicPage: "contact" }), goEnquire: () => this.setState({ publicPage: "contact" }),
+      enquireBtnStyle: { border: "none", background: theme.primary, color: "#fff", fontSize: 12, fontWeight: 800, padding: "10px 20px", borderRadius: 7, cursor: "pointer" },
+      heroPrimaryBtnStyle: { border: "none", background: theme.primary, color: "#fff", fontSize: 13, fontWeight: 800, padding: "13px 22px", borderRadius: 8, cursor: "pointer" },
+      heroSecondaryBtnStyle: { border: `1.5px solid ${theme.accent}`, background: "transparent", color: theme.accent, fontSize: 13, fontWeight: 800, padding: "13px 22px", borderRadius: 8, cursor: "pointer" },
+      heroPhotoStyle: { flex: 1, aspectRatio: "4/3", borderRadius: 12, overflow: "hidden", position: "relative" },
+      aboutPhotoStyle: { flex: "0 0 300px", aspectRatio: "1/1", borderRadius: 12, overflow: "hidden", position: "relative" },
+      factBorderStyle: { borderLeft: `3px solid ${theme.accent}`, paddingLeft: 12 },
+      contactCalloutStyle: { background: theme.tint, borderRadius: 12, padding: 24, maxWidth: 460 },
+      mapSlotStyle: { width: "100%", aspectRatio: "4/3", borderRadius: 12, overflow: "hidden", position: "relative", marginBottom: 28 },
+      contactInfoRowStyle: { borderTop: "1px solid rgba(0,0,0,0.08)", paddingTop: 14 },
+      posts, postsCount: posts.length,
+
+      inputStyle: { width: "100%", height: 38, borderRadius: 7, border: "1px solid #d9dcd6", padding: "0 12px", fontSize: 13, fontWeight: 500, fontFamily: "Inter, sans-serif", boxSizing: "border-box", outline: "none" },
+      chipParentStyle: chipStyle(s.enqRole === "parent"), chipStudentStyle: chipStyle(s.enqRole === "student"),
+      setRoleParent: () => this.setState({ enqRole: "parent" }), setRoleStudent: () => this.setState({ enqRole: "student" }),
+      enqName: s.enqName, enqPhone: s.enqPhone, enqGrade: s.enqGrade, enqEmail: s.enqEmail, enqMessage: s.enqMessage,
+      onEnqNameChange: (e) => this.setState({ enqName: e.target.value }),
+      onEnqPhoneChange: (e) => this.setState({ enqPhone: e.target.value }),
+      onEnqGradeChange: (e) => this.setState({ enqGrade: e.target.value }),
+      onEnqEmailChange: (e) => this.setState({ enqEmail: e.target.value }),
+      onEnqMessageChange: (e) => this.setState({ enqMessage: e.target.value }),
+      textareaStyle: { width: "100%", minHeight: 86, borderRadius: 7, border: "1px solid #d9dcd6", padding: "10px 12px", fontSize: 13, fontWeight: 500, fontFamily: "Inter, sans-serif", boxSizing: "border-box", outline: "none", resize: "vertical", lineHeight: 1.5 },
+      contactWaStyle: audStyle(s.enqContact === "whatsapp"), contactEmailStyle: audStyle(s.enqContact === "email"), contactCallStyle: audStyle(s.enqContact === "call"),
+      setContactWa: () => this.setState({ enqContact: "whatsapp" }), setContactEmail: () => this.setState({ enqContact: "email" }), setContactCall: () => this.setState({ enqContact: "call" }),
+      contactMethodLabel: s.enqContact === "email" ? "email" : s.enqContact === "call" ? "phone call" : "WhatsApp",
+      enquirySubmitted: s.enquirySubmitted, enquiryNotSubmitted: !s.enquirySubmitted,
+      submitEnquiryStyle: { border: "none", background: (s.enqName.trim() && s.enqPhone.trim()) ? theme.primary : "#c9cdc5", color: "#fff", fontSize: 12, fontWeight: 800, padding: "11px 20px", borderRadius: 7, cursor: (s.enqName.trim() && s.enqPhone.trim()) ? "pointer" : "default" },
+      submitEnquiryHover: (s.enqName.trim() && s.enqPhone.trim()) ? "opacity:0.88" : "",
+      successCircleStyle: { width: 54, height: 54, borderRadius: "50%", background: theme.accentSoft, color: theme.primary, fontSize: 24, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto" },
+      submitEnquiry: () => {
+        if (!s.enqName.trim() || !s.enqPhone.trim()) return;
+        this.setState({
+          enquirySubmitted: true,
+          enquiries: [{ id: Date.now(), name: s.enqName.trim(), meta: (s.enqGrade.trim() || "Grade not specified") + " \u00b7 prefers " + (s.enqContact === "email" ? "email" : s.enqContact === "call" ? "a call" : "WhatsApp"), status: "new", time: "Just now", justAdded: true, note: s.enqMessage.trim(), email: s.enqEmail.trim() }, ...s.enquiries]
+        });
+      },
+      viewInboxFromConfirmation: () => this.setState({ app: "admin", adminPage: "enquiries" }),
+
+      sbLogoStyle: { width: 26, height: 26, borderRadius: 6, background: theme.primary },
+      sbItemStaticStyle: { display: "flex", alignItems: "center", gap: 8, padding: "10px 18px", fontSize: 12, color: "#a8aca3", opacity: 0.55 },
+      sbDashboardStyle: sbStyle(s.adminPage === "dashboard"), sbNewsStyle: sbStyle(s.adminPage === "news"),
+      sbCalendarStyle: sbStyle(s.adminPage === "calendar"), sbEnquiriesStyle: sbStyle(s.adminPage === "enquiries"),
+      goAdminDashboard: () => this.setState({ adminPage: "dashboard" }), goAdminNews: () => this.setState({ adminPage: "news" }),
+      goAdminCalendar: () => this.setState({ adminPage: "calendar" }), goAdminEnquiries: () => this.setState({ adminPage: "enquiries" }),
+      admDashboard: s.adminPage === "dashboard", admNews: s.adminPage === "news", admCalendar: s.adminPage === "calendar", admEnquiries: s.adminPage === "enquiries",
+      hasPending: pendingCount > 0, pendingCount,
+      pendingBadgeStyle: badge("#faeeda", "#ba7517", ""),
+      avatarStyle: { width: 30, height: 30, borderRadius: "50%", background: theme.accentSoft },
+
+      headlineDraft, liveHeadlineDisplay: liveHeadline,
+      onHeadlineChange: (e) => this.setState({ draftHeadline: e.target.value }),
+      headlineInputStyle: { width: "100%", height: 38, borderRadius: 7, border: `1.5px solid ${isDirty ? theme.accent : "#d9dcd6"}`, padding: "0 12px", fontSize: 13, fontWeight: 600, fontFamily: "Inter, sans-serif", boxSizing: "border-box", outline: "none" },
+      heroBadgeText: isDirty ? "Unpublished edit" : "Live",
+      heroBadgeStyle: isDirty ? badge("#e7e6e1", "#5b6d63", "") : badge(theme.accentSoft, theme.ink, ""),
+      publishHeroStyle: { border: "none", background: isDirty ? theme.primary : "#e7e6e1", color: isDirty ? "#fff" : "#8a8f89", fontSize: 12, fontWeight: 800, padding: "10px 18px", borderRadius: 7, cursor: isDirty ? "pointer" : "default" },
+      publishHeroHover: isDirty ? "opacity:0.88" : "",
+      publishHero: () => { if (isDirty) this.setState({ liveHeadline: headlineDraft }); },
+      livePreviewBoxStyle: { minHeight: 100, borderRadius: 8, background: theme.tint, display: "flex", alignItems: "center", padding: "0 16px", fontSize: 15, fontWeight: 800, color: theme.ink },
+
+      newsTitle: s.newsTitle, onNewsTitleChange: (e) => this.setState({ newsTitle: e.target.value }),
+      audPublicStyle: audStyle(s.newsAudience === "public"), audAlumniStyle: audStyle(s.newsAudience === "alumni"), audBothStyle: audStyle(s.newsAudience === "both"),
+      setAudPublic: () => this.setState({ newsAudience: "public" }), setAudAlumni: () => this.setState({ newsAudience: "alumni" }), setAudBoth: () => this.setState({ newsAudience: "both" }),
+      toggleTrackStyle: { width: 36, height: 20, borderRadius: 12, background: s.waOn ? theme.accent : "#d9dcd6", position: "relative", cursor: "pointer" },
+      toggleKnobStyle: { width: 16, height: 16, borderRadius: "50%", background: "#fff", position: "absolute", top: 2, left: s.waOn ? 18 : 2 },
+      toggleWa: () => this.setState({ waOn: !s.waOn }),
+      publishNewsStyle: { border: "none", background: s.newsTitle.trim() ? theme.primary : "#c9cdc5", color: "#fff", fontSize: 12, fontWeight: 800, padding: "10px 18px", borderRadius: 7, cursor: s.newsTitle.trim() ? "pointer" : "default" },
+      publishNewsHover: s.newsTitle.trim() ? "opacity:0.88" : "",
+      publishedBadgeStyle: badge(theme.accentSoft, theme.ink, ""),
+      publishNews: () => {
+        if (!s.newsTitle.trim()) return;
+        this.setState({
+          posts: [{ id: Date.now(), title: s.newsTitle.trim(), date: "Just now", audience: s.newsAudience }, ...s.posts],
+          newsTitle: "", newsAudience: "both", waOn: false
+        });
+      },
+
+      dowLabels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], calendarDays,
+      eventPhotoStyle: { width: "100%", aspectRatio: "16/9", borderRadius: 8, overflow: "hidden", position: "relative" },
+      rsvpPillStyle: badge(theme.accentSoft, theme.ink, ""),
+      rsvpGoing: s.rsvpGoing, rsvpMaybe: s.rsvpMaybe,
+      rsvpBtnText: s.rsvped ? "You're going \u2713" : "RSVP: I'm going",
+      rsvpBtnStyle: { width: "100%", border: "none", background: s.rsvped ? theme.accentSoft : theme.primary, color: s.rsvped ? theme.ink : "#fff", fontSize: 12, fontWeight: 800, padding: "11px 0", borderRadius: 7, cursor: s.rsvped ? "default" : "pointer" },
+      rsvpBtnHover: s.rsvped ? "" : "opacity:0.88",
+      doRsvp: () => { if (!s.rsvped) this.setState({ rsvpGoing: s.rsvpGoing + 1, rsvped: true }); },
+
+      enquiries
+    };
+  }
+}
+
+</script>
+</body>
+</html>
