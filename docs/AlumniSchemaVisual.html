@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alumni Relations — Schema Register</title>
+<style>
+  :root {
+    --ink: #1b1b2f;
+    --ink-soft: #3a3a52;
+    --paper: #eae6dc;
+    --paper-raised: #f4f1e9;
+    --paper-line: #cfc9b8;
+    --muted: #6b6858;
+    --brass: #8c6a24;
+    --brass-bg: #f0e2bd;
+    --brass-line: #c9a95c;
+    --teal: #205955;
+    --teal-bg: #d9e8e4;
+    --teal-line: #7fa9a3;
+    --success: #2f6b46;
+    --warning: #96631a;
+    --danger: #8c3226;
+    --shadow: 0 1px 0 rgba(27,27,47,0.05), 0 8px 20px -14px rgba(27,27,47,0.35);
+    --radius: 3px;
+    --font-display: Georgia, "Iowan Old Style", "Palatino Linotype", "URW Palladio L", serif;
+    --font-body: -apple-system, "Segoe UI", system-ui, Roboto, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+
+  :root[data-theme="dark"] {
+    --ink: #eae6dc;
+    --ink-soft: #cfc9b8;
+    --paper: #17161f;
+    --paper-raised: #201e29;
+    --paper-line: #3a3849;
+    --muted: #948f7e;
+    --brass: #e0bd6e;
+    --brass-bg: #3a2f14;
+    --brass-line: #7a5f26;
+    --teal: #8fc9c1;
+    --teal-bg: #143231;
+    --teal-line: #2c5f59;
+    --success: #7fcf9a;
+    --warning: #e0aa5c;
+    --danger: #e2897a;
+    --shadow: 0 1px 0 rgba(0,0,0,0.3), 0 8px 24px -14px rgba(0,0,0,0.6);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #eae6dc;
+      --ink-soft: #cfc9b8;
+      --paper: #17161f;
+      --paper-raised: #201e29;
+      --paper-line: #3a3849;
+      --muted: #948f7e;
+      --brass: #e0bd6e;
+      --brass-bg: #3a2f14;
+      --brass-line: #7a5f26;
+      --teal: #8fc9c1;
+      --teal-bg: #143231;
+      --teal-line: #2c5f59;
+      --success: #7fcf9a;
+      --warning: #e0aa5c;
+      --danger: #e2897a;
+      --shadow: 0 1px 0 rgba(0,0,0,0.3), 0 8px 24px -14px rgba(0,0,0,0.6);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+
+  a { color: var(--teal); }
+
+  .sheet {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 clamp(16px, 4vw, 48px) 96px;
+  }
+
+  /* ---------- Masthead ---------- */
+  .masthead {
+    padding: clamp(28px, 5vw, 56px) 0 28px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .masthead__eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .masthead__eyebrow .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--brass); flex: none; }
+  h1.masthead__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(30px, 4.6vw, 46px);
+    letter-spacing: -0.01em;
+    margin: 0 0 10px;
+    text-wrap: balance;
+  }
+  .masthead__sub {
+    max-width: 62ch;
+    color: var(--ink-soft);
+    font-size: 15.5px;
+    margin: 0;
+  }
+  .masthead__sub code { font-family: var(--font-mono); font-size: 0.92em; background: var(--paper-raised); padding: 0.05em 0.35em; border-radius: 2px; border: 1px solid var(--paper-line); }
+
+  .ledger-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--paper-line);
+    border: 1px solid var(--paper-line);
+    margin-top: 24px;
+  }
+  .ledger-stats__cell {
+    background: var(--paper-raised);
+    padding: 14px 16px;
+  }
+  .ledger-stats__num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 26px;
+    color: var(--brass);
+    display: block;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .ledger-stats__label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* ---------- Jump nav ---------- */
+  .jumpnav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--paper);
+    border-bottom: 1px solid var(--paper-line);
+    padding: 10px clamp(16px, 4vw, 48px);
+    margin: 0 calc(-1 * clamp(16px, 4vw, 48px));
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+  }
+  .jumpnav a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    padding: 5px 10px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+  }
+  .jumpnav a:hover, .jumpnav a:focus-visible {
+    border-color: var(--paper-line);
+    color: var(--ink);
+    background: var(--paper-raised);
+  }
+  .jumpnav a:focus-visible { outline: 2px solid var(--teal); outline-offset: 1px; }
+
+  /* ---------- Section ---------- */
+  .section { padding-top: 52px; scroll-margin-top: 56px; }
+  .section__head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    border-bottom: 1px solid var(--paper-line);
+    padding-bottom: 10px;
+    margin-bottom: 22px;
+  }
+  .section__num {
+    font-family: var(--font-mono);
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .section__head h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 23px;
+    margin: 0;
+  }
+  .section__desc {
+    color: var(--muted);
+    font-size: 13.5px;
+    margin: -12px 0 22px;
+    max-width: 68ch;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 18px;
+    align-items: start;
+  }
+
+  /* ---------- Table card ---------- */
+  .tcard {
+    background: var(--paper-raised);
+    border: 1px solid var(--paper-line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    break-inside: avoid;
+  }
+  .tcard__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    background: var(--ink);
+    color: var(--paper);
+  }
+  :root[data-theme="dark"] .tcard__head, :root:not([data-theme="light"]) .tcard__head { background: #0f0e15; }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .tcard__head { background: var(--ink); color: var(--paper); } }
+  .tcard__name {
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    letter-spacing: 0.02em;
+  }
+  .tcard__badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.75;
+  }
+  .tcard__rows { width: 100%; border-collapse: collapse; }
+  .tcard__rows tr { border-bottom: 1px solid var(--paper-line); }
+  .tcard__rows tr:last-child { border-bottom: none; }
+  .tcard__rows td {
+    padding: 7px 14px;
+    font-size: 12.5px;
+    vertical-align: top;
+  }
+  .col-name {
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    width: 1%;
+    padding-right: 10px !important;
+  }
+  .col-name.is-pk { color: var(--brass); font-weight: 700; }
+  .col-name.is-fk { color: var(--teal); }
+  .col-type {
+    font-family: var(--font-mono);
+    color: var(--muted);
+    white-space: nowrap;
+    width: 1%;
+  }
+  .col-notes { color: var(--ink-soft); }
+  .col-notes .chip { margin-right: 4px; }
+
+  .chip {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.03em;
+    padding: 1px 5px;
+    border-radius: 2px;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+  .chip--pk { background: var(--brass-bg); color: var(--brass); border: 1px solid var(--brass-line); }
+  .chip--fk { background: var(--teal-bg); color: var(--teal); border: 1px solid var(--teal-line); }
+  .chip--uniq { background: var(--paper); color: var(--ink-soft); border: 1px solid var(--paper-line); }
+  .chip--check { color: var(--muted); border: 1px dashed var(--paper-line); }
+
+  .tcard__foot {
+    padding: 9px 14px;
+    border-top: 1px solid var(--paper-line);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--paper);
+  }
+  .tcard__foot b { color: var(--ink-soft); font-weight: 600; }
+
+  .tcard.is-stub { opacity: 0.82; }
+  .tcard.is-stub .tcard__head { background: var(--paper-line); color: var(--ink); }
+
+  /* ---------- Relations table ---------- */
+  .diagram-frame {
+    border: 1px solid var(--paper-line);
+    background:
+      linear-gradient(var(--paper-line) 1px, transparent 1px) 0 0 / 100% 28px,
+      var(--paper-raised);
+    padding: 8px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .rel-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--paper-raised);
+  }
+  .rel-table th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--ink);
+  }
+  .rel-table td {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--paper-line);
+    white-space: nowrap;
+  }
+  .rel-table tbody tr:last-child td { border-bottom: none; }
+  .rel-table .rel-parent { color: var(--ink-soft); }
+  .rel-table .rel-child { color: var(--teal); font-weight: 600; }
+  .rel-table .rel-arrow { color: var(--brass); text-align: center; width: 1%; }
+  .rel-table .rel-note { color: var(--muted); font-size: 11px; margin-left: 6px; }
+  @media (max-width: 640px) {
+    .diagram-frame { overflow-x: auto; }
+    .rel-table { min-width: 560px; }
+  }
+
+  /* ---------- Roadmap ---------- */
+  .roadmap-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+  }
+  .roadmap-item {
+    border: 1px dashed var(--paper-line);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    background: transparent;
+    break-inside: avoid;
+  }
+  .roadmap-item__name {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink-soft);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .roadmap-item__desc { font-size: 12.5px; color: var(--muted); }
+
+  /* ---------- Legend ---------- */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 18px 0 26px;
+    align-items: center;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+  footer.colophon {
+    margin-top: 64px;
+    padding-top: 18px;
+    border-top: 2px solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media print {
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .jumpnav { position: static; margin: 16px 0; }
+    .section { break-before: page; padding-top: 0; }
+    .section:first-of-type { break-before: auto; }
+    a { text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header class="masthead">
+    <div class="masthead__eyebrow"><span class="dot"></span> EduSaaS Africa — Alumni Relations Module</div>
+    <h1 class="masthead__title">Schema Register</h1>
+    <p class="masthead__sub">
+      Visual reference for the Alumni Relations tables defined in <code>edusaasSchemas.md</code> —
+      PostgreSQL DDL, row-level multi-tenant via <code>school_id</code>. <code>schools</code> and <code>users</code>
+      are the core platform tables, defined once in that same document.
+    </p>
+    <div class="ledger-stats">
+      <div class="ledger-stats__cell"><span class="ledger-stats__num">10</span><span class="ledger-stats__label">Alumni tables</span></div>
+      <div class="ledger-stats__cell"><span class="ledger-stats__num">2</span><span class="ledger-stats__label">Stub dependencies</span></div>
+      <div class="ledger-stats__cell"><span class="ledger-stats__num">5</span><span class="ledger-stats__label">Feature domains</span></div>
+      <div class="ledger-stats__cell"><span class="ledger-stats__num">5</span><span class="ledger-stats__label">V2 tables, unspecced</span></div>
+    </div>
+  </header>
+
+  <nav class="jumpnav" aria-label="Jump to section">
+    <a href="#relations">Relations</a>
+    <a href="#directory">Directory</a>
+    <a href="#classgroups">Class groups</a>
+    <a href="#events">Events</a>
+    <a href="#mentorship">Mentorship</a>
+    <a href="#donations">Donations</a>
+    <a href="#roadmap">V2 roadmap</a>
+  </nav>
+
+  <div class="legend">
+    <span><span class="chip chip--pk">pk</span> primary key</span>
+    <span><span class="chip chip--fk">fk</span> foreign key → target</span>
+    <span><span class="chip chip--uniq">uniq</span> unique constraint</span>
+    <span><span class="chip chip--check">check</span> value constraint</span>
+    <span style="color:var(--ink-soft)">bold mono = not null</span>
+  </div>
+
+  <section class="section" id="relations">
+    <div class="section__head"><span class="section__num">§1</span><h2>How the tables relate</h2></div>
+    <p class="section__desc">Every alumni-facing table traces back to a school. Child tables carry a denormalized <code>school_id</code> for direct tenant-scoped queries even where it's derivable through a join — see the DDL doc §2.</p>
+    <div class="diagram-frame">
+      <table class="rel-table">
+        <thead>
+          <tr><th>Parent</th><th></th><th>Child</th><th>Via column</th><th>Cardinality</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="rel-parent">schools</td><td class="rel-arrow">&rarr;</td><td class="rel-child">alumni_profiles</td><td>school_id</td><td>1 &ndash; many</td></tr>
+          <tr><td class="rel-parent">users</td><td class="rel-arrow">&rarr;</td><td class="rel-child">alumni_profiles</td><td>user_id</td><td>1 &ndash; 1</td></tr>
+          <tr><td class="rel-parent">alumni_profiles</td><td class="rel-arrow">&rarr;</td><td class="rel-child">alumni_verification_requests</td><td>alumni_profile_id</td><td>1 &ndash; many<span class="rel-note">(1 pending)</span></td></tr>
+          <tr><td class="rel-parent">schools</td><td class="rel-arrow">&rarr;</td><td class="rel-child">class_groups</td><td>school_id</td><td>1 &ndash; many</td></tr>
+          <tr><td class="rel-parent">class_groups</td><td class="rel-arrow">&rarr;</td><td class="rel-child">class_group_posts</td><td>class_group_id</td><td>1 &ndash; many</td></tr>
+          <tr><td class="rel-parent">class_group_posts</td><td class="rel-arrow">&rarr;</td><td class="rel-child">class_group_post_reactions</td><td>post_id</td><td>1 &ndash; many</td></tr>
+          <tr><td class="rel-parent">users</td><td class="rel-arrow">&rarr;</td><td class="rel-child">class_group_posts</td><td>author_id</td><td>1 &ndash; many</td></tr>
+          <tr><td class="rel-parent">users</td><td class="rel-arrow">&rarr;</td><td class="rel-child">class_group_post_reactions</td><td>user_id</td><td>1 &ndash; many</td></tr>
+          <tr><td class="rel-parent">schools</td><td class="rel-arrow">&rarr;</td><td class="rel-child">events</td><td>school_id</td><td>1 &ndash; many</td></tr>
+          <tr><td class="rel-parent">events</td><td class="rel-arrow">&rarr;</td><td class="rel-child">event_rsvps</td><td>event_id</td><td>1 &ndash; many</td></tr>
+          <tr><td class="rel-parent">users</td><td class="rel-arrow">&rarr;</td><td class="rel-child">event_rsvps</td><td>user_id</td><td>1 &ndash; many</td></tr>
+          <tr><td class="rel-parent">alumni_profiles</td><td class="rel-arrow">&rarr;</td><td class="rel-child">mentorship_connections</td><td>mentor_id</td><td>1 &ndash; many</td></tr>
+          <tr><td class="rel-parent">users</td><td class="rel-arrow">&rarr;</td><td class="rel-child">mentorship_connections</td><td>requester_id</td><td>1 &ndash; many</td></tr>
+          <tr><td class="rel-parent">schools</td><td class="rel-arrow">&rarr;</td><td class="rel-child">donation_campaigns</td><td>school_id</td><td>1 &ndash; many</td></tr>
+          <tr><td class="rel-parent">donation_campaigns</td><td class="rel-arrow">&rarr;</td><td class="rel-child">donations</td><td>campaign_id</td><td>1 &ndash; many</td></tr>
+          <tr><td class="rel-parent">users</td><td class="rel-arrow">&rarr;</td><td class="rel-child">donations</td><td>donor_id</td><td>1 &ndash; many</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" id="directory">
+    <div class="section__head"><span class="section__num">§2</span><h2>Alumni Directory</h2></div>
+    <p class="section__desc">The core entity — one profile per alumnus, plus the admin verification queue behind it. Stub dependencies shown alongside for FK context.</p>
+    <div class="card-grid">
+
+      <article class="tcard is-stub">
+        <div class="tcard__head"><span class="tcard__name">schools</span><span class="tcard__badge">stub · other module</span></div>
+        <table class="tcard__rows">
+          <tr><td class="col-name is-pk">id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--pk">pk</span></td></tr>
+          <tr><td class="col-name">name</td><td class="col-type">text</td><td class="col-notes">not null</td></tr>
+          <tr><td class="col-name">slug</td><td class="col-type">text</td><td class="col-notes"><span class="chip chip--uniq">uniq</span> not null</td></tr>
+          <tr><td class="col-name">country</td><td class="col-type">varchar(2)</td><td class="col-notes">ISO alpha-2: GM · ZW</td></tr>
+          <tr><td class="col-name">created_at</td><td class="col-type">timestamptz</td><td class="col-notes">default now()</td></tr>
+        </table>
+      </article>
+
+      <article class="tcard is-stub">
+        <div class="tcard__head"><span class="tcard__name">users</span><span class="tcard__badge">stub · other module</span></div>
+        <table class="tcard__rows">
+          <tr><td class="col-name is-pk">id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--pk">pk</span></td></tr>
+          <tr><td class="col-name">phone</td><td class="col-type">text</td><td class="col-notes"><span class="chip chip--uniq">uniq</span> E.164</td></tr>
+          <tr><td class="col-name">name</td><td class="col-type">text</td><td class="col-notes">nullable</td></tr>
+          <tr><td class="col-name">role</td><td class="col-type">varchar(20)</td><td class="col-notes">alumni · school_admin · super_admin</td></tr>
+          <tr><td class="col-name">avatar_url</td><td class="col-type">text</td><td class="col-notes">nullable</td></tr>
+          <tr><td class="col-name">created_at</td><td class="col-type">timestamptz</td><td class="col-notes">default now()</td></tr>
+        </table>
+      </article>
+
+      <article class="tcard">
+        <div class="tcard__head"><span class="tcard__name">alumni_profiles</span><span class="tcard__badge">core entity</span></div>
+        <table class="tcard__rows">
+          <tr><td class="col-name is-pk">id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--pk">pk</span></td></tr>
+          <tr><td class="col-name is-fk">user_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → users.id</span> <span class="chip chip--uniq">uniq</span></td></tr>
+          <tr><td class="col-name is-fk">school_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → schools.id</span></td></tr>
+          <tr><td class="col-name">graduation_year</td><td class="col-type">smallint</td><td class="col-notes"><span class="chip chip--check">check</span> 1950–next yr</td></tr>
+          <tr><td class="col-name">class_section</td><td class="col-type">varchar(100)</td><td class="col-notes">e.g. "Upper 6 Arts"</td></tr>
+          <tr><td class="col-name">current_city</td><td class="col-type">varchar(120)</td><td class="col-notes">nullable</td></tr>
+          <tr><td class="col-name">current_country</td><td class="col-type">varchar(2)</td><td class="col-notes">ISO alpha-2</td></tr>
+          <tr><td class="col-name">profession</td><td class="col-type">varchar(150)</td><td class="col-notes">nullable</td></tr>
+          <tr><td class="col-name">employer</td><td class="col-type">varchar(150)</td><td class="col-notes">nullable</td></tr>
+          <tr><td class="col-name">bio</td><td class="col-type">text</td><td class="col-notes">nullable</td></tr>
+          <tr><td class="col-name">linkedin_url</td><td class="col-type">text</td><td class="col-notes">nullable</td></tr>
+          <tr><td class="col-name">verification_status</td><td class="col-type">varchar(20)</td><td class="col-notes"><span class="chip chip--check">check</span> unverified·pending·verified·rejected</td></tr>
+          <tr><td class="col-name">verification_answer</td><td class="col-type">text</td><td class="col-notes">honor-system answer</td></tr>
+          <tr><td class="col-name">is_mentor</td><td class="col-type">boolean</td><td class="col-notes">default false</td></tr>
+          <tr><td class="col-name">mentor_areas</td><td class="col-type">text[]</td><td class="col-notes">default '{}'</td></tr>
+          <tr><td class="col-name">visibility</td><td class="col-type">jsonb</td><td class="col-notes">per-field privacy</td></tr>
+          <tr><td class="col-name">deleted_at</td><td class="col-type">timestamptz</td><td class="col-notes">soft delete</td></tr>
+          <tr><td class="col-name">created_at / updated_at</td><td class="col-type">timestamptz</td><td class="col-notes">default now()</td></tr>
+        </table>
+        <div class="tcard__foot"><b>indexes</b> (school_id, graduation_year) · (school_id, current_city) · (school_id) where is_mentor</div>
+      </article>
+
+      <article class="tcard">
+        <div class="tcard__head"><span class="tcard__name">alumni_verification_requests</span><span class="tcard__badge">review log</span></div>
+        <table class="tcard__rows">
+          <tr><td class="col-name is-pk">id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--pk">pk</span></td></tr>
+          <tr><td class="col-name is-fk">alumni_profile_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → alumni_profiles.id</span></td></tr>
+          <tr><td class="col-name is-fk">school_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → schools.id</span> denorm.</td></tr>
+          <tr><td class="col-name">verification_answer_snap</td><td class="col-type">text</td><td class="col-notes">not null</td></tr>
+          <tr><td class="col-name">status</td><td class="col-type">varchar(20)</td><td class="col-notes"><span class="chip chip--check">check</span> pending·approved·rejected</td></tr>
+          <tr><td class="col-name is-fk">reviewed_by</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → users.id</span> nullable</td></tr>
+          <tr><td class="col-name">reviewer_notes</td><td class="col-type">text</td><td class="col-notes">nullable</td></tr>
+          <tr><td class="col-name">created_at / reviewed_at</td><td class="col-type">timestamptz</td><td class="col-notes">reviewed_at nullable</td></tr>
+        </table>
+        <div class="tcard__foot"><b>uniq</b> (alumni_profile_id) where status='pending' &nbsp;·&nbsp; <b>index</b> (school_id, status)</div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="section" id="classgroups">
+    <div class="section__head"><span class="section__num">§3</span><h2>Class Year Groups</h2></div>
+    <p class="section__desc">One group per (school, graduation year). Membership is implicit — no membership table — a profile belongs if its year matches.</p>
+    <div class="card-grid">
+
+      <article class="tcard">
+        <div class="tcard__head"><span class="tcard__name">class_groups</span></div>
+        <table class="tcard__rows">
+          <tr><td class="col-name is-pk">id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--pk">pk</span></td></tr>
+          <tr><td class="col-name is-fk">school_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → schools.id</span></td></tr>
+          <tr><td class="col-name">graduation_year</td><td class="col-type">smallint</td><td class="col-notes">not null</td></tr>
+          <tr><td class="col-name">name</td><td class="col-type">varchar(50)</td><td class="col-notes">auto: "Class of 2015"</td></tr>
+          <tr><td class="col-name">created_at</td><td class="col-type">timestamptz</td><td class="col-notes">default now()</td></tr>
+        </table>
+        <div class="tcard__foot"><b>uniq</b> (school_id, graduation_year)</div>
+      </article>
+
+      <article class="tcard">
+        <div class="tcard__head"><span class="tcard__name">class_group_posts</span></div>
+        <table class="tcard__rows">
+          <tr><td class="col-name is-pk">id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--pk">pk</span></td></tr>
+          <tr><td class="col-name is-fk">class_group_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → class_groups.id</span></td></tr>
+          <tr><td class="col-name is-fk">school_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → schools.id</span> denorm.</td></tr>
+          <tr><td class="col-name is-fk">author_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → users.id</span></td></tr>
+          <tr><td class="col-name">content</td><td class="col-type">text</td><td class="col-notes"><span class="chip chip--check">check</span> ≤ 2000 chars</td></tr>
+          <tr><td class="col-name">image_url</td><td class="col-type">text</td><td class="col-notes">nullable</td></tr>
+          <tr><td class="col-name">deleted_at</td><td class="col-type">timestamptz</td><td class="col-notes">soft delete, moderation</td></tr>
+          <tr><td class="col-name">created_at / updated_at</td><td class="col-type">timestamptz</td><td class="col-notes">default now()</td></tr>
+        </table>
+        <div class="tcard__foot"><b>index</b> (class_group_id, created_at desc) where not deleted</div>
+      </article>
+
+      <article class="tcard">
+        <div class="tcard__head"><span class="tcard__name">class_group_post_reactions</span></div>
+        <table class="tcard__rows">
+          <tr><td class="col-name is-pk">id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--pk">pk</span></td></tr>
+          <tr><td class="col-name is-fk">post_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → class_group_posts.id</span></td></tr>
+          <tr><td class="col-name is-fk">user_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → users.id</span></td></tr>
+          <tr><td class="col-name">type</td><td class="col-type">varchar(20)</td><td class="col-notes">default 'like'</td></tr>
+          <tr><td class="col-name">created_at</td><td class="col-type">timestamptz</td><td class="col-notes">default now()</td></tr>
+        </table>
+        <div class="tcard__foot"><b>uniq</b> (post_id, user_id) — no school_id, always reached via post_id</div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="section" id="events">
+    <div class="section__head"><span class="section__num">§4</span><h2>Events</h2></div>
+    <p class="section__desc">Reunions, career days, fundraisers — with RSVP tracking.</p>
+    <div class="card-grid">
+
+      <article class="tcard">
+        <div class="tcard__head"><span class="tcard__name">events</span></div>
+        <table class="tcard__rows">
+          <tr><td class="col-name is-pk">id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--pk">pk</span></td></tr>
+          <tr><td class="col-name is-fk">school_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → schools.id</span></td></tr>
+          <tr><td class="col-name is-fk">created_by</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → users.id</span></td></tr>
+          <tr><td class="col-name">title</td><td class="col-type">varchar(200)</td><td class="col-notes">not null</td></tr>
+          <tr><td class="col-name">description</td><td class="col-type">text</td><td class="col-notes">nullable</td></tr>
+          <tr><td class="col-name">event_date</td><td class="col-type">timestamptz</td><td class="col-notes">not null</td></tr>
+          <tr><td class="col-name">end_date</td><td class="col-type">timestamptz</td><td class="col-notes"><span class="chip chip--check">check</span> ≥ event_date</td></tr>
+          <tr><td class="col-name">location</td><td class="col-type">varchar(255)</td><td class="col-notes">nullable</td></tr>
+          <tr><td class="col-name">location_type</td><td class="col-type">varchar(20)</td><td class="col-notes">physical · virtual · hybrid</td></tr>
+          <tr><td class="col-name">virtual_link</td><td class="col-type">text</td><td class="col-notes">nullable</td></tr>
+          <tr><td class="col-name">cover_image_url</td><td class="col-type">text</td><td class="col-notes">nullable</td></tr>
+          <tr><td class="col-name">is_published</td><td class="col-type">boolean</td><td class="col-notes">default false</td></tr>
+          <tr><td class="col-name">created_at / updated_at</td><td class="col-type">timestamptz</td><td class="col-notes">default now()</td></tr>
+        </table>
+        <div class="tcard__foot"><b>index</b> (school_id, event_date) where published</div>
+      </article>
+
+      <article class="tcard">
+        <div class="tcard__head"><span class="tcard__name">event_rsvps</span></div>
+        <table class="tcard__rows">
+          <tr><td class="col-name is-pk">id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--pk">pk</span></td></tr>
+          <tr><td class="col-name is-fk">event_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → events.id</span></td></tr>
+          <tr><td class="col-name is-fk">school_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → schools.id</span> denorm.</td></tr>
+          <tr><td class="col-name is-fk">user_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → users.id</span></td></tr>
+          <tr><td class="col-name">status</td><td class="col-type">varchar(20)</td><td class="col-notes"><span class="chip chip--check">check</span> going·maybe·not_going</td></tr>
+          <tr><td class="col-name">created_at / updated_at</td><td class="col-type">timestamptz</td><td class="col-notes">default now()</td></tr>
+        </table>
+        <div class="tcard__foot"><b>uniq</b> (event_id, user_id) &nbsp;·&nbsp; <b>index</b> (event_id, status)</div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="section" id="mentorship">
+    <div class="section__head"><span class="section__num">§5</span><h2>Mentorship <span style="font-family:var(--font-mono);font-size:13px;color:var(--muted);font-weight:400;">— V1.1</span></h2></div>
+    <p class="section__desc">Opt-in fields live on <code>alumni_profiles</code> (is_mentor, mentor_areas); this table backs the request/accept flow.</p>
+    <div class="card-grid">
+
+      <article class="tcard">
+        <div class="tcard__head"><span class="tcard__name">mentorship_connections</span></div>
+        <table class="tcard__rows">
+          <tr><td class="col-name is-pk">id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--pk">pk</span></td></tr>
+          <tr><td class="col-name is-fk">school_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → schools.id</span> denorm.</td></tr>
+          <tr><td class="col-name is-fk">mentor_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → alumni_profiles.id</span></td></tr>
+          <tr><td class="col-name is-fk">requester_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → users.id</span></td></tr>
+          <tr><td class="col-name">area</td><td class="col-type">varchar(50)</td><td class="col-notes">career · university · tutoring · general</td></tr>
+          <tr><td class="col-name">message</td><td class="col-type">text</td><td class="col-notes">nullable</td></tr>
+          <tr><td class="col-name">status</td><td class="col-type">varchar(20)</td><td class="col-notes"><span class="chip chip--check">check</span> pending·accepted·declined·closed</td></tr>
+          <tr><td class="col-name">created_at / updated_at</td><td class="col-type">timestamptz</td><td class="col-notes">default now()</td></tr>
+        </table>
+        <div class="tcard__foot"><b>index</b> (mentor_id, status) &nbsp;·&nbsp; app layer enforces mentor_id.is_mentor = true</div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="section" id="donations">
+    <div class="section__head"><span class="section__num">§6</span><h2>Donations <span style="font-family:var(--font-mono);font-size:13px;color:var(--muted);font-weight:400;">— V1.1</span></h2></div>
+    <p class="section__desc">Amounts stored as integers in smallest currency unit. Financial rows use <code>ON DELETE RESTRICT</code>, not cascade — money trails don't get deleted by accident.</p>
+    <div class="card-grid">
+
+      <article class="tcard">
+        <div class="tcard__head"><span class="tcard__name">donation_campaigns</span></div>
+        <table class="tcard__rows">
+          <tr><td class="col-name is-pk">id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--pk">pk</span></td></tr>
+          <tr><td class="col-name is-fk">school_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → schools.id</span></td></tr>
+          <tr><td class="col-name">title</td><td class="col-type">varchar(200)</td><td class="col-notes">not null</td></tr>
+          <tr><td class="col-name">description</td><td class="col-type">text</td><td class="col-notes">nullable</td></tr>
+          <tr><td class="col-name">goal_amount</td><td class="col-type">integer</td><td class="col-notes"><span class="chip chip--check">check</span> &gt; 0</td></tr>
+          <tr><td class="col-name">currency</td><td class="col-type">varchar(3)</td><td class="col-notes"><span class="chip chip--check">check</span> GMD·ZWL·USD</td></tr>
+          <tr><td class="col-name">deadline</td><td class="col-type">timestamptz</td><td class="col-notes">nullable</td></tr>
+          <tr><td class="col-name">is_active</td><td class="col-type">boolean</td><td class="col-notes">default true</td></tr>
+          <tr><td class="col-name">created_at / updated_at</td><td class="col-type">timestamptz</td><td class="col-notes">default now()</td></tr>
+        </table>
+      </article>
+
+      <article class="tcard">
+        <div class="tcard__head"><span class="tcard__name">donations</span></div>
+        <table class="tcard__rows">
+          <tr><td class="col-name is-pk">id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--pk">pk</span></td></tr>
+          <tr><td class="col-name is-fk">campaign_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → donation_campaigns.id</span> restrict</td></tr>
+          <tr><td class="col-name is-fk">school_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → schools.id</span> denorm., restrict</td></tr>
+          <tr><td class="col-name is-fk">donor_id</td><td class="col-type">uuid</td><td class="col-notes"><span class="chip chip--fk">fk → users.id</span></td></tr>
+          <tr><td class="col-name">amount</td><td class="col-type">integer</td><td class="col-notes"><span class="chip chip--check">check</span> &gt; 0</td></tr>
+          <tr><td class="col-name">currency</td><td class="col-type">varchar(3)</td><td class="col-notes">not null</td></tr>
+          <tr><td class="col-name">payment_method</td><td class="col-type">varchar(20)</td><td class="col-notes">wave·ecocash·paynow·stripe</td></tr>
+          <tr><td class="col-name">payment_ref</td><td class="col-type">varchar(255)</td><td class="col-notes"><span class="chip chip--uniq">uniq</span> idempotency key</td></tr>
+          <tr><td class="col-name">is_anonymous</td><td class="col-type">boolean</td><td class="col-notes">default false</td></tr>
+          <tr><td class="col-name">status</td><td class="col-type">varchar(20)</td><td class="col-notes">pending·completed·failed·refunded</td></tr>
+          <tr><td class="col-name">created_at / updated_at</td><td class="col-type">timestamptz</td><td class="col-notes">default now()</td></tr>
+        </table>
+        <div class="tcard__foot"><b>index</b> (campaign_id, status)</div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="section" id="roadmap">
+    <div class="section__head"><span class="section__num">§7</span><h2>V2 roadmap — names only</h2></div>
+    <p class="section__desc">Product decisions behind these (messaging model, chapter geography, moderation) aren't settled — no DDL yet, just placeholders.</p>
+    <div class="roadmap-list">
+      <div class="roadmap-item"><span class="roadmap-item__name">job_postings</span><span class="roadmap-item__desc">A9 — alumni post job opportunities</span></div>
+      <div class="roadmap-item"><span class="roadmap-item__name">alumni_chapters / alumni_chapter_memberships</span><span class="roadmap-item__desc">A10 — location-based alumni groups</span></div>
+      <div class="roadmap-item"><span class="roadmap-item__name">direct_messages</span><span class="roadmap-item__desc">A11 — in-platform messaging</span></div>
+      <div class="roadmap-item"><span class="roadmap-item__name">broadcast_messages</span><span class="roadmap-item__desc">A14 — SMS/WhatsApp bulk broadcast</span></div>
+      <div class="roadmap-item"><span class="roadmap-item__name">(analytics: views, not tables)</span><span class="roadmap-item__desc">A13 — likely read-model over existing tables</span></div>
+    </div>
+  </section>
+
+  <footer class="colophon">
+    <span>edusaasSchemas.md · EduSaaS Africa</span>
+    <span>PostgreSQL · row-level tenant isolation via school_id</span>
+  </footer>
+
+</div>
+</body>
+</html>
