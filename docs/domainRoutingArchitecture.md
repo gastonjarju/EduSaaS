@@ -88,10 +88,10 @@ This keeps DNS/SSL entirely inside Vercel, which is a natural fit since the fron
 
 ## 5. Request routing (tenant resolution)
 
-Runs in Next.js Middleware, at the edge, before any page renders:
+Runs in Next.js Proxy (`proxy.ts` — the Next.js 16 name for Middleware) before any page renders. Implemented in `proxy.ts` and `lib/tenant/`:
 
 1. Read the `Host` header from the incoming request.
-2. **If it ends in `.edusaas.africa`:** the subdomain segment *is* the school slug — no lookup needed, rewrite directly to the internal route (e.g. `/_sites/[slug]/...`).
+2. **If it ends in `.edusaas.africa`:** the subdomain segment *is* the school slug — no lookup needed, rewrite directly to the internal route `/sites/[slug]/...` (not `/_sites`: underscore-prefixed folders are private and non-routable in the App Router).
 3. **Otherwise (custom domain):** look up `custom_domain → slug` in a fast edge-readable store. Don't hit Django/Postgres per request — sync active custom-domain mappings into **Vercel Edge Config** (or a Redis-backed edge cache) whenever `domain_status` flips to `active`. Edge Config reads are sub-millisecond and designed for exactly this "domain → tenant" lookup pattern.
 4. Rewrite the request to the shared dynamic route, passing the resolved slug. The page then fetches that school's `SchoolProfile` + `content_blocks` from the Django API (cached/ISR'd — no need to refetch on every request, revalidate on save).
 5. Unresolvable host (not in Edge Config, not a valid subdomain) → a clear 404/"school not found" page, not a generic Vercel error.
