@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import { getViewer } from "@/lib/auth/session";
 import { isUuid } from "@/lib/format";
 import { getSchoolBySlug } from "@/lib/schools";
+import { REJECT_CONFIRM_OVER } from "./reviewRules";
 import { BULK_LIMIT, idsMatching, recordDecisions, REVIEW_STATUSES, type ReviewStatus } from "./verification";
 
 type Decision = "verified" | "rejected";
@@ -51,6 +52,13 @@ export async function reviewSelected(slug: string, formData: FormData) {
       : formData.getAll("profileIds").map(String).filter(isUuid).slice(0, BULK_LIMIT);
   if (!isDecision(decision) || ids.length === 0) {
     back.set("bulk", "none");
+    redirect(`/admin/alumni?${back}`);
+  }
+
+  // Large rejections must be confirmed (the bar asks; enforced here too)
+  if (decision === "rejected" && ids.length > REJECT_CONFIRM_OVER && formData.get("confirmed") !== "1") {
+    back.set("bulk", "confirm");
+    back.set("n", String(ids.length));
     redirect(`/admin/alumni?${back}`);
   }
 

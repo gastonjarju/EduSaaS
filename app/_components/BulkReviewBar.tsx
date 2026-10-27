@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { REJECT_CONFIRM_OVER } from "@/lib/alumni/reviewRules";
 
 type Props = {
   formId: string; // the bulk form; row checkboxes use form={formId}
@@ -20,6 +21,7 @@ export default function BulkReviewBar({ formId, pageCount, total, canVerify, can
   const [selected, setSelected] = useState(0);
   const [allMatching, setAllMatching] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [confirming, setConfirming] = useState(false); // large-reject confirmation open
   const selectAll = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -27,6 +29,7 @@ export default function BulkReviewBar({ formId, pageCount, total, canVerify, can
       const checked = rowBoxes(formId).filter((b) => b.checked).length;
       setSelected(checked);
       setHydrated(true);
+      setConfirming(false); // selection changed: ask again
       if (checked < pageCount) setAllMatching(false);
       if (selectAll.current) {
         selectAll.current.checked = checked > 0 && checked === pageCount;
@@ -49,6 +52,7 @@ export default function BulkReviewBar({ formId, pageCount, total, canVerify, can
   function toggleAll(checked: boolean) {
     for (const b of rowBoxes(formId)) b.checked = checked;
     setSelected(checked ? pageCount : 0);
+    setConfirming(false);
     if (!checked) setAllMatching(false);
     if (selectAll.current) selectAll.current.indeterminate = false;
   }
@@ -59,6 +63,7 @@ export default function BulkReviewBar({ formId, pageCount, total, canVerify, can
   const disabled = hydrated && count === 0;
   const button = "h-12 flex-1 whitespace-nowrap rounded-md px-4 font-semibold disabled:opacity-50 sm:flex-none";
   const suffix = count > 0 ? ` (${count})` : "";
+  const needsConfirm = hydrated && count > REJECT_CONFIRM_OVER;
 
   return (
     <div className="space-y-2 rounded-xl border border-line bg-white p-3">
@@ -82,12 +87,24 @@ export default function BulkReviewBar({ formId, pageCount, total, canVerify, can
               {suffix}
             </button>
           )}
-          {canReject && (
-            <button form={formId} name="decision" value="rejected" disabled={disabled} className={`${button} border border-line-strong bg-white`}>
-              Reject<span className="hidden sm:inline"> selected</span>
-              {suffix}
-            </button>
-          )}
+          {canReject &&
+            (needsConfirm ? (
+              // Over the limit: open the confirmation instead of submitting
+              <button
+                type="button"
+                onClick={() => setConfirming(true)}
+                aria-expanded={confirming}
+                className={`${button} border border-line-strong bg-white`}
+              >
+                Reject<span className="hidden sm:inline"> selected</span>
+                {suffix}
+              </button>
+            ) : (
+              <button form={formId} name="decision" value="rejected" disabled={disabled} className={`${button} border border-line-strong bg-white`}>
+                Reject<span className="hidden sm:inline"> selected</span>
+                {suffix}
+              </button>
+            ))}
         </div>
       </div>
       {selected === pageCount && pageCount > 0 && total > pageCount && (
@@ -102,12 +119,45 @@ export default function BulkReviewBar({ formId, pageCount, total, canVerify, can
           ) : (
             <>
               All {pageCount} on this page are selected.{" "}
-              <button type="button" onClick={() => setAllMatching(true)} className="text-accent-ink underline">
+              <button
+                type="button"
+                onClick={() => {
+                  setAllMatching(true);
+                  setConfirming(false);
+                }}
+                className="text-accent-ink underline"
+              >
                 Select all {total} in this tab
               </button>
             </>
           )}
         </p>
+      )}
+      {confirming && needsConfirm && (
+        <div role="alertdialog" aria-label="Confirm rejection" className="space-y-3 rounded-lg bg-amber-soft p-3 text-ink">
+          <p>
+            <strong>Reject {count} alumni?</strong> They&apos;ll be hidden from the directory and lose access until you
+            verify them again.
+          </p>
+          <div className="flex gap-2">
+            <input type="hidden" name="confirmed" value="1" form={formId} />
+            <button form={formId} name="decision" value="rejected" className={`${button} bg-ink text-white`}>
+              Yes, reject {count}
+            </button>
+            <button type="button" onClick={() => setConfirming(false)} className={`${button} border border-line-strong bg-white`}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+      {canReject && (
+        // Without JavaScript there's no confirmation step, so ask for a tick instead
+        <noscript>
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" name="confirmed" value="1" form={formId} className="h-5 w-5" />
+            I confirm rejecting more than {REJECT_CONFIRM_OVER} alumni at once
+          </label>
+        </noscript>
       )}
       {allMatching && <input type="hidden" name="allMatching" value="1" form={formId} />}
     </div>

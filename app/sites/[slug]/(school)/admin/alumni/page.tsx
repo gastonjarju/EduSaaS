@@ -76,6 +76,11 @@ export default async function AdminAlumni({
           {bulk === "rejected" && " They're hidden from the directory; verify them from the Rejected tab to undo."}
         </p>
       )}
+      {bulk === "confirm" && (
+        <p role="status" className="rounded-xl bg-amber-soft p-4 text-amber">
+          Nothing was rejected: rejecting {bulkN} alumni at once needs confirming. Select them again and confirm.
+        </p>
+      )}
       {bulk === "none" && (
         <p role="status" className="rounded-xl bg-amber-soft p-4 text-amber">
           Nothing was selected. Tick the alumni you want, then press Verify selected or Reject selected.
