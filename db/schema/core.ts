@@ -50,8 +50,9 @@ export const users = pgTable(
   "users",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    phone: text("phone").notNull().unique(), // E.164, e.g. +2203121164
-    email: text("email").unique(),
+    // Sign-up needs at least one of phone/email (users_phone_or_email_check)
+    phone: text("phone").unique(), // E.164, e.g. +2203121164
+    email: text("email").unique(), // stored lowercase
     name: text("name").notNull(),
     passwordHash: text("password_hash"), // nullable: sign-in is phone/email OTP
     role: varchar("role", { length: 20 }).notNull(), // teacher/parent/student deferred to V2
@@ -74,6 +75,10 @@ export const users = pgTable(
     check(
       "users_school_admin_requires_school_check",
       sql`${table.role} != 'school_admin' OR ${table.schoolId} IS NOT NULL`
+    ),
+    check(
+      "users_phone_or_email_check",
+      sql`${table.phone} IS NOT NULL OR ${table.email} IS NOT NULL`
     ),
     index("idx_users_school_admins")
       .on(table.schoolId)

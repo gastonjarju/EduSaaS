@@ -18,7 +18,7 @@ export async function GET(
   if (!isUuid(profileId)) notFound();
 
   const contact = await getProfilePhone(school.id, profileId);
-  if (!contact) notFound();
+  if (!contact?.phone) notFound(); // email-only alumni have no WhatsApp
 
   const firstName = contact.name.split(" ")[0];
   const text = `Hi ${firstName}, it's ${viewer.user.name} — I found you on the ${school.name} alumni network.`;

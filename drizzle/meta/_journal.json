@@ -15,6 +15,13 @@
       "when": 1793072787088,
       "tag": "0001_users_password_hash_nullable",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793074541898,
+      "tag": "0002_users_phone_or_email",
+      "breakpoints": true
     }
   ]
 }

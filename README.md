@@ -33,7 +33,7 @@ npm run db:seed      # demo schools stpeterstechnical + kristemambo, ~60 alumni 
 MOCK_AUTH=1 npm run dev
 ```
 
-With `MOCK_AUTH=1`, school sites show a "Dev sign-in" bar to switch between seeded alumni and the school admin, e.g. http://stpeterstechnical.localhost:3000. Never set it in production.
+With `MOCK_AUTH=1`, school sites show a "Dev sign-in" bar to switch between seeded alumni and the school admin, e.g. http://stpeterstechnical.localhost:3000. Never set it in production. The join flow at `/alumni/join` sends no real codes in this mode: the code is always `1234`.
 
 Run the unit tests with `npm test`.
 
