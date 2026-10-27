@@ -33,6 +33,22 @@ export function csvRow(values: (string | number | null | undefined)[]): string {
   return values.map(csvCell).join(",");
 }
 
+/** Compact age of a post: "just now", "5m", "3h", "2d", then "12 Oct". */
+export function timeAgo(date: Date, now = new Date()): string {
+  const minutes = Math.floor((now.getTime() - date.getTime()) / 60_000);
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d`;
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    ...(date.getFullYear() !== now.getFullYear() && { year: "numeric" }),
+  }).format(date);
+}
+
 /** Digits only, for wa.me links (which take the number without "+"). */
 export function whatsappNumber(e164: string): string {
   return e164.replace(/\D/g, "");

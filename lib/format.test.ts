@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { csvCell, escapeLike, initials, isUuid, whatsappNumber } from "./format";
+import { csvCell, escapeLike, initials, isUuid, timeAgo, whatsappNumber } from "./format";
 
 describe("csvCell", () => {
   it("quotes values containing commas, quotes or newlines", () => {
@@ -36,6 +36,17 @@ describe("helpers", () => {
     expect(isUuid("19b7d5c3-4b74-448f-9f0b-5a3b3bdee6af")).toBe(true);
     expect(isUuid("aisha-b")).toBe(false);
     expect(isUuid("1; drop table users")).toBe(false);
+  });
+
+  it("timeAgo shortens recent times and dates older ones", () => {
+    const now = new Date("2026-10-26T12:00:00Z");
+    const ago = (ms: number) => timeAgo(new Date(now.getTime() - ms), now);
+    expect(ago(20_000)).toBe("just now");
+    expect(ago(5 * 60_000)).toBe("5m");
+    expect(ago(3 * 3_600_000)).toBe("3h");
+    expect(ago(2 * 86_400_000)).toBe("2d");
+    expect(timeAgo(new Date("2026-10-01T12:00:00Z"), now)).toBe("1 Oct");
+    expect(timeAgo(new Date("2025-10-01T12:00:00Z"), now)).toBe("1 Oct 2025");
   });
 
   it("whatsappNumber strips everything but digits", () => {
