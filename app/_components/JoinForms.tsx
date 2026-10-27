@@ -4,6 +4,7 @@
 // to show; these only submit and display errors.
 import { useActionState, useState } from "react";
 import type { ActionState } from "@/lib/alumni/actions";
+import { PHONE_COUNTRIES } from "@/lib/alumni/phoneCountries";
 
 type Action = (prev: ActionState, formData: FormData) => Promise<ActionState>;
 
@@ -38,7 +39,37 @@ export function StepIndicator({ step }: { step: 1 | 2 }) {
   );
 }
 
-export function ContactStep({ action, placeholder }: { action: Action; placeholder: string }) {
+// Country-code picker: shows "🇬🇲 +220 ▾" while closed; the native list
+// (transparent select on top) shows full country names.
+function CountryPicker({ initial }: { initial: string }) {
+  const [code, setCode] = useState(initial);
+  const selected = PHONE_COUNTRIES.find((c) => c.code === code) ?? PHONE_COUNTRIES[0];
+  return (
+    <div className="relative h-12 flex-none">
+      <span
+        aria-hidden
+        className="flex h-full items-center gap-1 rounded-md bg-placeholder px-3 whitespace-nowrap"
+      >
+        {selected.flag} +{selected.dial} <span className="text-ink-soft">▾</span>
+      </span>
+      <select
+        name="phoneCountry"
+        aria-label="Country code"
+        defaultValue={initial}
+        onChange={(e) => setCode(e.target.value)}
+        className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+      >
+        {PHONE_COUNTRIES.map((c) => (
+          <option key={c.code} value={c.code}>
+            {c.flag} {c.name} (+{c.dial})
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+export function ContactStep({ action, defaultCountry }: { action: Action; defaultCountry: string }) {
   const [kind, setKind] = useState<"phone" | "email">("phone");
   const [state, formAction, pending] = useActionState(action, {});
 
@@ -62,20 +93,49 @@ export function ContactStep({ action, placeholder }: { action: Action; placehold
           </label>
         ))}
       </div>
-      <label className="block space-y-1">
-        <span className="text-sm text-ink-soft">{kind === "phone" ? "Phone number" : "Email address"}</span>
-        <input
-          key={kind}
-          name="contact"
-          required
-          type={kind === "phone" ? "tel" : "email"}
-          inputMode={kind === "phone" ? "tel" : "email"}
-          autoComplete={kind === "phone" ? "tel" : "email"}
-          placeholder={kind === "phone" ? placeholder : "you@example.com"}
-          defaultValue={state.content}
-          className={input}
-        />
-      </label>
+      {kind === "phone" ? (
+        <div className="space-y-1">
+          <label htmlFor="contact" className="text-sm text-ink-soft">
+            Phone number
+          </label>
+          <div className="flex gap-2">
+            <CountryPicker
+              // React resets the form after each submit; remounting with the
+              // submitted country as the default keeps the user's choice.
+              key={state.country ?? "initial"}
+              initial={state.country ?? defaultCountry}
+            />
+            <input
+              key="phone"
+              id="contact"
+              name="contact"
+              required
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel-national"
+              placeholder="Number"
+              defaultValue={state.content}
+              className={`${input} min-w-0`}
+            />
+          </div>
+          <p className="text-xs text-ink-soft">Living abroad? Pick your country, or type the number with + and the country code.</p>
+        </div>
+      ) : (
+        <label className="block space-y-1">
+          <span className="text-sm text-ink-soft">Email address</span>
+          <input
+            key="email"
+            name="contact"
+            required
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            placeholder="you@example.com"
+            defaultValue={state.content}
+            className={input}
+          />
+        </label>
+      )}
       <ErrorText state={state} />
       <button disabled={pending} className={primary}>
         {pending ? "Sending…" : kind === "phone" ? "Send code via WhatsApp" : "Send code by email"}

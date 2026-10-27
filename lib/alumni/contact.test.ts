@@ -17,7 +17,26 @@ describe("normalizePhone", () => {
     expect(normalizePhone("12345", "GM")).toBeNull();
     expect(normalizePhone("+1234567890123456", "GM")).toBeNull();
     expect(normalizePhone("call me", "GM")).toBeNull();
-    expect(normalizePhone("7712345", "US")).toBeNull(); // unknown country, no "+"
+    expect(normalizePhone("7712345", "XX")).toBeNull(); // unknown country, no "+"
+    expect(normalizePhone("7712345", "US")).toBeNull(); // too short for the US
+  });
+});
+
+describe("normalizePhone with a chosen country", () => {
+  it("uses the chosen country's code for numbers without +", () => {
+    expect(normalizePhone("8599794189", "US")).toBe("+18599794189");
+    expect(normalizePhone("(859) 979-4189", "US")).toBe("+18599794189");
+    expect(normalizePhone("1 859 979 4189", "US")).toBe("+18599794189");
+    expect(normalizePhone("07700 900123", "GB")).toBe("+447700900123");
+    expect(normalizePhone("070 123 45 67", "SE")).toBe("+46701234567");
+  });
+
+  it("ignores the chosen country when the number has +", () => {
+    expect(normalizePhone("+1 859 979 4189", "GM")).toBe("+18599794189");
+  });
+
+  it("rejects a number that doesn't fit the chosen country", () => {
+    expect(normalizePhone("8599794189", "GM")).toBeNull();
   });
 });
 

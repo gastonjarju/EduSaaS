@@ -10,6 +10,7 @@ import { mockAuthEnabled, startSession } from "@/lib/auth/session";
 import { getSchoolBySlug } from "@/lib/schools";
 import type { ActionState } from "./actions";
 import { normalizeContact } from "./contact";
+import { phoneCountry } from "./phoneCountries";
 import {
   clearJoin,
   createAlumnus,
@@ -29,11 +30,18 @@ export async function sendCode(slug: string, _prev: ActionState, formData: FormD
 
   const kind = formData.get("kind") === "email" ? "email" : "phone";
   const raw = String(formData.get("contact") ?? "");
-  const contact = normalizeContact(kind, raw, school.country);
+  // Country picked next to the phone field; anything unexpected → school's country
+  const picked = String(formData.get("phoneCountry") ?? "");
+  const country = phoneCountry(picked) ? picked : school.country;
+  const contact = normalizeContact(kind, raw, country);
   if (!contact) {
     return {
-      error: kind === "phone" ? "Enter a valid phone number." : "Enter a valid email address.",
+      error:
+        kind === "phone"
+          ? "Enter a valid phone number for the selected country, or start with + and the country code."
+          : "Enter a valid email address.",
       content: raw,
+      country,
     };
   }
 
