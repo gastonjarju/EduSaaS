@@ -2,7 +2,7 @@
 
 // Server actions for the join flow (screen 1c). Codes are mocked: with
 // MOCK_AUTH=1 the code is always MOCK_CODE and nothing is sent. Real codes
-// via Twilio (WhatsApp/SMS) and email replace sendCode/verifyCode later.
+// via Twilio SMS and email replace sendCode/verifyCode later.
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";

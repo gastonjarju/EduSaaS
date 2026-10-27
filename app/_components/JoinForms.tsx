@@ -138,7 +138,7 @@ export function ContactStep({ action, defaultCountry }: { action: Action; defaul
       )}
       <ErrorText state={state} />
       <button disabled={pending} className={primary}>
-        {pending ? "Sending…" : kind === "phone" ? "Send code via WhatsApp" : "Send code by email"}
+        {pending ? "Sending…" : kind === "phone" ? "Send code via SMS" : "Send code by email"}
       </button>
     </form>
   );
