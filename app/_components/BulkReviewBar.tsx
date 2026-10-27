@@ -14,6 +14,18 @@ type Props = {
 const rowBoxes = (formId: string) =>
   Array.from(document.querySelectorAll<HTMLInputElement>(`input[form="${formId}"][name="profileIds"]`));
 
+/**
+ * Per-row Verify / Reject buttons (server-rendered, marked with
+ * data-row-action) are switched off while anything is ticked, so only the
+ * bulk buttons act.
+ */
+function setRowActionsDisabled(formId: string, disabled: boolean) {
+  for (const b of document.querySelectorAll<HTMLButtonElement>(`button[data-row-action="${formId}"]`)) {
+    b.disabled = disabled;
+    b.title = disabled ? "Clear the selection to use this button" : "";
+  }
+}
+
 // Selection bar for the admin Alumni list: "Select all", a count, and bulk
 // Verify / Reject. Row checkboxes and these buttons belong to one form, so
 // it also works without JavaScript (tick boxes, press a button).
@@ -30,6 +42,7 @@ export default function BulkReviewBar({ formId, pageCount, total, canVerify, can
       setSelected(checked);
       setHydrated(true);
       setConfirming(false); // selection changed: ask again
+      setRowActionsDisabled(formId, checked > 0);
       if (checked < pageCount) setAllMatching(false);
       if (selectAll.current) {
         selectAll.current.checked = checked > 0 && checked === pageCount;
@@ -46,6 +59,7 @@ export default function BulkReviewBar({ formId, pageCount, total, canVerify, can
     return () => {
       document.removeEventListener("change", onChange);
       cancelAnimationFrame(id);
+      setRowActionsDisabled(formId, false);
     };
   }, [formId, pageCount]);
 
@@ -53,6 +67,7 @@ export default function BulkReviewBar({ formId, pageCount, total, canVerify, can
     for (const b of rowBoxes(formId)) b.checked = checked;
     setSelected(checked ? pageCount : 0);
     setConfirming(false);
+    setRowActionsDisabled(formId, checked);
     if (!checked) setAllMatching(false);
     if (selectAll.current) selectAll.current.indeterminate = false;
   }
@@ -78,7 +93,9 @@ export default function BulkReviewBar({ formId, pageCount, total, canVerify, can
           <span className="font-semibold">Select all</span>
         </label>
         <span className="text-sm text-ink-soft" role="status">
-          {count > 0 ? `${count} selected` : "Tick alumni to verify or reject them together."}
+          {count > 0
+            ? `${count} selected · row buttons are off while alumni are selected`
+            : "Tick alumni to verify or reject them together."}
         </span>
         <div className="flex w-full gap-2 sm:ml-auto sm:w-auto">
           {canVerify && (

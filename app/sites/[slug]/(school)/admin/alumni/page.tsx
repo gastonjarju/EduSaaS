@@ -164,14 +164,22 @@ export default async function AdminAlumni({
               <div className="flex gap-2">
                 {r.status !== "verified" && (
                   <form action={reviewAlumnus.bind(null, school.slug, r.profileId, "verified")}>
-                    <button className="h-12 rounded-md bg-accent px-4 font-semibold text-white" aria-label={`Verify ${r.name}`}>
+                    <button
+                      data-row-action="bulk-review"
+                      className="h-12 rounded-md bg-accent px-4 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label={`Verify ${r.name}`}
+                    >
                       Verify
                     </button>
                   </form>
                 )}
                 {r.status !== "rejected" && (
                   <form action={reviewAlumnus.bind(null, school.slug, r.profileId, "rejected")}>
-                    <button className="h-12 rounded-md border border-line-strong bg-white px-4 font-semibold" aria-label={`Reject ${r.name}`}>
+                    <button
+                      data-row-action="bulk-review"
+                      className="h-12 rounded-md border border-line-strong bg-white px-4 font-semibold disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label={`Reject ${r.name}`}
+                    >
                       Reject
                     </button>
                   </form>

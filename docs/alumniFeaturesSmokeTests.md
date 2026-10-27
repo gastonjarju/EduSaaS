@@ -257,7 +257,7 @@ Copy this table into the PR or release notes and fill in the Result column.
 - Step 7: they're back in the directory as verified.
 - Step 8: "✓ 2 alumni verified." Both leave Pending, and the checkboxes clear.
 - Step 9: the button reads **Verify selected (60)**; after unticking a row it reads **(24)**, back to this page only. Don't press it.
-- With nothing ticked, the bulk buttons are disabled.
+- With nothing ticked, the bulk buttons are disabled. With anything ticked, every row's own Verify / Reject buttons are greyed out and do nothing, and the bar says "row buttons are off while alumni are selected".
 - Rejecting **more than 10** at once asks first: "Reject N alumni? …" with **Yes, reject N** / **Cancel**. Cancel, or changing the selection, rejects nothing. Rejecting 10 or fewer, and any Verify, happen straight away.
 
 ## 4. Known gaps
