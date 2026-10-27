@@ -10,6 +10,20 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* School site palette, from prototypes/Alumni Prototype.html */
+  --color-canvas: #f4f4f2;
+  --color-ink: #2c2c2a;
+  --color-ink-soft: #6b6a64;
+  --color-line: #c9c8c2;
+  --color-line-strong: #9a9a92;
+  --color-placeholder: #e2e1db;
+  --color-placeholder-strong: #cfcec6;
+  --color-accent: #1d9e75;
+  --color-accent-soft: #e1f5ee;
+  --color-accent-ink: #085041;
+  --color-amber: #ba7517;
+  --color-amber-soft: #faeeda;
 }
 
 @media (prefers-color-scheme: dark) {

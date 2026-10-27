@@ -53,7 +53,7 @@ export const users = pgTable(
     phone: text("phone").notNull().unique(), // E.164, e.g. +2203121164
     email: text("email").unique(),
     name: text("name").notNull(),
-    passwordHash: text("password_hash").notNull(),
+    passwordHash: text("password_hash"), // nullable: sign-in is phone/email OTP
     role: varchar("role", { length: 20 }).notNull(), // teacher/parent/student deferred to V2
     schoolId: uuid("school_id").references(() => schools.id, {
       onDelete: "cascade",

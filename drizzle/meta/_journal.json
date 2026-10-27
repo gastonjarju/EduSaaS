@@ -8,6 +8,13 @@
       "when": 1792337009175,
       "tag": "0000_early_human_torch",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793072787088,
+      "tag": "0001_users_password_hash_nullable",
+      "breakpoints": true
     }
   ]
 }
