@@ -62,6 +62,15 @@ export const getViewer = cache(
   }
 );
 
+/** Signs the user in (mock session: the cookie is trusted only with MOCK_AUTH=1). */
+export async function startSession(userId: string) {
+  (await cookies()).set(SESSION_COOKIE, userId, {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+  });
+}
+
 /** Like getViewer, but sends signed-out visitors to the alumni sign-up page. */
 export async function requireViewer(schoolId: string): Promise<Viewer> {
   const viewer = await getViewer(schoolId);

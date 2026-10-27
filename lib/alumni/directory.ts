@@ -135,21 +135,23 @@ export async function getProfile(
   schoolId: string,
   profileId: string,
   viewer: ViewerContext
-): Promise<(ProfileView & { userId: string }) | null> {
+): Promise<(ProfileView & { userId: string; hasPhone: boolean }) | null> {
   const [row] = await db
-    .select(profileColumns)
+    .select({ ...profileColumns, hasPhone: sql<boolean>`${users.phone} is not null` })
     .from(alumniProfiles)
     .innerJoin(users, eq(users.id, alumniProfiles.userId))
     .where(and(inSchool(schoolId), eq(alumniProfiles.id, profileId)))
     .limit(1);
-  return row ? { ...toProfileView(row, viewer), userId: row.userId } : null;
+  return row
+    ? { ...toProfileView(row, viewer), userId: row.userId, hasPhone: row.hasPhone }
+    : null;
 }
 
 /** The alumnus's phone, for the WhatsApp redirect only — never rendered. */
 export async function getProfilePhone(
   schoolId: string,
   profileId: string
-): Promise<{ name: string; phone: string } | null> {
+): Promise<{ name: string; phone: string | null } | null> {
   const [row] = await db
     .select({ name: users.name, phone: users.phone })
     .from(alumniProfiles)

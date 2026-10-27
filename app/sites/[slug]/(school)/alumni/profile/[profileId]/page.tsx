@@ -88,7 +88,7 @@ export default async function AlumniProfile({
         )}
 
         <div className="mt-6 flex flex-col gap-2 sm:flex-row">
-          {!isSelf && (
+          {!isSelf && profile.hasPhone && (
             <a
               href={`/alumni/profile/${profile.id}/whatsapp`}
               rel="noopener noreferrer"
