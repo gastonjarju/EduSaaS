@@ -11,7 +11,7 @@
 
 This document designs how EduSaaS serves each school on its own domain — a free `schoolname.edusaas.africa` subdomain by default, with an option to upgrade to a fully custom domain (`greenhill.ac.zw`, `pointlomahigh.com`) — while every school renders from the *same* shared Next.js template with per-school branding and content-block customization.
 
-**Starting point:** this extends the multi-tenancy section already in `architectureDesign.md` (row-level isolation via `school_id`, Next.js middleware reading subdomain/domain → school config). This doc makes that concrete: the data model, the DNS/SSL flow, the request-routing path, and the customization model.
+**Starting point:** this extends the multi-tenancy section already in `architectureDesign.md` (row-level isolation via `school_id`, Next.js Proxy reading subdomain/domain → school config). This doc makes that concrete: the data model, the DNS/SSL flow, the request-routing path, and the customization model.
 
 **Explicitly out of scope for this design** (per discussion): a district/network layer with its own homepage (à la `sandiegounified.org` listing member schools) and a `district_admin` role. Schools stay standalone entities. A school can still fully "break out" onto its own custom domain regardless of how it's branded — there's no parent-domain constraint. If school grouping/networks become a real need later, it can be added as a lightweight nullable tag on `School` without touching anything in this design (see §7).
 
@@ -76,9 +76,9 @@ This gives you the "branding + content blocks" tier you specified: every school 
 **Custom domain (premium tier) — self-serve, per school:**
 
 1. School admin enters their domain in the dashboard (e.g. `greenhill.ac.zw`).
-2. Backend calls the Vercel Domains API to add the domain to the project. Vercel returns the DNS record the school needs to add — a CNAME to `cname.vercel-dns.com` for a subdomain-style custom domain, or an A record to Vercel's anycast IP for an apex/root domain (CNAME isn't valid at the root of a zone). If the domain is already claimed elsewhere, Vercel also returns a TXT verification token.
+2. The app (a Server Action) calls the Vercel Domains API to add the domain to the project. Vercel returns the DNS record the school needs to add — a CNAME to `cname.vercel-dns.com` for a subdomain-style custom domain, or an A record to Vercel's anycast IP for an apex/root domain (CNAME isn't valid at the root of a zone). If the domain is already claimed elsewhere, Vercel also returns a TXT verification token.
 3. The dashboard shows the school admin exactly what record to add at their registrar, with a "check status" button.
-4. A Celery periodic task (every few minutes) polls the Vercel API for that domain's verification + SSL-issuance status and updates `domain_status` accordingly (`pending_dns` → `pending_ssl` → `active`, or `failed` with the reason surfaced back to the admin).
+4. A scheduled background job (every few minutes; job runner not chosen yet — see `architectureDesign.md` Open Questions) polls the Vercel API for that domain's verification + SSL-issuance status and updates `domain_status` accordingly (`pending_dns` → `pending_ssl` → `active`, or `failed` with the reason surfaced back to the admin).
 5. Once `active`, Vercel has already auto-issued and will auto-renew the Let's Encrypt certificate — no work on your side beyond keeping the domain attached.
 6. On activation, notify the school admin (WhatsApp/email, per your existing notification stack) and flip the subdomain to redirect to the custom domain.
 
@@ -92,11 +92,11 @@ Runs in Next.js Proxy (`proxy.ts` — the Next.js 16 name for Middleware) before
 
 1. Read the `Host` header from the incoming request.
 2. **If it ends in `.edusaas.africa`:** the subdomain segment *is* the school slug — no lookup needed, rewrite directly to the internal route `/sites/[slug]/...` (not `/_sites`: underscore-prefixed folders are private and non-routable in the App Router).
-3. **Otherwise (custom domain):** look up `custom_domain → slug` in a fast edge-readable store. Don't hit Django/Postgres per request — sync active custom-domain mappings into **Vercel Edge Config** (or a Redis-backed edge cache) whenever `domain_status` flips to `active`. Edge Config reads are sub-millisecond and designed for exactly this "domain → tenant" lookup pattern.
-4. Rewrite the request to the shared dynamic route, passing the resolved slug. The page then fetches that school's `SchoolProfile` + `content_blocks` from the Django API (cached/ISR'd — no need to refetch on every request, revalidate on save).
+3. **Otherwise (custom domain):** look up `custom_domain → slug` in a fast edge-readable store. Don't hit Neon Postgres per request — sync active custom-domain mappings into **Vercel Edge Config** (or a Redis-backed edge cache) whenever `domain_status` flips to `active`. Edge Config reads are sub-millisecond and designed for exactly this "domain → tenant" lookup pattern.
+4. Rewrite the request to the shared dynamic route, passing the resolved slug. The page then fetches that school's `SchoolProfile` + `content_blocks` from Neon via Drizzle (cached/ISR'd — no need to refetch on every request, revalidate on save).
 5. Unresolvable host (not in Edge Config, not a valid subdomain) → a clear 404/"school not found" page, not a generic Vercel error.
 
-The key property: subdomains resolve with **zero external lookups** (the slug is embedded in the hostname), and custom domains resolve with **one cached edge lookup** — both fast enough to run in middleware on every request without adding meaningful latency, which matters given the low-bandwidth-user priority already stated in your architecture doc.
+The key property: subdomains resolve with **zero external lookups** (the slug is embedded in the hostname), and custom domains resolve with **one cached edge lookup** — both fast enough to run in the proxy on every request without adding meaningful latency, which matters given the low-bandwidth-user priority already stated in your architecture doc.
 
 ---
 

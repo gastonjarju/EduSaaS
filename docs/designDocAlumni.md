@@ -195,146 +195,9 @@ We ran alumni surveys in both pilot markets. These findings directly inform feat
 
 ---
 
-## 3. Data Model (Drizzle Schema — Key Tables)
+## 3. Data Model
 
-```
-// ─── Core Tables ───
-
-schools
-  id              uuid PK
-  name            text NOT NULL
-  slug            text UNIQUE NOT NULL       // URL-friendly: "st-peters-lamin"
-  country         text NOT NULL              // "GM" | "ZW"
-  school_type     text                       // government | private | mission | madrassa
-  description     text
-  logo_url        text
-  cover_image_url text
-  contact_email   text
-  contact_phone   text
-  address         text
-  city            text
-  website_domain  text                       // custom domain if premium
-  tier            text DEFAULT 'free'        // free | standard | premium | enterprise
-  created_at      timestamp DEFAULT now()
-  updated_at      timestamp DEFAULT now()
-  deleted_at      timestamp
-
-// ─── Users & Alumni ───
-
-users
-  id              uuid PK
-  phone           text UNIQUE NOT NULL       // E.164 format: +2203121164
-  name            text
-  role            text NOT NULL              // alumni | school_admin | super_admin
-  avatar_url      text
-  created_at      timestamp DEFAULT now()
-  updated_at      timestamp DEFAULT now()
-
-alumni_profiles
-  id              uuid PK
-  user_id         uuid FK → users.id UNIQUE
-  school_id       uuid FK → schools.id
-  graduation_year integer NOT NULL
-  class_section   text                       // "Form 5A", "Upper 6 Arts"
-  current_city    text
-  current_country text
-  profession      text
-  employer        text
-  bio             text
-  linkedin_url    text
-  is_verified     boolean DEFAULT false      // verified by school admin
-  is_mentor       boolean DEFAULT false      // opted in as mentor
-  mentor_areas    text[]                     // ["career", "university", "tutoring"]
-  visibility      jsonb DEFAULT '{"city":true,"profession":true,"bio":true,"employer":false}'
-  created_at      timestamp DEFAULT now()
-  updated_at      timestamp DEFAULT now()
-
-// ─── Class Year Groups ───
-
-class_groups
-  id              uuid PK
-  school_id       uuid FK → schools.id
-  graduation_year integer NOT NULL
-  name            text                       // auto: "Class of 2015"
-  UNIQUE(school_id, graduation_year)
-
-class_group_posts
-  id              uuid PK
-  class_group_id  uuid FK → class_groups.id
-  author_id       uuid FK → users.id
-  content         text NOT NULL
-  image_url       text
-  created_at      timestamp DEFAULT now()
-
-// ─── Events ───
-
-events
-  id              uuid PK
-  school_id       uuid FK → schools.id
-  created_by      uuid FK → users.id
-  title           text NOT NULL
-  description     text
-  event_date      timestamp NOT NULL
-  end_date        timestamp
-  location        text
-  location_type   text DEFAULT 'physical'    // physical | virtual | hybrid
-  virtual_link    text
-  cover_image_url text
-  is_published    boolean DEFAULT false
-  created_at      timestamp DEFAULT now()
-
-event_rsvps
-  id              uuid PK
-  event_id        uuid FK → events.id
-  user_id         uuid FK → users.id
-  status          text NOT NULL              // going | maybe | not_going
-  created_at      timestamp DEFAULT now()
-  UNIQUE(event_id, user_id)
-
-// ─── News / Announcements ───
-
-school_posts
-  id              uuid PK
-  school_id       uuid FK → schools.id
-  author_id       uuid FK → users.id
-  title           text NOT NULL
-  content         text NOT NULL
-  image_url       text
-  is_published    boolean DEFAULT true
-  created_at      timestamp DEFAULT now()
-
-post_reactions
-  id              uuid PK
-  post_id         uuid FK → school_posts.id
-  user_id         uuid FK → users.id
-  type            text DEFAULT 'like'
-  UNIQUE(post_id, user_id)
-
-// ─── Donations (V1.1) ───
-
-campaigns
-  id              uuid PK
-  school_id       uuid FK → schools.id
-  title           text NOT NULL
-  description     text
-  goal_amount     integer                    // in smallest currency unit
-  currency        text DEFAULT 'GMD'         // GMD | USD | ZWL
-  deadline        timestamp
-  is_active       boolean DEFAULT true
-  created_at      timestamp DEFAULT now()
-
-donations
-  id              uuid PK
-  campaign_id     uuid FK → campaigns.id
-  donor_id        uuid FK → users.id
-  amount          integer NOT NULL
-  currency        text NOT NULL
-  payment_method  text                       // wave | ecocash | stripe
-  payment_ref     text                       // external transaction ID
-  is_anonymous    boolean DEFAULT false
-  status          text DEFAULT 'pending'     // pending | completed | failed
-  created_at      timestamp DEFAULT now()
-```
+The canonical schema for the whole platform, including every Alumni Relations table, is [edusaasSchemas.md](./edusaasSchemas.md). It is written as PostgreSQL DDL and will be implemented as the Drizzle schema. The earlier table sketch that lived here was superseded by that doc and removed to avoid two sources of truth (see git history).
 
 ---
 
@@ -347,10 +210,11 @@ donations
 ├── /pricing                           Tier comparison
 └── /register-school                   School onboarding wizard
 
-/[schoolSlug] (school public site)
+<school host> (school public site: slug.edusaas.africa or custom domain;
+               proxy.ts rewrites to /sites/[slug] internally — see domainRoutingArchitecture.md)
 ├── /                                  School homepage (template)
 ├── /about                             About the school
-├── /admissions                        Admissions info + application form
+├── /admissions                        Admissions info + enquiry form (full applications are V2)
 ├── /news                              School news feed
 ├── /events                            Upcoming events
 ├── /gallery                           Photo gallery
@@ -454,7 +318,7 @@ Use `https://wa.me/?text=` deep links. These work universally on all Android ver
                    │ HTTPS
 ┌──────────────────▼──────────────────────────┐
 │               Vercel Edge                    │
-│  Middleware: auth check, tenant routing      │
+│  Proxy (proxy.ts): tenant routing, auth check│
 │  Edge functions: OTP validation, rate limit  │
 └──────────────────┬──────────────────────────┘
                    │

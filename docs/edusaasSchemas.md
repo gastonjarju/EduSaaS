@@ -1,8 +1,8 @@
 # EduSaaS — Database Schema
 
 **Modules:** Core platform (`schools`, `accounts`) · School Site & Admin · Alumni Relations — see [designDocAlumni.md](./designDocAlumni.md) for the Alumni feature spec, and [school-site-template-wireframe.html](../wireframes/school-site-template-wireframe.html) / [school-admin-wireframes.html](../wireframes/school-admin-wireframes.html) for the site & admin surfaces.
-**Engine:** PostgreSQL (per [architectureDesign.md](../architectureDesign.md) — Django + DRF + Postgres, row-level multi-tenancy)
-**Status:** Design — no backend code exists yet in this repo. This is DDL-level design intended to become Django models (`schools`, `accounts`, `websites`, `alumni` apps) when the backend is scaffolded.
+**Engine:** Neon Postgres via Drizzle ORM (per [architectureDesign.md](../architectureDesign.md) — Next.js full-stack, row-level multi-tenancy)
+**Status:** Design — no database code exists yet in this repo. This is DDL-level design intended to become the Drizzle schema when the data layer is scaffolded.
 
 This document is the merged, canonical schema for the whole platform. It replaces the earlier `alumniDatabaseSchema.md` and `schoolSiteAdminDatabaseSchema.md`, which defined `schools`/`users` twice — once as minimal FK stubs (Alumni Relations) and once as the real spec (School Site & Admin). Here each table is defined exactly once.
 
@@ -20,14 +20,14 @@ This document is the merged, canonical schema for the whole platform. It replace
 
 Every table below is scoped to a school. Tables queried directly by tenant (not just joined through a parent) carry a **denormalized `school_id`** column, even where it's technically derivable through a FK chain (e.g. `class_group_posts.class_group_id → class_groups.school_id`). This lets every query and every future Postgres Row-Level Security (RLS) policy filter on `school_id` directly with an index, without a join, and without relying on application code getting the join right every time.
 
-Recommendation: once the backend exists, enable RLS on all tables below with a policy like:
+Recommendation: once the database exists, enable RLS on all tables below with a policy like:
 
 ```sql
 CREATE POLICY tenant_isolation ON alumni_profiles
   USING (school_id = current_setting('app.current_school_id')::uuid);
 ```
 
-This is defense-in-depth on top of (not a replacement for) the Django query-manager scoping already called for in the architecture doc.
+This is defense-in-depth on top of (not a replacement for) the Drizzle query-helper scoping already called for in the architecture doc.
 
 ---
 
@@ -219,7 +219,7 @@ CREATE INDEX idx_news_posts_alumni_feed ON news_posts (school_id, published_at D
   WHERE status = 'published' AND audience IN ('alumni','both');
 ```
 
-The per-audience WhatsApp send cap (2/week, from the wireframe's field hint) is a rate-limit rule applied by the Celery task that fans out notifications, not something expressible as a table constraint.
+The per-audience WhatsApp send cap (2/week, from the wireframe's field hint) is a rate-limit rule applied by the background job that fans out notifications, not something expressible as a table constraint.
 
 ### `gallery_items`
 
