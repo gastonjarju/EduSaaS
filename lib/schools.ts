@@ -32,6 +32,31 @@ const COUNTRY_NAMES: Record<string, string> = {
   ZW: "Zimbabwe",
 };
 
+// Schools have no time zone column yet; pilot countries each have one zone.
+const COUNTRY_TIME_ZONES: Record<string, string> = {
+  GM: "Africa/Banjul",
+  ZW: "Africa/Harare",
+};
+
+/** Formats a timestamp in the school's local time, e.g. "Sun, 20 Dec 2026, 16:00". */
+export function formatSchoolDate(
+  school: Pick<School, "country">,
+  date: Date,
+  options: Intl.DateTimeFormatOptions = {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }
+): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: COUNTRY_TIME_ZONES[school.country] ?? "UTC",
+    ...options,
+  }).format(date);
+}
+
 export function countryName(code: string): string {
   return (
     COUNTRY_NAMES[code] ??

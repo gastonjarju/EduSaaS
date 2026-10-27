@@ -35,4 +35,6 @@ MOCK_AUTH=1 npm run dev
 
 With `MOCK_AUTH=1`, school sites show a "Dev sign-in" bar to switch between seeded alumni and the school admin, e.g. http://stpeterstechnical.localhost:3000. Never set it in production.
 
+Run the unit tests with `npm test`.
+
 To test a custom domain, set `CUSTOM_DOMAIN_MAP='{"greenhill.test":"greenhill"}'` and point `greenhill.test` at `127.0.0.1` in `/etc/hosts`.
