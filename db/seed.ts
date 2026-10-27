@@ -50,6 +50,7 @@ type FeaturedAlumnus = {
   bio?: string;
   verification?: "unverified" | "pending" | "verified";
   isMentor?: boolean;
+  linkedinUrl?: string; // real URL; otherwise featured alumni get a demo one
 };
 
 type SchoolSeed = {
@@ -176,7 +177,7 @@ const SCHOOLS: readonly SchoolSeed[] = [
       { first: "Chipo", last: "Moyo", year: 2014, city: { city: "Harare", country: "ZW" }, profession: "Doctor", employer: "Parirenyatwa Hospital", classSection: "Upper 6 Sciences", bio: "Kriste Mambo taught me discipline. Happy to advise anyone applying to medical school.", verification: "verified", isMentor: true },
       { first: "Tendai", last: "Ncube", year: 2011, city: { city: "Johannesburg", country: "ZA" }, profession: "Accountant", employer: "Deloitte", verification: "verified" },
       { first: "Rumbidzai", last: "Mutasa", year: 2019, city: { city: "Mutare", country: "ZW" }, profession: "Teacher", verification: "pending" },
-      { first: "Liberty", last: "Mupotsa", year: 2017, city: { city: "Harare", country: "ZW" }, profession: "Software Engineer", employer: "EduSaaS", classSection: "Upper 6 Sciences", bio: "Co-founder of EduSaaS. Always happy to talk tech careers with fellow Kriste Mambo alumni.", verification: "verified", isMentor: true },
+      { first: "Liberty", last: "Mupotsa", year: 2017, city: { city: "Harare", country: "ZW" }, profession: "Software Engineer", employer: "EduSaaS", classSection: "Upper 6 Sciences", bio: "Co-founder of EduSaaS. Always happy to talk tech careers with fellow Kriste Mambo alumni.", verification: "verified", isMentor: true, linkedinUrl: "https://www.linkedin.com/in/liberty-mupotsa-56b43616b" },
     ],
     admin: { first: "Tafadzwa", last: "Makoni" },
   },
@@ -277,6 +278,12 @@ async function main() {
             profession: a.profession,
             employer: a.employer,
             bio: a.bio,
+            // Obviously fake handles so demo links never hit a real person's page
+            linkedinUrl:
+              a.linkedinUrl ??
+              (i < s.featured.length || chance(rand, 0.4)
+                ? `https://www.linkedin.com/in/edusaas-demo-${a.first}-${a.last}-${i + 1}`.toLowerCase()
+                : undefined),
             verificationStatus: a.verification ?? "unverified",
             isMentor: a.isMentor ?? false,
             mentorAreas: a.isMentor ? ["career", "university"] : [],
@@ -289,7 +296,7 @@ async function main() {
                     profession: chance(rand, 0.5),
                     bio: true,
                     employer: false,
-                    linkedin: false,
+                    linkedin: true,
                   },
                 }
               : {}),

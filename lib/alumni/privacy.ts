@@ -20,7 +20,7 @@ const DEFAULT_VISIBILITY: Record<PrivacyField, boolean> = {
   profession: true,
   bio: true,
   employer: false,
-  linkedin: false,
+  linkedin: true,
 };
 
 export type ProfileRow = {

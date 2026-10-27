@@ -10,6 +10,7 @@ import { mockAuthEnabled, startSession } from "@/lib/auth/session";
 import { getSchoolBySlug } from "@/lib/schools";
 import type { ActionState } from "./actions";
 import { normalizeContact } from "./contact";
+import { normalizeLinkedinUrl } from "./linkedin";
 import { phoneCountry } from "./phoneCountries";
 import {
   clearJoin,
@@ -108,6 +109,15 @@ const profileSchema = z.object({
     .max(thisYear + 1, "Choose your graduation year."),
   profession: optionalText(150),
   city: optionalText(120),
+  linkedinUrl: z
+    .string()
+    .trim()
+    .transform((s, ctx) => {
+      if (!s) return null;
+      const url = normalizeLinkedinUrl(s);
+      if (!url) ctx.addIssue({ code: "custom", message: "Enter a linkedin.com profile URL, or leave it blank." });
+      return url;
+    }),
 });
 
 export async function completeProfile(slug: string, _prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -121,6 +131,7 @@ export async function completeProfile(slug: string, _prev: ActionState, formData
     graduationYear: formData.get("graduationYear") ?? "",
     profession: formData.get("profession") ?? "",
     city: formData.get("city") ?? "",
+    linkedinUrl: formData.get("linkedinUrl") ?? "",
   });
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 

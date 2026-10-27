@@ -57,7 +57,7 @@ export const alumniProfiles = pgTable(
     visibility: jsonb("visibility")
       .notNull()
       .default(
-        sql`'{"city": true, "profession": true, "bio": true, "employer": false, "linkedin": false}'::jsonb`
+        sql`'{"city": true, "profession": true, "bio": true, "employer": false, "linkedin": true}'::jsonb`
       ),
 
     deletedAt: timestamp("deleted_at", { withTimezone: true }), // GDPR-lite soft delete

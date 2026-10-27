@@ -220,6 +220,19 @@ export function ProfileStep({ action, years }: { action: Action; years: number[]
         <span className="text-sm text-ink-soft">City (optional)</span>
         <input name="city" maxLength={120} autoComplete="address-level2" className={input} />
       </label>
+      <label className="block space-y-1">
+        <span className="text-sm text-ink-soft">LinkedIn profile URL (optional)</span>
+        <input
+          name="linkedinUrl"
+          // text, not url: the server also accepts "linkedin.com/in/…" without https://
+          type="text"
+          inputMode="url"
+          autoCapitalize="none"
+          maxLength={200}
+          placeholder="https://www.linkedin.com/in/your-name"
+          className={input}
+        />
+      </label>
       <ErrorText state={state} />
       <button disabled={pending} className={primary}>
         {pending ? "Joining…" : "Join directory"}

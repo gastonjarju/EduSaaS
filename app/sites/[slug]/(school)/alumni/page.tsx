@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Avatar, VerificationBadge, profileSummary } from "@/app/_components/alumni";
+import { Avatar, LinkedinLink, VerificationBadge, profileSummary } from "@/app/_components/alumni";
 import {
   directoryFilterOptions,
   PAGE_SIZE,
@@ -130,14 +130,20 @@ export default async function AlumniDirectory({
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {profiles.map((p) => (
-            <li key={p.id}>
-              <Link
-                href={`/alumni/profile/${p.id}`}
-                className="flex h-full items-center gap-3 rounded-xl border border-line bg-white p-4 hover:border-accent"
-              >
-                <Avatar name={p.name} />
-                <div className="min-w-0">
-                  <p className="truncate font-semibold">{p.name}</p>
+            <li
+              key={p.id}
+              className="relative flex h-full items-center gap-3 rounded-xl border border-line bg-white p-4 hover:border-accent"
+            >
+              <Avatar name={p.name} />
+              <div className="min-w-0 flex-1">
+                {/* The name link stretches over the whole card; the LinkedIn
+                    button sits above it (z-10) since links can't nest. */}
+                <Link
+                  href={`/alumni/profile/${p.id}`}
+                  className="block truncate font-semibold after:absolute after:inset-0 after:rounded-xl"
+                >
+                  {p.name}
+                </Link>
                   <p className="text-sm text-ink-soft">{profileSummary(p)}</p>
                   {viewer.isAdmin && p.verificationStatus !== "verified" && (
                     <div className="mt-1">
@@ -147,8 +153,8 @@ export default async function AlumniDirectory({
                       )}
                     </div>
                   )}
-                </div>
-              </Link>
+              </div>
+              <LinkedinLink url={p.linkedinUrl} name={p.name} className="relative z-10 flex-none" />
             </li>
           ))}
         </ul>

@@ -22,6 +22,13 @@
       "when": 1793074541898,
       "tag": "0002_users_phone_or_email",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793076387336,
+      "tag": "0003_alumni_linkedin_visible_by_default",
+      "breakpoints": true
     }
   ]
 }

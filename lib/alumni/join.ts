@@ -97,6 +97,7 @@ export async function createAlumnus(input: {
   graduationYear: number;
   profession: string | null;
   city: string | null;
+  linkedinUrl: string | null;
 }): Promise<{ userId: string; profileId: string }> {
   return db.transaction(async (tx) => {
     const byContact =
@@ -145,6 +146,7 @@ export async function createAlumnus(input: {
         graduationYear: input.graduationYear,
         profession: input.profession,
         currentCity: input.city,
+        linkedinUrl: input.linkedinUrl,
         verificationStatus: "pending",
       })
       .returning({ id: alumniProfiles.id });
