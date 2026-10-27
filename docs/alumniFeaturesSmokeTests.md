@@ -244,6 +244,8 @@ Copy this table into the PR or release notes and fill in the Result column.
 5. As Aisha, search the directory for the rejected person, then try their profile URL.
 6. Sign out, open `/alumni/join` and verify the rejected person's phone number with `1234`.
 7. As the admin, click **Verify** on them in the **Rejected** tab.
+8. On **Pending**, tick two people → **Verify selected (2)**.
+9. On **All**, tick **Select all**, then **Select all 60 in this tab**, then untick one row.
 
 **Expected**
 - Step 1: 404.
@@ -253,6 +255,9 @@ Copy this table into the PR or release notes and fill in the Result column.
 - Step 5: not in the directory, and their profile URL is a 404.
 - Step 6: "The school hasn't approved your alumni profile. Please contact the school." They aren't signed in.
 - Step 7: they're back in the directory as verified.
+- Step 8: "✓ 2 alumni verified." Both leave Pending, and the checkboxes clear.
+- Step 9: the button reads **Verify selected (60)**; after unticking a row it reads **(24)**, back to this page only. Don't press it.
+- With nothing ticked, the bulk buttons are disabled.
 
 ## 4. Known gaps
 

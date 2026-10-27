@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Avatar } from "@/app/_components/alumni";
+import BulkReviewBar from "@/app/_components/BulkReviewBar";
 import { countByStatus, listForReview, REVIEW_PAGE_SIZE, REVIEW_STATUSES, type ReviewStatus } from "@/lib/alumni/verification";
-import { reviewAlumnus } from "@/lib/alumni/verificationActions";
+import { reviewAlumnus, reviewSelected } from "@/lib/alumni/verificationActions";
 import { requireAdmin } from "@/lib/auth/session";
 import { formatSchoolDate, requireSchool } from "@/lib/schools";
 
@@ -50,6 +51,8 @@ export default async function AdminAlumni({
     listForReview(school.id, { status, q, page }),
   ]);
   const allCount = Object.values(counts).reduce((a, b) => a + b, 0);
+  const bulk = first(query.bulk);
+  const bulkN = Number(first(query.n) ?? 0);
   const pages = Math.max(1, Math.ceil(total / REVIEW_PAGE_SIZE));
   const href = (s: string, p = 1) => {
     const sp = new URLSearchParams({ status: s });
@@ -66,6 +69,18 @@ export default async function AdminAlumni({
           Check that people who joined really are former students. Rejected profiles are hidden from the directory.
         </p>
       </div>
+
+      {(bulk === "verified" || bulk === "rejected") && (
+        <p role="status" className="rounded-xl bg-accent-soft p-4 text-accent-ink">
+          ✓ {bulkN} {bulkN === 1 ? "alumnus" : "alumni"} {bulk}.
+          {bulk === "rejected" && " They're hidden from the directory; verify them from the Rejected tab to undo."}
+        </p>
+      )}
+      {bulk === "none" && (
+        <p role="status" className="rounded-xl bg-amber-soft p-4 text-amber">
+          Nothing was selected. Tick the alumni you want, then press Verify selected or Reject selected.
+        </p>
+      )}
 
       <nav aria-label="Verification status" className="flex flex-wrap gap-2">
         {TABS.map((t) => {
@@ -90,6 +105,23 @@ export default async function AdminAlumni({
         <button className="h-12 rounded-md bg-ink px-5 font-semibold text-white">Search</button>
       </form>
 
+      {/* Bulk form: row checkboxes and the bar's buttons point at it (form="bulk-review") */}
+      <form id="bulk-review" action={reviewSelected.bind(null, school.slug)} className="hidden">
+        <input type="hidden" name="status" value={status} />
+        {q && <input type="hidden" name="q" value={q} />}
+      </form>
+      {rows.length > 0 && (
+        <BulkReviewBar
+          // Remount after each bulk action or page change so the selection resets
+          key={`${status}|${q ?? ""}|${page}|${first(query.t) ?? ""}`}
+          formId="bulk-review"
+          pageCount={rows.length}
+          total={total}
+          canVerify={status !== "verified"}
+          canReject={status !== "rejected"}
+        />
+      )}
+
       {rows.length === 0 ? (
         <p className="rounded-xl border border-line bg-white p-6 text-center text-ink-soft">
           {status === "pending" && !q ? "No one is waiting for verification. 🎉" : "No alumni found."}
@@ -98,6 +130,14 @@ export default async function AdminAlumni({
         <ul className="divide-y divide-line overflow-hidden rounded-xl border border-line bg-white">
           {rows.map((r) => (
             <li key={r.profileId} className="flex flex-wrap items-center gap-3 p-4">
+              <input
+                type="checkbox"
+                name="profileIds"
+                value={r.profileId}
+                form="bulk-review"
+                aria-label={`Select ${r.name}`}
+                className="h-5 w-5 flex-none cursor-pointer accent-accent"
+              />
               <Avatar name={r.name} />
               <div className="min-w-0 flex-1 basis-48">
                 {r.status === "rejected" ? (

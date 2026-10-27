@@ -1,7 +1,7 @@
 // Admin verification of alumni (wireframe screen 1i). Every function takes
 // the school id. Decisions are logged in alumni_verification_requests so the
 // review history survives later changes.
-import { and, asc, count, desc, eq, ilike, isNull, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray, isNull, type SQL } from "drizzle-orm";
 import { db } from "@/db";
 import { alumniProfiles, alumniVerificationRequests, users } from "@/db/schema";
 import { escapeLike } from "@/lib/format";
@@ -28,10 +28,7 @@ export async function listForReview(
   schoolId: string,
   filter: { status: ReviewStatus | "all"; q?: string; page: number }
 ) {
-  const conditions: SQL[] = [active(schoolId)];
-  if (filter.status !== "all") conditions.push(eq(alumniProfiles.verificationStatus, filter.status));
-  if (filter.q) conditions.push(ilike(users.name, `%${escapeLike(filter.q)}%`));
-  const where = and(...conditions);
+  const where = and(...filterConditions(schoolId, filter.status, filter.q));
 
   const [rows, [{ total }]] = await Promise.all([
     db
@@ -65,49 +62,70 @@ export async function listForReview(
   return { rows, total };
 }
 
+export const BULK_LIMIT = 1000;
+
+function filterConditions(schoolId: string, status: ReviewStatus | "all", q?: string): SQL[] {
+  const conditions: SQL[] = [active(schoolId)];
+  if (status !== "all") conditions.push(eq(alumniProfiles.verificationStatus, status));
+  if (q) conditions.push(ilike(users.name, `%${escapeLike(q)}%`));
+  return conditions;
+}
+
+/** Profile ids in a tab (status + search), for "select all N in this tab". */
+export async function idsMatching(schoolId: string, status: ReviewStatus | "all", q?: string): Promise<string[]> {
+  const rows = await db
+    .select({ id: alumniProfiles.id })
+    .from(alumniProfiles)
+    .innerJoin(users, eq(users.id, alumniProfiles.userId))
+    .where(and(...filterConditions(schoolId, status, q)))
+    .limit(BULK_LIMIT);
+  return rows.map((r) => r.id);
+}
+
 /**
- * Records the school's decision on a profile. Returns false if the profile
- * isn't an active profile of this school.
+ * Records the school's decision on one or more profiles, in one
+ * transaction. Ids that aren't active profiles of this school are ignored.
+ * Returns how many profiles were updated.
  */
-export async function recordDecision(
+export async function recordDecisions(
   schoolId: string,
-  profileId: string,
+  profileIds: string[],
   decision: "verified" | "rejected",
   reviewerId: string
-): Promise<boolean> {
+): Promise<number> {
+  if (profileIds.length === 0) return 0;
   return db.transaction(async (tx) => {
-    const [profile] = await tx
+    const updated = await tx
       .update(alumniProfiles)
       .set({ verificationStatus: decision, updatedAt: new Date() })
-      .where(and(eq(alumniProfiles.id, profileId), active(schoolId)))
+      .where(and(inArray(alumniProfiles.id, profileIds), active(schoolId)))
       .returning({ id: alumniProfiles.id, answer: alumniProfiles.verificationAnswer });
-    if (!profile) return false;
+    if (updated.length === 0) return 0;
 
     const review = {
       status: decision === "verified" ? "approved" : "rejected",
       reviewedBy: reviewerId,
       reviewedAt: new Date(),
     };
-    // Close the open request if there is one (at most one per profile);
-    // otherwise log the decision as a new, already-reviewed request.
+    // Close open requests (at most one per profile); log the rest as new,
+    // already-reviewed requests so every decision is in the history.
     const closed = await tx
       .update(alumniVerificationRequests)
       .set(review)
       .where(
         and(
-          eq(alumniVerificationRequests.alumniProfileId, profileId),
+          inArray(alumniVerificationRequests.alumniProfileId, updated.map((u) => u.id)),
           eq(alumniVerificationRequests.status, "pending")
         )
       )
-      .returning({ id: alumniVerificationRequests.id });
-    if (closed.length === 0) {
-      await tx.insert(alumniVerificationRequests).values({
-        alumniProfileId: profileId,
-        schoolId,
-        verificationAnswerSnap: profile.answer ?? "",
-        ...review,
-      });
+      .returning({ profileId: alumniVerificationRequests.alumniProfileId });
+    const closedIds = new Set(closed.map((c) => c.profileId));
+    const toLog = updated.filter((u) => !closedIds.has(u.id));
+    if (toLog.length > 0) {
+      await tx.insert(alumniVerificationRequests).values(
+        toLog.map((u) => ({ alumniProfileId: u.id, schoolId, verificationAnswerSnap: u.answer ?? "", ...review }))
+      );
     }
-    return true;
+    return updated.length;
   });
 }
