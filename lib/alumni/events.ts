@@ -87,6 +87,22 @@ export async function getRsvpSummary(schoolId: string, eventId: string) {
   };
 }
 
+/** Creates or changes the user's RSVP (one per event and user). */
+export async function upsertRsvp(values: {
+  schoolId: string;
+  eventId: string;
+  userId: string;
+  status: RsvpStatus;
+}) {
+  await db
+    .insert(eventRsvps)
+    .values(values)
+    .onConflictDoUpdate({
+      target: [eventRsvps.eventId, eventRsvps.userId],
+      set: { status: values.status, updatedAt: new Date() },
+    });
+}
+
 export async function getViewerRsvp(
   schoolId: string,
   eventId: string,
