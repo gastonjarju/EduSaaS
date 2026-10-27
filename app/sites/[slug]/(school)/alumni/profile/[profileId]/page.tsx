@@ -12,6 +12,7 @@ export const metadata: Metadata = { title: "Alumni profile" };
 // Screen 1d. Signed-in alumni of this school and its admins only.
 export default async function AlumniProfile({
   params,
+  searchParams,
 }: PageProps<"/sites/[slug]/alumni/profile/[profileId]">) {
   const { slug, profileId } = await params;
   const school = await requireSchool(slug);
@@ -24,6 +25,9 @@ export default async function AlumniProfile({
   });
   if (!profile) notFound();
   const isSelf = profile.userId === viewer.user.id;
+  // Set by the join flow when a verified contact already had an account here
+  const welcome = (await searchParams).welcome;
+  const welcomeBack = isSelf && (welcome === "phone" || welcome === "email");
   const location = [profile.city, profile.country && countryName(profile.country)]
     .filter(Boolean)
     .join(", ");
@@ -34,6 +38,13 @@ export default async function AlumniProfile({
       <Link href="/alumni" className="inline-flex h-10 items-center text-ink-soft">
         ← Alumni directory
       </Link>
+
+      {welcomeBack && (
+        <p role="status" className="rounded-xl bg-accent-soft p-4 text-accent-ink">
+          Welcome back, {profile.name.split(" ")[0]}. This {welcome === "email" ? "email" : "number"} is already
+          registered, so we&apos;ve signed you in.
+        </p>
+      )}
 
       <article className="rounded-xl border border-line bg-white p-6">
         <div className="flex items-center gap-4">

@@ -67,7 +67,12 @@ export async function verifyCode(slug: string, _prev: ActionState, formData: For
     if (account.profileHere || isThisSchoolsAdmin) {
       await clearJoin();
       await startSession(account.user.id);
-      redirect(account.profileHere ? `/alumni/profile/${account.profileHere.id}` : "/alumni");
+      // ?welcome= makes the profile say they were signed in to an existing account
+      redirect(
+        account.profileHere
+          ? `/alumni/profile/${account.profileHere.id}?welcome=${state.contact.kind}`
+          : "/alumni"
+      );
     }
     // Stay on the code step (don't clear the join cookies) for refusals:
     // changing cookies re-renders the page, which would lose the error.
