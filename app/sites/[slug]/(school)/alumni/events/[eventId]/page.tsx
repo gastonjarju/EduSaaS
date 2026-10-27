@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Avatar } from "@/app/_components/alumni";
 import RsvpButtons from "@/app/_components/RsvpButtons";
+import ShareButton from "@/app/_components/ShareButton";
 import { setRsvp } from "@/lib/alumni/actions";
 import { eventPlace, getEvent, getRsvpSummary, getViewerRsvp } from "@/lib/alumni/events";
 import { getViewer } from "@/lib/auth/session";
@@ -43,7 +44,8 @@ export default async function EventDetail({
   const host = requestHeaders.get("host");
   const proto = requestHeaders.get("x-forwarded-proto") ?? "http";
   const eventUrl = `${proto}://${host}/alumni/events/${event.id}`;
-  const shareText = `You're invited! 🎉 ${event.title} at ${school.name} on ${formatSchoolDate(school, event.eventDate, { day: "numeric", month: "short" })}. RSVP here: ${eventUrl}`;
+  // The URL is passed separately; share targets add it to the message.
+  const shareText = `You're invited! 🎉 ${event.title} at ${school.name} on ${formatSchoolDate(school, event.eventDate, { day: "numeric", month: "short" })}.`;
 
   return (
     <div className="mx-auto max-w-xl space-y-4">
@@ -100,14 +102,7 @@ export default async function EventDetail({
             ))}
         </section>
 
-        <a
-          href={`https://wa.me/?text=${encodeURIComponent(shareText)}`}
-          rel="noopener noreferrer"
-          target="_blank"
-          className="flex h-12 items-center justify-center rounded-md bg-accent px-5 font-semibold text-white"
-        >
-          Share via WhatsApp
-        </a>
+        <ShareButton url={eventUrl} title={event.title} text={shareText} />
       </article>
     </div>
   );
