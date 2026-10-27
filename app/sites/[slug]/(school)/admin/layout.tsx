@@ -5,7 +5,7 @@ import NavLinks from "@/app/_components/NavLinks";
 // requireAdmin() itself, since pages render in parallel with layouts.
 const SECTIONS = [
   { href: "/admin/events", label: "Events" },
-  { href: "/alumni", label: "Alumni" },
+  { href: "/admin/alumni", label: "Alumni" },
 ];
 
 export default function AdminLayout({ children }: LayoutProps<"/sites/[slug]/admin">) {

@@ -2,7 +2,7 @@
 // auth library not chosen yet). A cookie holds the signed-in user's id and is
 // trusted only when MOCK_AUTH=1, so production stays signed out until real
 // OTP sign-in replaces this module.
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull, ne } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { cache } from "react";
@@ -52,7 +52,8 @@ export const getViewer = cache(
         and(
           eq(alumniProfiles.userId, user.id),
           eq(alumniProfiles.schoolId, schoolId),
-          isNull(alumniProfiles.deletedAt)
+          isNull(alumniProfiles.deletedAt),
+          ne(alumniProfiles.verificationStatus, "rejected") // rejected by the school
         )
       )
       .limit(1);

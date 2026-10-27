@@ -63,6 +63,9 @@ export async function verifyCode(slug: string, _prev: ActionState, formData: For
   // The code proves they own this phone/email. Existing members sign in.
   const account = await findAccount(school.id, state.contact);
   if (account) {
+    if (account.profileHere?.verificationStatus === "rejected") {
+      return { error: "The school hasn't approved your alumni profile. Please contact the school." };
+    }
     const isThisSchoolsAdmin =
       account.user.role === "school_admin" && account.user.schoolId === school.id;
     if (account.profileHere || isThisSchoolsAdmin) {

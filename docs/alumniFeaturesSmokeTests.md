@@ -56,6 +56,7 @@ Copy this table into the PR or release notes and fill in the Result column.
 | SMOKE-10 | Schools can't see each other's alumni or events | Ready | |
 | SMOKE-11 | Signed-out visitors can't see members-only pages | Ready | |
 | SMOKE-12 | Admin can export the alumni list | Ready | |
+| SMOKE-13 | Admin can verify and reject alumni | Ready | |
 
 ---
 
@@ -233,6 +234,26 @@ Copy this table into the PR or release notes and fill in the Result column.
 
 ---
 
+### SMOKE-13 — Admin can verify and reject alumni 📱
+
+**Steps**
+1. As Aisha Bojang, open `/admin/alumni`.
+2. As Mariama Touray (admin), open `/alumni`, then click **Review pending (N)**.
+3. On the **Pending** tab, click **Verify** on the first person.
+4. Click **Reject** on the next person, then open the **Rejected** tab.
+5. As Aisha, search the directory for the rejected person, then try their profile URL.
+6. Sign out, open `/alumni/join` and verify the rejected person's phone number with `1234`.
+7. As the admin, click **Verify** on them in the **Rejected** tab.
+
+**Expected**
+- Step 1: 404.
+- Step 2: the admin Alumni screen opens on **Pending**, oldest sign-ups first. Tab counts add up to **All (60)**. Each row shows name, class, phone or email and joined date.
+- Step 3: the person leaves the Pending tab, the Pending count drops by 1, and their profile shows **✓ Verified**.
+- Step 4: the person is listed under **Rejected (1)**.
+- Step 5: not in the directory, and their profile URL is a 404.
+- Step 6: "The school hasn't approved your alumni profile. Please contact the school." They aren't signed in.
+- Step 7: they're back in the directory as verified.
+
 ## 4. Known gaps
 
 These need building before the corresponding smoke tests can fully pass:
@@ -240,6 +261,5 @@ These need building before the corresponding smoke tests can fully pass:
 | Gap | Affects |
 |---|---|
 | Real sign-in (Twilio SMS codes) and a sign-out button for users | SMOKE-01, -02, -03 run only in mock mode |
-| Admin verification of alumni (approve/reject) | Profiles stay "Pending verification" |
 | Event cover images and deleting events | Not covered |
 | Profile editing, photo upload | Not covered |

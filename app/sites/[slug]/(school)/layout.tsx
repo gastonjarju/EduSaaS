@@ -31,7 +31,7 @@ export default async function SchoolLayout({
 }: LayoutProps<"/sites/[slug]">) {
   const school = await requireSchool((await params).slug);
   const viewer = await getViewer(school.id);
-  const nav = viewer?.isAdmin ? [...NAV, { href: "/admin/events", label: "Admin" }] : NAV;
+  const nav = viewer?.isAdmin ? [...NAV, { href: "/admin", label: "Admin" }] : NAV;
 
   return (
     <div className="flex flex-1 flex-col bg-canvas font-sans text-base text-ink">

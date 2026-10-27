@@ -10,6 +10,7 @@ import {
   ilike,
   isNotNull,
   isNull,
+  ne,
   sql,
   type SQL,
 } from "drizzle-orm";
@@ -49,10 +50,13 @@ const profileColumns = {
   visibility: alumniProfiles.visibility,
 };
 
+// Active profiles of this school. Profiles the school rejected (admin
+// verification) are hidden everywhere outside the admin Alumni screen.
 function inSchool(schoolId: string): SQL {
   return and(
     eq(alumniProfiles.schoolId, schoolId),
-    isNull(alumniProfiles.deletedAt)
+    isNull(alumniProfiles.deletedAt),
+    ne(alumniProfiles.verificationStatus, "rejected")
   )!;
 }
 
