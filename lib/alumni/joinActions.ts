@@ -14,6 +14,7 @@ import {
   clearJoin,
   createAlumnus,
   findAccount,
+  JoinConflictError,
   markCodeSent,
   markVerified,
   readJoinStep,
@@ -60,13 +61,16 @@ export async function verifyCode(slug: string, _prev: ActionState, formData: For
       await startSession(account.user.id);
       redirect(account.profileHere ? `/alumni/profile/${account.profileHere.id}` : "/alumni");
     }
-    // Stay on the code step (don't clear the join cookies): changing cookies
-    // re-renders the page, which would reset the form and lose this error.
-    return {
-      error: account.hasProfileElsewhere
-        ? "This contact is already registered with another school's alumni network."
-        : "This contact belongs to an existing staff account.",
-    };
+    // Stay on the code step (don't clear the join cookies) for refusals:
+    // changing cookies re-renders the page, which would lose the error.
+    if (account.hasProfileElsewhere) {
+      return { error: "This contact is already registered with another school's alumni network." };
+    }
+    if (account.user.role !== "alumni") {
+      return { error: "This contact belongs to an existing staff account." };
+    }
+    // An alumni account with no active profile (e.g. they deleted it) can
+    // rejoin: completeProfile reuses the account.
   }
 
   await markVerified(slug, state.contact);
@@ -113,6 +117,7 @@ export async function completeProfile(slug: string, _prev: ActionState, formData
     profileId = created.profileId;
     await startSession(created.userId);
   } catch (err) {
+    if (err instanceof JoinConflictError) return { error: err.message };
     if (isUniqueViolation(err)) {
       return { error: "This contact was just registered. Please sign in instead." };
     }
