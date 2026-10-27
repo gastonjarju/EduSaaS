@@ -72,7 +72,11 @@ export async function findAccount(schoolId: string, contact: Contact) {
   if (!user) return null;
 
   const [profile] = await db
-    .select({ id: alumniProfiles.id, schoolId: alumniProfiles.schoolId })
+    .select({
+      id: alumniProfiles.id,
+      schoolId: alumniProfiles.schoolId,
+      verificationStatus: alumniProfiles.verificationStatus,
+    })
     .from(alumniProfiles)
     .where(and(eq(alumniProfiles.userId, user.id), isNull(alumniProfiles.deletedAt)))
     .limit(1);

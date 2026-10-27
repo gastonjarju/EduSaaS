@@ -2,9 +2,9 @@
 // auth library not chosen yet). A cookie holds the signed-in user's id and is
 // trusted only when MOCK_AUTH=1, so production stays signed out until real
 // OTP sign-in replaces this module.
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull, ne } from "drizzle-orm";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { cache } from "react";
 import { db } from "@/db";
 import { alumniProfiles, users } from "@/db/schema";
@@ -52,7 +52,8 @@ export const getViewer = cache(
         and(
           eq(alumniProfiles.userId, user.id),
           eq(alumniProfiles.schoolId, schoolId),
-          isNull(alumniProfiles.deletedAt)
+          isNull(alumniProfiles.deletedAt),
+          ne(alumniProfiles.verificationStatus, "rejected") // rejected by the school
         )
       )
       .limit(1);
@@ -75,5 +76,15 @@ export async function startSession(userId: string) {
 export async function requireViewer(schoolId: string): Promise<Viewer> {
   const viewer = await getViewer(schoolId);
   if (!viewer) redirect("/alumni/join");
+  return viewer;
+}
+
+/**
+ * For admin pages: signed-out visitors go to sign in; signed-in users who
+ * aren't this school's admin get a 404 (the admin area isn't advertised).
+ */
+export async function requireAdmin(schoolId: string): Promise<Viewer> {
+  const viewer = await requireViewer(schoolId);
+  if (!viewer.isAdmin) notFound();
   return viewer;
 }

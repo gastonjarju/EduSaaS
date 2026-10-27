@@ -47,7 +47,7 @@ Copy this table into the PR or release notes and fill in the Result column.
 | SMOKE-01 | User can create an alumni account (phone) | Ready | |
 | SMOKE-02 | User can create an alumni account (email) | Ready | |
 | SMOKE-03 | User can sign in and sign out | Partly built — see notes | |
-| SMOKE-04 | Admin can create events | **Not built** | |
+| SMOKE-04 | Admin can create and publish events | Ready | |
 | SMOKE-05 | Users can sign up (RSVP) for events | Ready | |
 | SMOKE-06 | Users can find classmates in the directory | Ready | |
 | SMOKE-07 | Private profile fields stay private | Ready | |
@@ -56,6 +56,7 @@ Copy this table into the PR or release notes and fill in the Result column.
 | SMOKE-10 | Schools can't see each other's alumni or events | Ready | |
 | SMOKE-11 | Signed-out visitors can't see members-only pages | Ready | |
 | SMOKE-12 | Admin can export the alumni list | Ready | |
+| SMOKE-13 | Admin can verify and reject alumni | Ready | |
 
 ---
 
@@ -105,17 +106,28 @@ Copy this table into the PR or release notes and fill in the Result column.
 
 > **Gap:** there is no sign-out button for real users yet. Signing out is only possible from the dev bar, which exists only with `MOCK_AUTH=1`. Sign-out needs to be built together with real sign-in (Twilio SMS codes and an auth library; see `architectureDesign.md` Open Questions).
 
-### SMOKE-04 — Admin can create events
+### SMOKE-04 — Admin can create and publish events 📱
 
-**Status: not built.** No admin screen exists yet for creating, editing or publishing events; the events on the site come from `npm run db:seed`. It's planned as the admin Events screen in `wireframes/school-admin-wireframes.html`.
+**Steps**
+1. Sign in as Aisha Bojang (alumna) and open `/admin/events`.
+2. Sign in as Mariama Touray (admin). Click **Admin** in the header.
+3. Click **+ New event**. Enter title `Smoke Event`, a start date and time next month at 10:00, choose **In person**, location `Main hall` → **Save draft**.
+4. As Aisha, open `/alumni/events`.
+5. As the admin, open the event from the calendar → **Publish**.
+6. As Aisha, open `/alumni/events`, then the event → **Going**.
+7. As the admin, reopen the event: change the title to `Smoke Event (edited)` → **Save changes**, then **Unpublish**.
+8. On Kriste Mambo, as its admin (Tafadzwa Makoni), create and publish an event at 16:00.
 
-**Expected, once built**
-1. Signed in as Mariama Touray, the admin opens the Events admin screen and creates an event with a title, date and time, location (or an online link), and a description.
-2. Saved as a draft, it does **not** appear on `/alumni/events`.
-3. Once published, it appears under **Upcoming** on `/alumni/events` with the right local date and time, and alumni can RSVP (SMOKE-05).
-4. Alumni can't reach the admin screen.
-
-**Until then, check that seeded events work:** `/alumni/events` lists Homecoming Reunion, Career Day (virtual) and Library Fundraising Gala as upcoming, and Founders' Day as past. "Sports Day (draft)" is **not** listed.
+**Expected**
+- Step 1: 404. Alumni can't reach the admin screens and have no **Admin** link.
+- Step 2: the Events admin screen opens on the current month. Tablets and up show a calendar; phones show a list. Drafts show as **Draft** (e.g. "Sports Day (draft)" in March 2027).
+- Step 3: lands on the event's edit page with "✓ Draft saved", and it appears on the calendar with a dashed border.
+- Step 4: the draft is **not** listed.
+- Step 5: "✓ Published — it's now on the events page."
+- Step 6: listed at 10:00 · Main hall, and the RSVP saves. The admin's edit page then shows "1 going".
+- Step 7: alumni see the new title after saving; after unpublishing, it disappears from `/alumni/events`.
+- Step 8: shows 16:00 on Kriste Mambo's events page; times are in each school's own time zone.
+- Choosing **Online** without a link, or an end time before the start, shows an error, and what you typed is kept.
 
 ### SMOKE-05 — Users can sign up (RSVP) for events 📱
 
@@ -222,13 +234,38 @@ Copy this table into the PR or release notes and fill in the Result column.
 
 ---
 
+### SMOKE-13 — Admin can verify and reject alumni 📱
+
+**Steps**
+1. As Aisha Bojang, open `/admin/alumni`.
+2. As Mariama Touray (admin), open `/alumni`, then click **Review pending (N)**.
+3. On the **Pending** tab, click **Verify** on the first person.
+4. Click **Reject** on the next person, then open the **Rejected** tab.
+5. As Aisha, search the directory for the rejected person, then try their profile URL.
+6. Sign out, open `/alumni/join` and verify the rejected person's phone number with `1234`.
+7. As the admin, click **Verify** on them in the **Rejected** tab.
+8. On **Pending**, tick two people → **Verify selected (2)**.
+9. On **All**, tick **Select all**, then **Select all 60 in this tab**, then untick one row.
+
+**Expected**
+- Step 1: 404.
+- Step 2: the admin Alumni screen opens on **Pending**, oldest sign-ups first. Tab counts add up to **All (60)**. Each row shows name, class, phone or email and joined date.
+- Step 3: the person leaves the Pending tab, the Pending count drops by 1, and their profile shows **✓ Verified**.
+- Step 4: the person is listed under **Rejected (1)**.
+- Step 5: not in the directory, and their profile URL is a 404.
+- Step 6: "The school hasn't approved your alumni profile. Please contact the school." They aren't signed in.
+- Step 7: they're back in the directory as verified.
+- Step 8: "✓ 2 alumni verified." Both leave Pending, and the checkboxes clear.
+- Step 9: the button reads **Verify selected (60)**; after unticking a row it reads **(24)**, back to this page only. Don't press it.
+- With nothing ticked, the bulk buttons are disabled. With anything ticked, every row's own Verify / Reject buttons are greyed out and do nothing, and the bar says "row buttons are off while alumni are selected".
+- Rejecting **more than 10** at once asks first: "Reject N alumni? …" with **Yes, reject N** / **Cancel**. Cancel, or changing the selection, rejects nothing. Rejecting 10 or fewer, and any Verify, happen straight away.
+
 ## 4. Known gaps
 
 These need building before the corresponding smoke tests can fully pass:
 
 | Gap | Affects |
 |---|---|
-| Admin event creation and publishing | SMOKE-04 |
 | Real sign-in (Twilio SMS codes) and a sign-out button for users | SMOKE-01, -02, -03 run only in mock mode |
-| Admin verification of alumni (approve/reject) | Profiles stay "Pending verification" |
+| Event cover images and deleting events | Not covered |
 | Profile editing, photo upload | Not covered |

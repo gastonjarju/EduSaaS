@@ -7,6 +7,7 @@ import {
   searchDirectory,
   type DirectoryFilters,
 } from "@/lib/alumni/directory";
+import { countByStatus } from "@/lib/alumni/verification";
 import { requireViewer } from "@/lib/auth/session";
 import { requireSchool } from "@/lib/schools";
 
@@ -48,10 +49,12 @@ export default async function AlumniDirectory({
   const ctx = { userId: viewer.user.id, isAdmin: viewer.isAdmin };
   const filters = parseFilters(await searchParams);
 
-  const [{ profiles, total }, options] = await Promise.all([
+  const [{ profiles, total }, options, statusCounts] = await Promise.all([
     searchDirectory(school.id, filters, ctx),
     directoryFilterOptions(school.id, ctx),
+    viewer.isAdmin ? countByStatus(school.id) : null,
   ]);
+  const pendingCount = statusCounts?.pending ?? 0;
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const filtered = Boolean(filters.q || filters.year || filters.city);
 
@@ -66,12 +69,20 @@ export default async function AlumniDirectory({
           </p>
         </div>
         {viewer.isAdmin && (
-          <a
-            href="/alumni/export"
-            className="flex h-12 items-center rounded-md border border-line-strong bg-white px-4 font-semibold"
-          >
-            Export list
-          </a>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/admin/alumni"
+              className="flex h-12 items-center rounded-md bg-accent px-4 font-semibold text-white"
+            >
+              Review pending ({pendingCount})
+            </Link>
+            <a
+              href="/alumni/export"
+              className="flex h-12 items-center rounded-md border border-line-strong bg-white px-4 font-semibold"
+            >
+              Export list
+            </a>
+          </div>
         )}
       </div>
 

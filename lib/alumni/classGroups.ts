@@ -1,7 +1,7 @@
 // Class-year groups and their feeds. Membership is implicit: every alumni
 // profile with the group's school and graduation year belongs to it
 // (see db/schema/alumni.ts). Every function takes the school id.
-import { and, count, desc, eq, isNull } from "drizzle-orm";
+import { and, count, desc, eq, isNull, ne } from "drizzle-orm";
 import { db } from "@/db";
 import { alumniProfiles, classGroupPosts, classGroups, users } from "@/db/schema";
 
@@ -25,7 +25,8 @@ export async function countMembers(schoolId: string, year: number): Promise<numb
       and(
         eq(alumniProfiles.schoolId, schoolId),
         eq(alumniProfiles.graduationYear, year),
-        isNull(alumniProfiles.deletedAt)
+        isNull(alumniProfiles.deletedAt),
+        ne(alumniProfiles.verificationStatus, "rejected")
       )
     );
   return n;
