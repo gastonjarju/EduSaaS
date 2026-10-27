@@ -12,29 +12,17 @@ A multi-tenant platform for African schools, piloting in Zimbabwe and The Gambia
 - [docs/designDocAlumni.md](./docs/designDocAlumni.md) — alumni survey findings and feature spec
 - [docs/edusaasSchemas.md](./docs/edusaasSchemas.md) — canonical database schema
 - [docs/domainRoutingArchitecture.md](./docs/domainRoutingArchitecture.md) — subdomains, custom domains, tenant resolution
+- [docs/localDevelopment.md](./docs/localDevelopment.md) — running the app, database and Drizzle Studio, Vercel
+- [docs/alumniFeaturesSmokeTests.md](./docs/alumniFeaturesSmokeTests.md) — end-to-end checks for the alumni features
 
 ## Running locally
 
+Full guide: **[docs/localDevelopment.md](./docs/localDevelopment.md)**. It covers setup, Vercel environment variables, the database and Drizzle Studio, test users, Vercel previews, and troubleshooting.
+
 ```bash
 npm install
-npm run dev
-```
-
-- http://localhost:3000 — platform site
-- http://anyschool.localhost:3000 — a school site (the subdomain is the school slug)
-
-### Demo data and mock sign-in
-
-`.env.local` needs `POSTGRES_URL` and `POSTGRES_URL_NON_POOLING` (from `vercel env pull`).
-
-```bash
-npm run db:migrate   # apply migrations
-npm run db:seed      # demo schools stpeterstechnical + kristemambo, ~60 alumni each (safe to re-run)
+npx vercel env pull .env.local   # first time; needs Vercel project access
 MOCK_AUTH=1 npm run dev
 ```
 
-With `MOCK_AUTH=1`, school sites show a "Dev sign-in" bar to switch between seeded alumni and the school admin, e.g. http://stpeterstechnical.localhost:3000. Never set it in production. The join flow at `/alumni/join` sends no real codes in this mode: the code is always `1234`.
-
-Run the unit tests with `npm test`.
-
-To test a custom domain, set `CUSTOM_DOMAIN_MAP='{"greenhill.test":"greenhill"}'` and point `greenhill.test` at `127.0.0.1` in `/etc/hosts`.
+Then open http://stpeterstechnical.localhost:3000/alumni and sign in with the yellow **Dev sign-in** bar. Join codes are always `1234` in this mode.
