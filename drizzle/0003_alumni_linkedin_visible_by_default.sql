@@ -1,0 +1,1 @@
+ALTER TABLE "alumni_profiles" ALTER COLUMN "visibility" SET DEFAULT '{"city": true, "profession": true, "bio": true, "employer": false, "linkedin": true}'::jsonb;

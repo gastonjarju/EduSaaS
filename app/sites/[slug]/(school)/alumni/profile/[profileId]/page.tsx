@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Avatar, VerificationBadge } from "@/app/_components/alumni";
+import { Avatar, LinkedinLink, VerificationBadge } from "@/app/_components/alumni";
 import { getProfile } from "@/lib/alumni/directory";
 import { requireViewer } from "@/lib/auth/session";
 import { isUuid } from "@/lib/format";
@@ -76,18 +76,7 @@ export default async function AlumniProfile({
           </p>
         )}
 
-        {profile.linkedinUrl && (
-          <a
-            href={profile.linkedinUrl}
-            rel="noopener noreferrer"
-            target="_blank"
-            className="mt-4 inline-block text-accent-ink underline"
-          >
-            LinkedIn profile
-          </a>
-        )}
-
-        <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+        <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
           {!isSelf && profile.hasPhone && (
             <a
               href={`/alumni/profile/${profile.id}/whatsapp`}
@@ -98,6 +87,7 @@ export default async function AlumniProfile({
               Message on WhatsApp
             </a>
           )}
+          <LinkedinLink url={profile.linkedinUrl} name={profile.name} withLabel />
           <Link
             href={`/alumni/class/${profile.graduationYear}`}
             className="flex h-12 items-center justify-center rounded-md border border-line-strong px-5 font-semibold"
