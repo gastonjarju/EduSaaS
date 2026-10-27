@@ -2,7 +2,7 @@
 
 // Server actions for the join flow (screen 1c). Codes are mocked: with
 // MOCK_AUTH=1 the code is always MOCK_CODE and nothing is sent. Real codes
-// via Twilio (WhatsApp/SMS) and email replace sendCode/verifyCode later.
+// via Twilio SMS and email replace sendCode/verifyCode later.
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -11,10 +11,12 @@ import { getSchoolBySlug } from "@/lib/schools";
 import type { ActionState } from "./actions";
 import { normalizeContact } from "./contact";
 import { normalizeLinkedinUrl } from "./linkedin";
+import { phoneCountry } from "./phoneCountries";
 import {
   clearJoin,
   createAlumnus,
   findAccount,
+  JoinConflictError,
   markCodeSent,
   markVerified,
   readJoinStep,
@@ -29,11 +31,18 @@ export async function sendCode(slug: string, _prev: ActionState, formData: FormD
 
   const kind = formData.get("kind") === "email" ? "email" : "phone";
   const raw = String(formData.get("contact") ?? "");
-  const contact = normalizeContact(kind, raw, school.country);
+  // Country picked next to the phone field; anything unexpected → school's country
+  const picked = String(formData.get("phoneCountry") ?? "");
+  const country = phoneCountry(picked) ? picked : school.country;
+  const contact = normalizeContact(kind, raw, country);
   if (!contact) {
     return {
-      error: kind === "phone" ? "Enter a valid phone number." : "Enter a valid email address.",
+      error:
+        kind === "phone"
+          ? "Enter a valid phone number for the selected country, or start with + and the country code."
+          : "Enter a valid email address.",
       content: raw,
+      country,
     };
   }
 
@@ -59,15 +68,23 @@ export async function verifyCode(slug: string, _prev: ActionState, formData: For
     if (account.profileHere || isThisSchoolsAdmin) {
       await clearJoin();
       await startSession(account.user.id);
-      redirect(account.profileHere ? `/alumni/profile/${account.profileHere.id}` : "/alumni");
+      // ?welcome= makes the profile say they were signed in to an existing account
+      redirect(
+        account.profileHere
+          ? `/alumni/profile/${account.profileHere.id}?welcome=${state.contact.kind}`
+          : "/alumni"
+      );
     }
-    // Stay on the code step (don't clear the join cookies): changing cookies
-    // re-renders the page, which would reset the form and lose this error.
-    return {
-      error: account.hasProfileElsewhere
-        ? "This contact is already registered with another school's alumni network."
-        : "This contact belongs to an existing staff account.",
-    };
+    // Stay on the code step (don't clear the join cookies) for refusals:
+    // changing cookies re-renders the page, which would lose the error.
+    if (account.hasProfileElsewhere) {
+      return { error: "This contact is already registered with another school's alumni network." };
+    }
+    if (account.user.role !== "alumni") {
+      return { error: "This contact belongs to an existing staff account." };
+    }
+    // An alumni account with no active profile (e.g. they deleted it) can
+    // rejoin: completeProfile reuses the account.
   }
 
   await markVerified(slug, state.contact);
@@ -124,6 +141,7 @@ export async function completeProfile(slug: string, _prev: ActionState, formData
     profileId = created.profileId;
     await startSession(created.userId);
   } catch (err) {
+    if (err instanceof JoinConflictError) return { error: err.message };
     if (isUniqueViolation(err)) {
       return { error: "This contact was just registered. Please sign in instead." };
     }

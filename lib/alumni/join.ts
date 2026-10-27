@@ -83,8 +83,11 @@ export async function findAccount(schoolId: string, contact: Contact) {
   };
 }
 
+export class JoinConflictError extends Error {}
+
 /**
- * Creates the user, their alumni profile (pending verification — honor
+ * Creates the user (or reuses their alumni account if it has no active
+ * profile, e.g. after they deleted it), their alumni profile (pending verification — honor
  * system for V1) and the class group for their year if it's the first one.
  */
 export async function createAlumnus(input: {
@@ -97,15 +100,43 @@ export async function createAlumnus(input: {
   linkedinUrl: string | null;
 }): Promise<{ userId: string; profileId: string }> {
   return db.transaction(async (tx) => {
-    const [user] = await tx
-      .insert(users)
-      .values({
-        name: input.name,
-        role: "alumni",
-        phone: input.contact.kind === "phone" ? input.contact.value : null,
-        email: input.contact.kind === "email" ? input.contact.value : null,
-      })
-      .returning({ id: users.id });
+    const byContact =
+      input.contact.kind === "phone"
+        ? eq(users.phone, input.contact.value)
+        : eq(users.email, input.contact.value);
+    const [existing] = await tx
+      .select({ id: users.id, role: users.role })
+      .from(users)
+      .where(byContact)
+      .limit(1);
+
+    let user: { id: string };
+    if (existing) {
+      if (existing.role !== "alumni") {
+        throw new JoinConflictError("This contact belongs to an existing staff account.");
+      }
+      const [active] = await tx
+        .select({ id: alumniProfiles.id })
+        .from(alumniProfiles)
+        .where(and(eq(alumniProfiles.userId, existing.id), isNull(alumniProfiles.deletedAt)))
+        .limit(1);
+      if (active) throw new JoinConflictError("This contact is already registered. Please sign in instead.");
+      // A user has at most one profile row (unique user_id): drop the
+      // soft-deleted one so they start fresh.
+      await tx.delete(alumniProfiles).where(eq(alumniProfiles.userId, existing.id));
+      await tx.update(users).set({ name: input.name, updatedAt: new Date() }).where(eq(users.id, existing.id));
+      user = existing;
+    } else {
+      [user] = await tx
+        .insert(users)
+        .values({
+          name: input.name,
+          role: "alumni",
+          phone: input.contact.kind === "phone" ? input.contact.value : null,
+          email: input.contact.kind === "email" ? input.contact.value : null,
+        })
+        .returning({ id: users.id });
+    }
 
     const [profile] = await tx
       .insert(alumniProfiles)

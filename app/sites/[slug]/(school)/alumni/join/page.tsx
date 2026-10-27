@@ -9,11 +9,6 @@ import { requireSchool } from "@/lib/schools";
 
 export const metadata: Metadata = { title: "Join the alumni network" };
 
-const PHONE_PLACEHOLDERS: Record<string, string> = {
-  GM: "+220 ___ ____",
-  ZW: "+263 __ ___ ____",
-};
-
 // Screen 1c. Two steps: verify a phone or email with a one-time code, then
 // create a profile. Verifying a contact that already has a profile here signs
 // that alumnus in, so this page is also the alumni sign-in. The school comes
@@ -57,7 +52,7 @@ export default async function JoinAlumni({
           {state.step === "contact" && (
             <ContactStep
               action={sendCode.bind(null, school.slug)}
-              placeholder={PHONE_PLACEHOLDERS[school.country] ?? "+___ ___ ____"}
+              defaultCountry={school.country}
             />
           )}
 

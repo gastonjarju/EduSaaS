@@ -11,7 +11,8 @@ import { getSchoolBySlug } from "@/lib/schools";
 import { getClassGroup, insertPost, POST_MAX_LENGTH } from "./classGroups";
 import { getEvent, upsertRsvp } from "./events";
 
-export type ActionState = { error?: string; ok?: boolean; content?: string };
+// `content`/`country` echo the submitted values so a form can restore them after an error.
+export type ActionState = { error?: string; ok?: boolean; content?: string; country?: string };
 
 const postSchema = z.object({
   content: z
