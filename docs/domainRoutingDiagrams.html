@@ -335,7 +335,7 @@
     </div>
     <div class="diagram-scroll">
     <figure>
-      <svg viewBox="0 0 980 300" role="img" aria-label="Six-step sequence for activating a custom domain: the school admin enters a domain, the backend registers it with Vercel, Vercel returns a DNS record, the admin adds that record at their registrar, the backend polls Vercel while domain_status moves from pending_dns to pending_ssl, and once SSL is issued the status becomes active and Edge Config is synced.">
+      <svg viewBox="0 0 980 300" role="img" aria-label="Six-step sequence for activating a custom domain: the school admin enters a domain, the app registers it with Vercel, Vercel returns a DNS record, the admin adds that record at their registrar, a scheduled job polls Vercel while domain_status moves from pending_dns to pending_ssl, and once SSL is issued the status becomes active and Edge Config is synced.">
         <defs>
           <marker id="f2arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
             <path d="M0,0 L10,5 L0,10 z" fill="context-stroke"></path>
@@ -359,7 +359,7 @@
 
         <!-- step 2 -->
         <g class="node">
-          <text class="t-eyebrow" x="253" y="46" text-anchor="middle">EduSaaS backend</text>
+          <text class="t-eyebrow" x="253" y="46" text-anchor="middle">EduSaaS app</text>
           <rect class="node-shape" x="188" y="58" width="130" height="90" rx="8"></rect>
           <circle cx="206" cy="76" r="10" fill="var(--surface-2)" stroke="var(--line)"></circle>
           <text x="206" y="80" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--ink-muted)">2</text>
@@ -397,7 +397,7 @@
 
         <!-- step 5 -->
         <g class="node">
-          <text class="t-eyebrow" x="727" y="46" text-anchor="middle">Backend (Celery)</text>
+          <text class="t-eyebrow" x="727" y="46" text-anchor="middle">Scheduled job</text>
           <rect class="node-shape" x="662" y="58" width="130" height="90" rx="8"></rect>
           <circle cx="680" cy="76" r="10" fill="var(--surface-2)" stroke="var(--line)"></circle>
           <text x="680" y="80" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--ink-muted)">5</text>
@@ -427,7 +427,7 @@
       </svg>
     </figure>
     </div>
-    <figcaption>Steps 1&ndash;4 happen once, fast. Step 5 is a Celery poll loop that can take minutes to hours &mdash; DNS propagation, not a bug &mdash; and the dashboard should say so. Once Vercel confirms SSL, the redirect flips automatically.</figcaption>
+    <figcaption>Steps 1&ndash;4 happen once, fast. Step 5 is a scheduled poll loop that can take minutes to hours &mdash; DNS propagation, not a bug &mdash; and the dashboard should say so. Once Vercel confirms SSL, the redirect flips automatically.</figcaption>
   </section>
 
   <!-- ============ FIGURE 3 ============ -->

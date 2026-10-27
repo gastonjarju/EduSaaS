@@ -1,6 +1,6 @@
 // Shared school site route. Never visited directly: proxy.ts rewrites
 // <slug>.edusaas.africa (and active custom domains) here.
-// TODO: fetch the school's SchoolProfile + content_blocks from the Django API
+// TODO: load the school's profile + content blocks from Neon via Drizzle
 // and call notFound() when no school has this slug.
 export default async function SchoolHome({
   params,
