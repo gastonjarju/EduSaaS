@@ -49,9 +49,16 @@ export default async function EventDetail({
 
   return (
     <div className="mx-auto max-w-xl space-y-4">
-      <Link href="/alumni/events" className="inline-flex h-10 items-center text-ink-soft">
-        ← Events
-      </Link>
+      <div className="flex items-center justify-between">
+        <Link href="/alumni/events" className="inline-flex h-10 items-center text-ink-soft">
+          ← Events
+        </Link>
+        {viewer?.isAdmin && (
+          <Link href={`/admin/events/${event.id}`} className="inline-flex h-10 items-center font-semibold text-accent-ink underline">
+            Edit event
+          </Link>
+        )}
+      </div>
 
       <article className="space-y-5 rounded-xl border border-line bg-white p-6">
         <header className="space-y-2">

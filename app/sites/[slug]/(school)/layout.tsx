@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import MockAuthBar from "@/app/_components/MockAuthBar";
+import { getViewer } from "@/lib/auth/session";
 import { countryName, getSchoolBySlug, requireSchool } from "@/lib/schools";
 
 // Shell for every page of a school site. It sits in a route group below
@@ -28,6 +29,8 @@ export default async function SchoolLayout({
   params,
 }: LayoutProps<"/sites/[slug]">) {
   const school = await requireSchool((await params).slug);
+  const viewer = await getViewer(school.id);
+  const nav = viewer?.isAdmin ? [...NAV, { href: "/admin/events", label: "Admin" }] : NAV;
 
   return (
     <div className="flex flex-1 flex-col bg-canvas font-sans text-base text-ink">
@@ -39,7 +42,7 @@ export default async function SchoolLayout({
             <p className="text-sm text-ink-soft">{countryName(school.country)}</p>
           </Link>
           <nav className="flex gap-1 text-sm">
-            {NAV.map((item) => (
+            {nav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}

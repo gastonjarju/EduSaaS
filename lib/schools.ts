@@ -38,6 +38,10 @@ const COUNTRY_TIME_ZONES: Record<string, string> = {
   ZW: "Africa/Harare",
 };
 
+export function schoolTimeZone(school: Pick<School, "country">): string {
+  return COUNTRY_TIME_ZONES[school.country] ?? "UTC";
+}
+
 /** Formats a timestamp in the school's local time, e.g. "Sun, 20 Dec 2026, 16:00". */
 export function formatSchoolDate(
   school: Pick<School, "country">,
@@ -52,7 +56,7 @@ export function formatSchoolDate(
   }
 ): string {
   return new Intl.DateTimeFormat("en-GB", {
-    timeZone: COUNTRY_TIME_ZONES[school.country] ?? "UTC",
+    timeZone: schoolTimeZone(school),
     ...options,
   }).format(date);
 }
