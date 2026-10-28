@@ -6,6 +6,7 @@ import { countByStatus, listForReview, REVIEW_PAGE_SIZE, REVIEW_STATUSES, type R
 import { reviewAlumnus, reviewSelected } from "@/lib/alumni/verificationActions";
 import { requireAdmin } from "@/lib/auth/session";
 import { formatSchoolDate, requireSchool } from "@/lib/schools";
+import { photoUrl } from "@/lib/storage";
 
 export const metadata: Metadata = { title: "Alumni — admin" };
 
@@ -143,7 +144,7 @@ export default async function AdminAlumni({
                 aria-label={`Select ${r.name}`}
                 className="h-5 w-5 flex-none cursor-pointer accent-accent"
               />
-              <Avatar name={r.name} />
+              <Avatar name={r.name} photo={photoUrl(r.photoPath)} />
               <div className="min-w-0 flex-1 basis-48">
                 {r.status === "rejected" ? (
                   <p className="font-semibold">{r.name}</p>

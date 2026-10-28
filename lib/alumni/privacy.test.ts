@@ -15,7 +15,13 @@ const row: ProfileRow = {
   linkedinUrl: "https://linkedin.com/in/aisha",
   verificationStatus: "verified",
   isMentor: true,
-  visibility: { city: false, profession: true, bio: true, employer: false, linkedin: false },
+  visibility: { city: false, profession: true, bio: true, employer: false, linkedin: false, photo: false, memories: false },
+  photoPath: "school/profile/photo.webp",
+  industry: "Education",
+  studying: "MEd, University of The Gambia",
+  schoolActivities: ["Debate club", "Netball"],
+  schoolMemories: ["Winning the 2014 quiz"],
+  mentorAreas: ["career"],
 };
 
 const otherAlumnus = { userId: "user-2", isAdmin: false };
@@ -56,6 +62,36 @@ describe("toProfileView", () => {
     const view = toProfileView(row, { userId: "admin-1", isAdmin: true });
     expect(Object.keys(view)).not.toContain("phone");
     expect(Object.keys(view)).not.toContain("email");
+  });
+});
+
+describe("new profile sections", () => {
+  it("hides photo and memories when switched off; shows the rest by default", () => {
+    const view = toProfileView(row, otherAlumnus);
+    expect(view.photoPath).toBeNull();
+    expect(view.memories).toEqual([]);
+    expect(view.activities).toEqual(["Debate club", "Netball"]);
+    expect(view.studying).toBe("MEd, University of The Gambia");
+    expect(view.industry).toBe("Education");
+    expect(view.mentorAreas).toEqual(["career"]);
+  });
+
+  it("industry follows the profession setting", () => {
+    const hidden = toProfileView({ ...row, visibility: { profession: false } }, otherAlumnus);
+    expect(hidden.industry).toBeNull();
+    expect(hidden.profession).toBeNull();
+  });
+
+  it("owners and admins see everything", () => {
+    for (const viewer of [{ userId: "user-1", isAdmin: false }, { userId: "admin-1", isAdmin: true }]) {
+      const view = toProfileView(row, viewer);
+      expect(view.photoPath).toBe("school/profile/photo.webp");
+      expect(view.memories).toEqual(["Winning the 2014 quiz"]);
+    }
+  });
+
+  it("doesn't show mentor areas unless they're a mentor", () => {
+    expect(toProfileView({ ...row, isMentor: false }, otherAlumnus).mentorAreas).toEqual([]);
   });
 });
 

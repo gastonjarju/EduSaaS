@@ -3,6 +3,7 @@
 import { and, asc, count, desc, eq, gte, lt, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { alumniProfiles, eventRsvps, events, users } from "@/db/schema";
+import { visiblePhotoPath } from "./photoSql";
 
 export type Event = typeof events.$inferSelect;
 export type RsvpStatus = "going" | "maybe" | "not_going";
@@ -64,7 +65,7 @@ export async function getRsvpSummary(schoolId: string, eventId: string) {
       .where(scoped)
       .groupBy(eventRsvps.status),
     db
-      .select({ name: users.name, profileId: alumniProfiles.id })
+      .select({ name: users.name, profileId: alumniProfiles.id, photoPath: visiblePhotoPath })
       .from(eventRsvps)
       .innerJoin(users, eq(users.id, eventRsvps.userId))
       .leftJoin(

@@ -46,6 +46,7 @@ The app needs these values:
 |---|---|
 | `POSTGRES_URL` | The app's database connection (pooled) |
 | `POSTGRES_URL_NON_POOLING` | Migrations, seeding, Drizzle Studio (direct connection) |
+| `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Profile photos in Supabase Storage. The service key is server-only; never expose it to the browser. |
 
 Optional variables, set on the command line or in `.env.local`:
 
@@ -71,6 +72,7 @@ The app uses **Postgres** through **Drizzle ORM**. The database itself is the **
 | `npm run db:seed` | Resets the two demo schools (`stpeterstechnical`, `kristemambo`) with ~60 alumni each, class groups, posts, events and RSVPs. Safe to re-run. |
 | `npm run db:studio` | Opens **Drizzle Studio** to browse and edit tables (below). |
 | `npm run db:generate` | Creates a new migration after you change `db/schema/`. |
+| `npm run storage:setup` | Creates or updates the public `profile-photos` Storage bucket. Run it once per Supabase project; it's safe to re-run. |
 | `npm run db:push` | Pushes schema changes without a migration file. **Don't use it on the shared database;** use generate + migrate. |
 
 ### What `db:seed` does and doesn't reset
@@ -102,6 +104,15 @@ Other tools work too, connected with `POSTGRES_URL_NON_POOLING` and SSL on:
 4. Commit both the schema change and the files in `drizzle/`.
 
 Don't add or alter columns by hand in Studio or Supabase, or the database drifts from the migrations.
+
+### Profile photos (Supabase Storage)
+
+- **Where they go:** photos uploaded on **Edit profile** are stored in the `profile-photos` bucket.
+- **Processing:** the browser shrinks a photo first; the server then crops it square, resizes it to 400×400 and converts it to WebP (a few tens of KB).
+- **Who can see them:** the bucket is public, so anyone with a photo's link can open it. File names are random, and pages only include a photo's link when its owner allows others to see it.
+- **What the database stores:** `users.avatar_url` holds the file's path in the bucket, not a full URL.
+- **Clean-up:** replacing or removing a photo deletes the old file, but its old link may still load from the CDN cache for up to an hour. `npm run db:seed` deletes the photos of the seed users it resets.
+- **Browsing them:** in the Supabase dashboard under **Storage**.
 
 ---
 

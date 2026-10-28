@@ -35,6 +35,7 @@ export async function listForReview(
       .select({
         profileId: alumniProfiles.id,
         name: users.name,
+        photoPath: users.avatarUrl,
         phone: users.phone,
         email: users.email,
         graduationYear: alumniProfiles.graduationYear,

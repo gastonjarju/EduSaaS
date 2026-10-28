@@ -3,9 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Avatar, LinkedinLink, VerificationBadge } from "@/app/_components/alumni";
 import { getProfile } from "@/lib/alumni/directory";
+import { MENTOR_AREAS } from "@/lib/alumni/profileFields";
 import { requireViewer } from "@/lib/auth/session";
 import { isUuid } from "@/lib/format";
 import { countryName, requireSchool } from "@/lib/schools";
+import { photoUrl } from "@/lib/storage";
 
 export const metadata: Metadata = { title: "Alumni profile" };
 
@@ -32,6 +34,21 @@ export default async function AlumniProfile({
     .filter(Boolean)
     .join(", ");
   const role = [profile.profession, profile.employer].filter(Boolean).join(", ");
+  const mentorLabels = profile.mentorAreas
+    .map((a) => MENTOR_AREAS.find((m) => m.value === a)?.label)
+    .filter(Boolean)
+    .join(", ");
+  const hasWork = Boolean(role || profile.industry || profile.studying || profile.isMentor);
+  // Nudge owners whose profile is missing the optional sections
+  const missing = isSelf
+    ? [
+        !profile.photoPath && "a photo",
+        !hasWork && "what you do now",
+        profile.activities.length === 0 && "your school activities",
+        profile.memories.length === 0 && "a memory or two",
+      ].filter(Boolean)
+    : [];
+  const sectionTitle = "text-sm font-bold uppercase tracking-wide text-ink-soft";
 
   return (
     <div className="mx-auto max-w-xl space-y-4">
@@ -46,10 +63,22 @@ export default async function AlumniProfile({
         </p>
       )}
 
-      <article className="rounded-xl border border-line bg-white p-6">
+      {missing.length > 0 && (
+        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-accent bg-accent-soft p-4">
+          <p className="min-w-0 flex-1 text-accent-ink">
+            <strong>Complete your profile</strong> — add {missing.join(", ").replace(/, ([^,]*)$/, " and $1")} so
+            classmates can recognise you.
+          </p>
+          <Link href="/alumni/profile/edit" className="flex h-12 items-center rounded-md bg-accent px-4 font-semibold text-white">
+            Complete profile
+          </Link>
+        </div>
+      )}
+
+      <article className="space-y-6 rounded-xl border border-line bg-white p-6">
         <div className="flex items-center gap-4">
-          <Avatar name={profile.name} size="lg" />
-          <div className="min-w-0 space-y-1">
+          <Avatar name={profile.name} size="lg" photo={photoUrl(profile.photoPath)} />
+          <div className="min-w-0 flex-1 space-y-1">
             <h1 className="text-2xl font-bold">{profile.name}</h1>
             <p className="text-ink-soft">
               Class of {profile.graduationYear}
@@ -66,28 +95,79 @@ export default async function AlumniProfile({
           </div>
         </div>
 
-        <dl className="mt-6 space-y-2">
-          {role && (
-            <div className="flex gap-2">
-              <dt aria-label="Work">💼</dt>
-              <dd>{role}</dd>
-            </div>
-          )}
-          {location && (
-            <div className="flex gap-2">
-              <dt aria-label="Location">📍</dt>
-              <dd>{location}</dd>
-            </div>
-          )}
-        </dl>
+        {location && <p>📍 {location}</p>}
 
         {profile.bio && (
-          <p className="mt-4 border-l-4 border-accent-soft pl-3 italic text-ink-soft">
-            &ldquo;{profile.bio}&rdquo;
-          </p>
+          <p className="border-l-4 border-accent-soft pl-3 italic text-ink-soft">&ldquo;{profile.bio}&rdquo;</p>
         )}
 
-        <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+        {hasWork && (
+          <section className="space-y-2">
+            <h2 className={sectionTitle}>Current profession</h2>
+            <dl className="space-y-1">
+              {role && (
+                <div className="flex gap-2">
+                  <dt aria-label="Work">💼</dt>
+                  <dd>{role}</dd>
+                </div>
+              )}
+              {profile.industry && (
+                <div className="flex gap-2">
+                  <dt aria-label="Industry">🏢</dt>
+                  <dd>{profile.industry}</dd>
+                </div>
+              )}
+              {profile.studying && (
+                <div className="flex gap-2">
+                  <dt aria-label="Studying">🎓</dt>
+                  <dd>Studying {profile.studying}</dd>
+                </div>
+              )}
+              {profile.isMentor && (
+                <div className="flex gap-2">
+                  <dt aria-label="Mentoring">🤝</dt>
+                  <dd>Open to mentoring{mentorLabels && `: ${mentorLabels}`}</dd>
+                </div>
+              )}
+            </dl>
+          </section>
+        )}
+
+        {profile.activities.length > 0 && (
+          <section className="space-y-2">
+            <h2 className={sectionTitle}>At school</h2>
+            <ul className="flex flex-wrap gap-2">
+              {profile.activities.map((a) => (
+                <li key={a} className="rounded-full bg-accent-soft px-3 py-1 text-sm text-accent-ink">
+                  {a}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {profile.memories.length > 0 && (
+          <section className="space-y-2">
+            <h2 className={sectionTitle}>Memories</h2>
+            <ul className="space-y-2">
+              {profile.memories.map((m, i) => (
+                <li key={i} className="whitespace-pre-line rounded-lg bg-canvas p-3">
+                  {m}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+          {isSelf && (
+            <Link
+              href="/alumni/profile/edit"
+              className="flex h-12 items-center justify-center rounded-md bg-ink px-5 font-semibold text-white"
+            >
+              Edit profile
+            </Link>
+          )}
           {!isSelf && profile.hasPhone && (
             <a
               href={`/alumni/profile/${profile.id}/whatsapp`}

@@ -7,6 +7,7 @@ import { countMembers, getClassGroup, listPosts, POST_MAX_LENGTH } from "@/lib/a
 import { requireViewer } from "@/lib/auth/session";
 import { timeAgo } from "@/lib/format";
 import { requireSchool } from "@/lib/schools";
+import { photoUrl } from "@/lib/storage";
 
 export async function generateMetadata({
   params,
@@ -70,6 +71,7 @@ export default async function ClassGroupFeed({
           content: p.content,
           authorName: p.authorName,
           authorProfileId: p.authorProfileId,
+          authorPhoto: photoUrl(p.authorPhotoPath),
           timeLabel: timeAgo(p.createdAt, now),
         }))}
         canPost={isMember}

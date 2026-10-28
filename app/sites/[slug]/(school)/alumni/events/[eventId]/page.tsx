@@ -10,6 +10,7 @@ import { eventPlace, getEvent, getRsvpSummary, getViewerRsvp } from "@/lib/alumn
 import { getViewer } from "@/lib/auth/session";
 import { isUuid } from "@/lib/format";
 import { formatSchoolDate, requireSchool } from "@/lib/schools";
+import { photoUrl } from "@/lib/storage";
 
 export const metadata: Metadata = { title: "Event" };
 
@@ -85,7 +86,7 @@ export default async function EventDetail({
             <div className="flex items-center">
               {summary.goingAttendees.slice(0, SHOWN_ATTENDEES).map((a, i) => (
                 <span key={`${a.name}-${i}`} title={a.name} className="-mr-2 rounded-full ring-2 ring-white">
-                  <Avatar name={a.name} size="sm" />
+                  <Avatar name={a.name} size="sm" photo={photoUrl(a.photoPath)} />
                 </span>
               ))}
               {summary.goingAttendees.length > SHOWN_ATTENDEES && (

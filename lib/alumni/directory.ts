@@ -48,6 +48,12 @@ const profileColumns = {
   verificationStatus: alumniProfiles.verificationStatus,
   isMentor: alumniProfiles.isMentor,
   visibility: alumniProfiles.visibility,
+  photoPath: users.avatarUrl,
+  industry: alumniProfiles.industry,
+  studying: alumniProfiles.studying,
+  schoolActivities: alumniProfiles.schoolActivities,
+  schoolMemories: alumniProfiles.schoolMemories,
+  mentorAreas: alumniProfiles.mentorAreas,
 };
 
 // Active profiles of this school. Profiles the school rejected (admin
