@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import AccountMenu from "@/app/_components/AccountMenu";
 import MockAuthBar from "@/app/_components/MockAuthBar";
 import NavLinks from "@/app/_components/NavLinks";
 import { getViewer } from "@/lib/auth/session";
 import { countryName, getSchoolBySlug, requireSchool } from "@/lib/schools";
+import { photoUrl } from "@/lib/storage";
 
 // Shell for every page of a school site. It sits in a route group below
 // [slug] so that notFound() here is caught by app/sites/[slug]/not-found.tsx.
@@ -42,9 +44,23 @@ export default async function SchoolLayout({
             <p className="truncate font-bold">{school.name}</p>
             <p className="text-sm text-ink-soft">{countryName(school.country)}</p>
           </Link>
-          <nav className="flex gap-1 text-sm">
-            <NavLinks items={nav} />
-          </nav>
+          <div className="flex flex-wrap items-center gap-1">
+            <nav className="flex gap-1 text-sm">
+              <NavLinks items={nav} />
+            </nav>
+            <AccountMenu
+              {...(viewer
+                ? {
+                    kind: "member" as const,
+                    name: viewer.user.name,
+                    photo: photoUrl(viewer.user.avatarUrl), // you always see your own photo
+                    profileId: viewer.profile?.id ?? null,
+                    graduationYear: viewer.profile?.graduationYear ?? null,
+                    isAdmin: viewer.isAdmin,
+                  }
+                : { kind: "signedOut" as const })}
+            />
+          </div>
         </div>
       </header>
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-7">
