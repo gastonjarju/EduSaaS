@@ -72,6 +72,7 @@ The app uses **Postgres** through **Drizzle ORM**. The database itself is the **
 | `npm run db:seed` | Resets the two demo schools (`stpeterstechnical`, `kristemambo`) with ~60 alumni each, class groups, posts, events and RSVPs. Safe to re-run. |
 | `npm run db:studio` | Opens **Drizzle Studio** to browse and edit tables (below). |
 | `npm run db:generate` | Creates a new migration after you change `db/schema/`. |
+| `npm run admin:create -- --school <slug> --name "<name>" --email <email>` | Creates a school admin for a school (see "Adding a school"). |
 | `npm run storage:setup` | Creates or updates the public `profile-photos` Storage bucket. Run it once per Supabase project; it's safe to re-run. |
 | `npm run db:push` | Pushes schema changes without a migration file. **Don't use it on the shared database;** use generate + migrate. |
 
@@ -169,7 +170,16 @@ In Drizzle Studio, open **schools** → **Add record**:
 - **slug**: lowercase letters, numbers and hyphens, e.g. `stfaiths`
 - **country**: two letters, e.g. `ZW`
 
-Save, then open `http://<slug>.localhost:3000`. Dates show in local time for `GM` and `ZW`; other countries fall back to UTC until a time zone is added in `lib/schools.ts`.
+Save, then open `http://<slug>.localhost:3000`.
+
+A new school has no admin. Create one with:
+
+```bash
+npm run admin:create -- --school stfaiths --name "St Faiths Admin" --email admin@stfaiths.test
+# or --phone +263771234567 instead of --email
+```
+
+They then appear in the dev sign-in bar as "<name> — school admin". They can also sign in at `/alumni/join` with that email or phone and code `1234`. Re-running the command doesn't create a duplicate. Don't use an `@seed.edusaas.test` email, because `db:seed` deletes those. Dates show in local time for `GM` and `ZW`; other countries fall back to UTC until a time zone is added in `lib/schools.ts`.
 
 ---
 
