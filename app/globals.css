@@ -33,6 +33,16 @@
   }
 }
 
+/* Tailwind v4 no longer gives buttons a pointer cursor; restore it for
+   everything clickable (disabled buttons keep the default arrow). */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary {
+    cursor: pointer;
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
