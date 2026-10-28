@@ -57,6 +57,7 @@ Copy this table into the PR or release notes and fill in the Result column.
 | SMOKE-11 | Signed-out visitors can't see members-only pages | Ready | |
 | SMOKE-12 | Admin can export the alumni list | Ready | |
 | SMOKE-13 | Admin can verify and reject alumni | Ready | |
+| SMOKE-14 | Alumni can add a photo, profession, activities and memories | Ready | |
 
 ---
 
@@ -260,6 +261,30 @@ Copy this table into the PR or release notes and fill in the Result column.
 - With nothing ticked, the bulk buttons are disabled. With anything ticked, every row's own Verify / Reject buttons are greyed out and do nothing, and the bar says "row buttons are off while alumni are selected".
 - Rejecting **more than 10** at once asks first: "Reject N alumni? …" with **Yes, reject N** / **Cancel**. Cancel, or changing the selection, rejects nothing. Rejecting 10 or fewer, and any Verify, happen straight away.
 
+### SMOKE-14 — Alumni can add a photo, profession, activities and memories 📱
+
+**Setup:** run `npm run storage:setup` once, which creates the `profile-photos` bucket.
+
+**Steps**
+1. As Aisha Bojang, open your profile.
+2. Click **Edit profile** → **Upload photo** and choose a photo from your computer or phone.
+3. Change the job title, pick an **Industry**, fill in **Currently studying**, and tick **University applications** under mentoring.
+4. Under **Activities at school**, type a new activity and press Enter, tap a suggestion such as **+ Choir**, and remove one with **×**.
+5. Click **+ Add another memory** and write one. Under **Who can see what**, untick **Memories** → **Save profile**.
+6. Open your profile, then switch to Musa Jallow and open Aisha's profile.
+7. As Aisha, untick **Photo** and save, then check the directory as Musa.
+8. As Aisha, click **Remove photo**.
+
+**Expected**
+- Step 1: sections **Current profession**, **At school** and **Memories**, a **Complete your profile** prompt asking for a photo, and an **Edit profile** button.
+- Step 2: "✓ Photo updated." The photo, cropped square, appears on your profile, your directory card, your class-feed posts and event attendee lists.
+- Steps 3–5: "✓ Profile saved." Your profile shows all the changes.
+- Step 6: Musa sees everything except the memories; admins see everything. Musa has no Edit button.
+- Step 7: Musa sees your initials instead of the photo.
+- Step 8: back to initials.
+- An **iPhone (HEIC) photo** uploads too: the button shows "Converting…" for a few seconds first.
+- A file that isn't an image is rejected. A bad LinkedIn link shows an error and keeps your other edits.
+
 ## 4. Known gaps
 
 These need building before the corresponding smoke tests can fully pass:
@@ -268,4 +293,3 @@ These need building before the corresponding smoke tests can fully pass:
 |---|---|
 | Real sign-in (Twilio SMS codes) and a sign-out button for users | SMOKE-01, -02, -03 run only in mock mode |
 | Event cover images and deleting events | Not covered |
-| Profile editing, photo upload | Not covered |

@@ -10,6 +10,7 @@ export type FeedPost = {
   content: string;
   authorName: string;
   authorProfileId: string | null;
+  authorPhoto?: string | null;
   timeLabel: string;
   pending?: boolean;
 };
@@ -18,13 +19,14 @@ type Props = {
   posts: FeedPost[];
   canPost: boolean;
   viewerName: string;
+  viewerPhoto?: string | null;
   maxLength: number;
   action: (prev: ActionState, formData: FormData) => Promise<ActionState>;
 };
 
 // Screen 1e feed. New posts appear immediately (optimistically) and are
 // replaced by the server's copy once the page refreshes.
-export default function ClassFeed({ posts, canPost, viewerName, maxLength, action }: Props) {
+export default function ClassFeed({ posts, canPost, viewerName, viewerPhoto, maxLength, action }: Props) {
   const [shown, addPending] = useOptimistic(posts, (state, post: FeedPost) => [post, ...state]);
   const [state, formAction, pending] = useActionState(
     async (prev: ActionState, formData: FormData) => {
@@ -35,6 +37,7 @@ export default function ClassFeed({ posts, canPost, viewerName, maxLength, actio
           content,
           authorName: viewerName,
           authorProfileId: null,
+          authorPhoto: viewerPhoto,
           timeLabel: "posting…",
           pending: true,
         });
@@ -89,7 +92,7 @@ export default function ClassFeed({ posts, canPost, viewerName, maxLength, actio
               className={`rounded-xl border border-line bg-white p-4 ${post.pending ? "opacity-60" : ""}`}
             >
               <div className="flex items-center gap-3">
-                <Avatar name={post.authorName} size="sm" />
+                <Avatar name={post.authorName} size="sm" photo={post.authorPhoto} />
                 <p className="text-sm">
                   {post.authorProfileId ? (
                     <Link href={`/alumni/profile/${post.authorProfileId}`} className="font-semibold hover:underline">

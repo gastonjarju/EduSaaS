@@ -4,6 +4,7 @@
 import { and, count, desc, eq, isNull, ne } from "drizzle-orm";
 import { db } from "@/db";
 import { alumniProfiles, classGroupPosts, classGroups, users } from "@/db/schema";
+import { visiblePhotoPath } from "./photoSql";
 
 export const POST_MAX_LENGTH = 2000; // matches class_group_posts_content_length_check
 const FEED_LIMIT = 50;
@@ -40,6 +41,7 @@ export async function listPosts(schoolId: string, classGroupId: string) {
       createdAt: classGroupPosts.createdAt,
       authorName: users.name,
       authorProfileId: alumniProfiles.id,
+      authorPhotoPath: visiblePhotoPath,
     })
     .from(classGroupPosts)
     .innerJoin(users, eq(users.id, classGroupPosts.authorId))

@@ -1,4 +1,5 @@
 // Small presentational pieces shared by the alumni pages.
+import Image from "next/image";
 import { normalizeLinkedinUrl } from "@/lib/alumni/linkedin";
 import { initials } from "@/lib/format";
 
@@ -7,14 +8,31 @@ const AVATAR_SIZES = {
   md: "h-12 w-12 text-sm",
   lg: "h-20 w-20 text-2xl",
 };
+const AVATAR_PX = { sm: 32, md: 48, lg: 80 };
 
+/** Profile photo when there is one (a public Storage URL), else initials. */
 export function Avatar({
   name,
   size = "md",
+  photo,
 }: {
   name: string;
   size?: keyof typeof AVATAR_SIZES;
+  photo?: string | null;
 }) {
+  if (photo) {
+    return (
+      <Image
+        src={photo}
+        alt=""
+        width={AVATAR_PX[size]}
+        height={AVATAR_PX[size]}
+        // Already a small 400px WebP from Storage: skip Next's image optimizer
+        unoptimized
+        className={`flex-none rounded-full bg-placeholder-strong object-cover ${AVATAR_SIZES[size]}`}
+      />
+    );
+  }
   return (
     <span
       aria-hidden

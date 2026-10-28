@@ -10,6 +10,10 @@ export const PRIVACY_FIELDS = [
   "employer",
   "bio",
   "linkedin",
+  "photo",
+  "studying",
+  "activities",
+  "memories",
 ] as const;
 export type PrivacyField = (typeof PRIVACY_FIELDS)[number];
 export type Visibility = Partial<Record<PrivacyField, boolean>>;
@@ -21,6 +25,10 @@ const DEFAULT_VISIBILITY: Record<PrivacyField, boolean> = {
   bio: true,
   employer: false,
   linkedin: true,
+  photo: true,
+  studying: true,
+  activities: true,
+  memories: true,
 };
 
 export type ProfileRow = {
@@ -38,6 +46,12 @@ export type ProfileRow = {
   verificationStatus: string;
   isMentor: boolean;
   visibility: unknown;
+  photoPath?: string | null; // users.avatar_url (Storage path)
+  industry?: string | null;
+  studying?: string | null;
+  schoolActivities?: string[];
+  schoolMemories?: string[];
+  mentorAreas?: string[];
 };
 
 export type ProfileView = {
@@ -53,6 +67,12 @@ export type ProfileView = {
   linkedinUrl: string | null;
   verificationStatus: string;
   isMentor: boolean;
+  photoPath: string | null;
+  industry: string | null; // follows the "profession" setting
+  studying: string | null;
+  activities: string[];
+  memories: string[];
+  mentorAreas: string[];
 };
 
 export type ViewerContext = { userId: string | null; isAdmin: boolean };
@@ -88,5 +108,11 @@ export function toProfileView(
     linkedinUrl: show("linkedin") ? row.linkedinUrl : null,
     verificationStatus: row.verificationStatus,
     isMentor: row.isMentor,
+    photoPath: show("photo") ? (row.photoPath ?? null) : null,
+    industry: show("profession") ? (row.industry ?? null) : null,
+    studying: show("studying") ? (row.studying ?? null) : null,
+    activities: show("activities") ? (row.schoolActivities ?? []) : [],
+    memories: show("memories") ? (row.schoolMemories ?? []) : [],
+    mentorAreas: row.isMentor ? (row.mentorAreas ?? []) : [],
   };
 }

@@ -5,9 +5,10 @@
 //
 //   npm run db:seed
 import { config } from "dotenv";
-import { inArray, like } from "drizzle-orm";
+import { and, inArray, isNotNull, like } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+import { deletePhotos } from "../lib/storage";
 import * as schema from "./schema";
 
 config({ path: ".env.local", quiet: true });
@@ -51,6 +52,8 @@ type FeaturedAlumnus = {
   verification?: "unverified" | "pending" | "verified";
   isMentor?: boolean;
   linkedinUrl?: string; // real URL; otherwise featured alumni get a demo one
+  activities?: string[];
+  memories?: string[];
 };
 
 type SchoolSeed = {
@@ -97,6 +100,43 @@ const BIOS = [
   "Coaching the school football team on weekends.",
 ];
 
+// Industry for each seeded profession (see INDUSTRIES in lib/alumni/profileFields.ts)
+const INDUSTRY_FOR: Record<string, string> = {
+  Teacher: "Education",
+  Lecturer: "Education",
+  Nurse: "Health & Medicine",
+  Doctor: "Health & Medicine",
+  Pharmacist: "Health & Medicine",
+  Engineer: "Engineering",
+  "Software Engineer": "Technology",
+  "Software Developer": "Technology",
+  Analyst: "Finance & Accounting",
+  Accountant: "Finance & Accounting",
+  Entrepreneur: "Business & Trade",
+  "Civil Servant": "Government & Public Service",
+  Lawyer: "Law",
+  Electrician: "Construction & Trades",
+  Journalist: "Arts & Media",
+  Agronomist: "Agriculture",
+};
+
+const ACTIVITIES = ["Football", "Athletics", "Debate club", "Choir", "Drama", "Science club", "Quiz team", "Scouts", "Prefect", "Netball", "Volleyball", "School newspaper", "Chess"];
+
+const MEMORIES = [
+  "Inter-house sports day — our house finally won the relay.",
+  "Staying late in the library before exams with the whole class.",
+  "The school trip to the national museum.",
+  "Morning assembly and the head teacher's long announcements.",
+  "Winning the inter-school quiz competition.",
+  "Lunch under the big mango tree.",
+];
+
+// "Currently studying" examples per school country
+const STUDYING: Record<string, string[]> = {
+  GM: ["BSc Nursing, University of The Gambia", "Diploma in IT, Gambia Technical Training Institute", "BA Economics, University of The Gambia"],
+  ZW: ["BA Education, University of Zimbabwe", "BCom Accounting, Midlands State University", "BSc Computer Science, NUST"],
+};
+
 const POSTS = [
   "Anyone up for a reunion this December? 🎉",
   "Found our old class photo while clearing out the house. Who remembers this day?",
@@ -138,7 +178,7 @@ const SCHOOLS: readonly SchoolSeed[] = [
     ],
     classSections: ["Grade 12 Science", "Grade 12 Arts", "Grade 12 Technical", "Form 5A", "Form 5B"],
     featured: [
-      { first: "Aisha", last: "Bojang", year: 2015, city: { city: "Banjul", country: "GM" }, profession: "Teacher", employer: "Gambia College", classSection: "Form 5A", bio: "Grateful for the foundation St. Peter's gave me. Happy to mentor anyone going into education.", verification: "verified", isMentor: true },
+      { first: "Aisha", last: "Bojang", year: 2015, city: { city: "Banjul", country: "GM" }, profession: "Teacher", employer: "Gambia College", classSection: "Form 5A", bio: "Grateful for the foundation St. Peter's gave me. Happy to mentor anyone going into education.", verification: "verified", isMentor: true, activities: ["Debate club", "Netball", "Prefect"], memories: ["Winning the inter-school debate final in 2014.", "Mr Jallow's chemistry lessons — we still quote him."] },
       { first: "Musa", last: "Jallow", year: 2012, city: { city: "New York", country: "US" }, profession: "Engineer", employer: "Con Edison", verification: "verified" },
       { first: "Fatou", last: "Sowe", year: 2018, city: { city: "Serrekunda", country: "GM" }, profession: "Nurse", employer: "Edward Francis Small Teaching Hospital", verification: "verified" },
       { first: "Omar", last: "Ceesay", year: 2015, city: { city: "Brikama", country: "GM" }, profession: "Nurse", verification: "verified" },
@@ -196,6 +236,14 @@ async function main() {
   if (!url) throw new Error("POSTGRES_URL_NON_POOLING is not set (.env.local)");
   const client = postgres(url, { max: 1, onnotice: () => {} });
   const db = drizzle(client, { schema });
+
+  // Photos of the seed users deleted below would otherwise stay in Storage
+  const seedPhotos = (
+    await db
+      .select({ path: schema.users.avatarUrl })
+      .from(schema.users)
+      .where(and(like(schema.users.email, `%@${SEED_EMAIL_DOMAIN}`), isNotNull(schema.users.avatarUrl)))
+  ).map((r) => r.path!);
 
   await db.transaction(async (tx) => {
     // Deleting a school cascades to its profiles, groups, posts, events and
@@ -278,6 +326,13 @@ async function main() {
             profession: a.profession,
             employer: a.employer,
             bio: a.bio,
+            industry: INDUSTRY_FOR[a.profession] ?? null,
+            // Featured alumni use their own lists (or none); others get a few
+            schoolActivities:
+              a.activities ?? (i >= s.featured.length ? ACTIVITIES.filter(() => chance(rand, 0.15)).slice(0, 4) : []),
+            schoolMemories:
+              a.memories ?? (i >= s.featured.length && chance(rand, 0.35) ? [pick(rand, MEMORIES)] : []),
+            studying: i >= s.featured.length && a.year >= 2021 && chance(rand, 0.5) ? pick(rand, STUDYING[s.country]) : null,
             // Obviously fake handles so demo links never hit a real person's page
             linkedinUrl:
               a.linkedinUrl ??
@@ -422,6 +477,10 @@ async function main() {
     }
   });
 
+  if (seedPhotos.length > 0) {
+    await deletePhotos(seedPhotos);
+    console.log(`Deleted ${seedPhotos.length} profile photo(s) of reset seed users`);
+  }
   await client.end();
 }
 

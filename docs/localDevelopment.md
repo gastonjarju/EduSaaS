@@ -46,6 +46,7 @@ The app needs these values:
 |---|---|
 | `POSTGRES_URL` | The app's database connection (pooled) |
 | `POSTGRES_URL_NON_POOLING` | Migrations, seeding, Drizzle Studio (direct connection) |
+| `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Profile photos in Supabase Storage. The service key is server-only; never expose it to the browser. |
 
 Optional variables, set on the command line or in `.env.local`:
 
@@ -71,6 +72,8 @@ The app uses **Postgres** through **Drizzle ORM**. The database itself is the **
 | `npm run db:seed` | Resets the two demo schools (`stpeterstechnical`, `kristemambo`) with ~60 alumni each, class groups, posts, events and RSVPs. Safe to re-run. |
 | `npm run db:studio` | Opens **Drizzle Studio** to browse and edit tables (below). |
 | `npm run db:generate` | Creates a new migration after you change `db/schema/`. |
+| `npm run admin:create -- --school <slug> --name "<name>" --email <email>` | Creates a school admin for a school (see "Adding a school"). |
+| `npm run storage:setup` | Creates or updates the public `profile-photos` Storage bucket. Run it once per Supabase project; it's safe to re-run. |
 | `npm run db:push` | Pushes schema changes without a migration file. **Don't use it on the shared database;** use generate + migrate. |
 
 ### What `db:seed` does and doesn't reset
@@ -102,6 +105,16 @@ Other tools work too, connected with `POSTGRES_URL_NON_POOLING` and SSL on:
 4. Commit both the schema change and the files in `drizzle/`.
 
 Don't add or alter columns by hand in Studio or Supabase, or the database drifts from the migrations.
+
+### Profile photos (Supabase Storage)
+
+- **Where they go:** photos uploaded on **Edit profile** are stored in the `profile-photos` bucket.
+- **Processing:** the browser shrinks a photo first; the server then crops it square, resizes it to 400×400 and converts it to WebP (a few tens of KB).
+- **iPhone (HEIC) photos:** converted to JPEG in the browser by [`heic-to`](https://github.com/hoppergee/heic-to). The server's image library (`sharp`) can read HEIC details but can't decode the image, because its prebuilt version has no HEVC decoder. The ~3 MB decoder is only downloaded when someone picks a HEIC file. `heic-to` is LGPL-3.0 licensed and loaded as a separate file.
+- **Who can see them:** the bucket is public, so anyone with a photo's link can open it. File names are random, and pages only include a photo's link when its owner allows others to see it.
+- **What the database stores:** `users.avatar_url` holds the file's path in the bucket, not a full URL.
+- **Clean-up:** replacing or removing a photo deletes the old file, but its old link may still load from the CDN cache for up to an hour. `npm run db:seed` deletes the photos of the seed users it resets.
+- **Browsing them:** in the Supabase dashboard under **Storage**.
 
 ---
 
@@ -157,7 +170,16 @@ In Drizzle Studio, open **schools** → **Add record**:
 - **slug**: lowercase letters, numbers and hyphens, e.g. `stfaiths`
 - **country**: two letters, e.g. `ZW`
 
-Save, then open `http://<slug>.localhost:3000`. Dates show in local time for `GM` and `ZW`; other countries fall back to UTC until a time zone is added in `lib/schools.ts`.
+Save, then open `http://<slug>.localhost:3000`.
+
+A new school has no admin. Create one with:
+
+```bash
+npm run admin:create -- --school stfaiths --name "St Faiths Admin" --email admin@stfaiths.test
+# or --phone +263771234567 instead of --email
+```
+
+They then appear in the dev sign-in bar as "<name> — school admin". They can also sign in at `/alumni/join` with that email or phone and code `1234`. Re-running the command doesn't create a duplicate. Don't use an `@seed.edusaas.test` email, because `db:seed` deletes those. Dates show in local time for `GM` and `ZW`; other countries fall back to UTC until a time zone is added in `lib/schools.ts`.
 
 ---
 

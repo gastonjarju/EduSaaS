@@ -16,7 +16,7 @@ export function mockAuthEnabled(): boolean {
 }
 
 export type Viewer = {
-  user: Pick<typeof users.$inferSelect, "id" | "name" | "role" | "schoolId">;
+  user: Pick<typeof users.$inferSelect, "id" | "name" | "role" | "schoolId" | "avatarUrl">;
   profile: typeof alumniProfiles.$inferSelect | null;
   isAdmin: boolean;
 };
@@ -35,6 +35,7 @@ export const getViewer = cache(
         name: users.name,
         role: users.role,
         schoolId: users.schoolId,
+        avatarUrl: users.avatarUrl, // own photo path, for the header menu
       })
       .from(users)
       .where(eq(users.id, userId))

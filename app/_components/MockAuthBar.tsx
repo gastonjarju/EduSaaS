@@ -41,7 +41,7 @@ export default async function MockAuthBar({ schoolId }: { schoolId: string }) {
         <select
           name="userId"
           defaultValue={viewer?.user.id ?? ""}
-          className="h-9 rounded-md border border-line bg-white px-2"
+          className="h-9 rounded-md border border-line bg-white pl-2 pr-9"
           aria-label="Sign in as"
         >
           <option value="" disabled>

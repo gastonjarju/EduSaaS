@@ -10,6 +10,7 @@ import {
 import { countByStatus } from "@/lib/alumni/verification";
 import { requireViewer } from "@/lib/auth/session";
 import { requireSchool } from "@/lib/schools";
+import { photoUrl } from "@/lib/storage";
 
 export const metadata: Metadata = { title: "Alumni directory" };
 
@@ -96,13 +97,13 @@ export default async function AlumniDirectory({
           defaultValue={filters.q}
           placeholder="Search name…"
           aria-label="Search by name"
-          className="h-12 rounded-md bg-placeholder px-3"
+          className="h-12 rounded-md bg-placeholder pl-3 pr-10"
         />
         <select
           name="year"
           defaultValue={filters.year ?? ""}
           aria-label="Graduation year"
-          className="h-12 rounded-md bg-placeholder px-3"
+          className="h-12 rounded-md bg-placeholder pl-3 pr-10"
         >
           <option value="">Any year</option>
           {options.years.map((y) => (
@@ -115,7 +116,7 @@ export default async function AlumniDirectory({
           name="city"
           defaultValue={filters.city ?? ""}
           aria-label="Location"
-          className="h-12 rounded-md bg-placeholder px-3"
+          className="h-12 rounded-md bg-placeholder pl-3 pr-10"
         >
           <option value="">Any location</option>
           {options.cities.map((c) => (
@@ -145,7 +146,7 @@ export default async function AlumniDirectory({
               key={p.id}
               className="relative flex h-full items-center gap-3 rounded-xl border border-line bg-white p-4 hover:border-accent"
             >
-              <Avatar name={p.name} />
+              <Avatar name={p.name} photo={photoUrl(p.photoPath)} />
               <div className="min-w-0 flex-1">
                 {/* The name link stretches over the whole card; the LinkedIn
                     button sits above it (z-10) since links can't nest. */}

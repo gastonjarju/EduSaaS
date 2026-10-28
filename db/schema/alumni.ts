@@ -40,6 +40,20 @@ export const alumniProfiles = pgTable(
     bio: text("bio"),
     linkedinUrl: text("linkedin_url"),
 
+    // Current profession section (profession/employer above)
+    industry: varchar("industry", { length: 50 }), // one of INDUSTRIES in lib/alumni/profileFields.ts
+    studying: varchar("studying", { length: 200 }), // e.g. "BSc Nursing, University of The Gambia"
+
+    // "At school": activity tags (≤15) and short memories (≤5)
+    schoolActivities: text("school_activities")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    schoolMemories: text("school_memories")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+
     // A5 lightweight verification (honor system, not identity-proof)
     verificationStatus: varchar("verification_status", { length: 20 })
       .notNull()
@@ -57,7 +71,7 @@ export const alumniProfiles = pgTable(
     visibility: jsonb("visibility")
       .notNull()
       .default(
-        sql`'{"city": true, "profession": true, "bio": true, "employer": false, "linkedin": true}'::jsonb`
+        sql`'{"city": true, "profession": true, "bio": true, "employer": false, "linkedin": true, "photo": true, "studying": true, "activities": true, "memories": true}'::jsonb`
       ),
 
     deletedAt: timestamp("deleted_at", { withTimezone: true }), // GDPR-lite soft delete

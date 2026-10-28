@@ -33,6 +33,26 @@
   }
 }
 
+/* Tailwind v4 no longer gives buttons a pointer cursor; restore it for
+   everything clickable (disabled buttons keep the default arrow). */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary {
+    cursor: pointer;
+  }
+
+  /* Dropdowns: our own chevron, inset from the edge (the browser's sits
+     flush right). Give each select right padding (pr-10) for it. */
+  select:not([multiple]) {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%236b6a64' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.85rem center;
+    background-size: 1.1rem;
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

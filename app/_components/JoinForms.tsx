@@ -201,7 +201,7 @@ export function ProfileStep({ action, years }: { action: Action; years: number[]
       </label>
       <label className="block space-y-1">
         <span className="text-sm text-ink-soft">Graduation year</span>
-        <select name="graduationYear" required defaultValue="" className={input}>
+        <select name="graduationYear" required defaultValue="" className={`${input} pr-10`}>
           <option value="" disabled>
             Select…
           </option>
