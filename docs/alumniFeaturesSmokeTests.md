@@ -282,6 +282,7 @@ Copy this table into the PR or release notes and fill in the Result column.
 - Step 6: Musa sees everything except the memories; admins see everything. Musa has no Edit button.
 - Step 7: Musa sees your initials instead of the photo.
 - Step 8: back to initials.
+- An **iPhone (HEIC) photo** uploads too: the button shows "Converting…" for a few seconds first.
 - A file that isn't an image is rejected. A bad LinkedIn link shows an error and keeps your other edits.
 
 ## 4. Known gaps

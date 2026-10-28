@@ -109,6 +109,7 @@ Don't add or alter columns by hand in Studio or Supabase, or the database drifts
 
 - **Where they go:** photos uploaded on **Edit profile** are stored in the `profile-photos` bucket.
 - **Processing:** the browser shrinks a photo first; the server then crops it square, resizes it to 400×400 and converts it to WebP (a few tens of KB).
+- **iPhone (HEIC) photos:** converted to JPEG in the browser by [`heic-to`](https://github.com/hoppergee/heic-to). The server's image library (`sharp`) can read HEIC details but can't decode the image, because its prebuilt version has no HEVC decoder. The ~3 MB decoder is only downloaded when someone picks a HEIC file. `heic-to` is LGPL-3.0 licensed and loaded as a separate file.
 - **Who can see them:** the bucket is public, so anyone with a photo's link can open it. File names are random, and pages only include a photo's link when its owner allows others to see it.
 - **What the database stores:** `users.avatar_url` holds the file's path in the bucket, not a full URL.
 - **Clean-up:** replacing or removing a photo deletes the old file, but its old link may still load from the CDN cache for up to an hour. `npm run db:seed` deletes the photos of the seed users it resets.

@@ -121,7 +121,12 @@ export async function uploadProfilePhoto(slug: string, _prev: PhotoState, formDa
       .webp({ quality: 80 })
       .toBuffer();
   } catch {
-    return { error: "That file isn't a photo we can read. Try a JPEG or PNG." };
+    // HEIC only gets here without JavaScript (the browser converts it otherwise)
+    return {
+      error: /\.hei[cf]$/i.test(file.name) || /hei[cf]/i.test(file.type)
+        ? "iPhone (HEIC) photos need JavaScript turned on to upload. Or save the photo as a JPEG first."
+        : "That file isn't a photo we can read. Try a JPEG or PNG.",
+    };
   }
 
   const path = `${ctx.school.id}/${ctx.profile.id}/${randomUUID()}.webp`;

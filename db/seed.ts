@@ -131,12 +131,11 @@ const MEMORIES = [
   "Lunch under the big mango tree.",
 ];
 
-const STUDYING = [
-  "BSc Nursing, University of The Gambia",
-  "BA Education, University of Zimbabwe",
-  "Diploma in IT, Gambia Technical Training Institute",
-  "BCom Accounting, Midlands State University",
-];
+// "Currently studying" examples per school country
+const STUDYING: Record<string, string[]> = {
+  GM: ["BSc Nursing, University of The Gambia", "Diploma in IT, Gambia Technical Training Institute", "BA Economics, University of The Gambia"],
+  ZW: ["BA Education, University of Zimbabwe", "BCom Accounting, Midlands State University", "BSc Computer Science, NUST"],
+};
 
 const POSTS = [
   "Anyone up for a reunion this December? 🎉",
@@ -333,7 +332,7 @@ async function main() {
               a.activities ?? (i >= s.featured.length ? ACTIVITIES.filter(() => chance(rand, 0.15)).slice(0, 4) : []),
             schoolMemories:
               a.memories ?? (i >= s.featured.length && chance(rand, 0.35) ? [pick(rand, MEMORIES)] : []),
-            studying: i >= s.featured.length && a.year >= 2021 && chance(rand, 0.5) ? pick(rand, STUDYING) : null,
+            studying: i >= s.featured.length && a.year >= 2021 && chance(rand, 0.5) ? pick(rand, STUDYING[s.country]) : null,
             // Obviously fake handles so demo links never hit a real person's page
             linkedinUrl:
               a.linkedinUrl ??
