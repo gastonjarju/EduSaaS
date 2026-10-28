@@ -97,13 +97,13 @@ export default async function AlumniDirectory({
           defaultValue={filters.q}
           placeholder="Search name…"
           aria-label="Search by name"
-          className="h-12 rounded-md bg-placeholder px-3"
+          className="h-12 rounded-md bg-placeholder pl-3 pr-10"
         />
         <select
           name="year"
           defaultValue={filters.year ?? ""}
           aria-label="Graduation year"
-          className="h-12 rounded-md bg-placeholder px-3"
+          className="h-12 rounded-md bg-placeholder pl-3 pr-10"
         >
           <option value="">Any year</option>
           {options.years.map((y) => (
@@ -116,7 +116,7 @@ export default async function AlumniDirectory({
           name="city"
           defaultValue={filters.city ?? ""}
           aria-label="Location"
-          className="h-12 rounded-md bg-placeholder px-3"
+          className="h-12 rounded-md bg-placeholder pl-3 pr-10"
         >
           <option value="">Any location</option>
           {options.cities.map((c) => (

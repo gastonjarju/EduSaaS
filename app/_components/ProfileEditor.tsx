@@ -138,7 +138,7 @@ function Fields({
         </div>
         <label className="block space-y-1">
           <span className={hint}>Industry</span>
-          <select name="industry" defaultValue={v.industry} className={input}>
+          <select name="industry" defaultValue={v.industry} className={`${input} pr-10`}>
             <option value="">Choose…</option>
             {INDUSTRIES.map((i) => (
               <option key={i} value={i}>
